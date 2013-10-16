@@ -9,8 +9,6 @@ import javax.swing.JButton;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.model.phases.GamePhase;
-import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.custommap.CustomFacade;
 
 public class CardView implements ActionListener {
@@ -19,6 +17,13 @@ public class CardView implements ActionListener {
 	private final JButton button;
 	
 	private CardViewClickListener onClick;
+	public static boolean	allKnown;
+	public static CardViewTextStrategy text = new CardViewTextStrategy() {
+		@Override
+		public String textFor(Card card) {
+			return card.toString();
+		}
+	};
 	
 	public CardView(Card card, CardViewClickListener listener) {
 		super();
@@ -36,19 +41,15 @@ public class CardView implements ActionListener {
 	}
 
 	public void cardUpdate() {
-		GamePhase phase = card.getCurrentZone().getGame().getActivePhase();
 		
-		boolean known = card.getCurrentZone().isKnown(null);
-		if (phase instanceof IPlayerPhase) {
-			Player player = ((IPlayerPhase)phase).getPlayer();
-			known = card.getCurrentZone().isKnown(player);
-		}
 //		CustomFacade.getLog().i("Phase is " + phase + " and card is " + card + " in " + card.getCurrentZone());
-		String html = known ? card.toString() : "???";
+		Player currentPlayer = card.getGame().getCurrentPlayer();
+		boolean known = card.getCurrentZone().isKnown(currentPlayer) || allKnown;
+		String html = known ? text.textFor(card) : "???";
 		
-		button.setText("<html>" + html.replaceAll("\\n", "<br>") + "</html>");
 		StackAction action = this.card.getGame().getAIHandler().click(getCard());
-		button.setEnabled(action.isAllowed());
+		button.setText("<html>" + html.replaceAll("\\n", "<br>") + "</html>");
+		button.setEnabled(action == null ? false : action.isAllowed());
 	}
 
 	@Override

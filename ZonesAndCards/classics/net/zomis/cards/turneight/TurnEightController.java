@@ -26,7 +26,7 @@ public class TurnEightController implements AIHandler {
 
 	@Override
 	public List<StackAction> getAvailableActions(Player player) {
-		List<StackAction> result = new LinkedList<>();
+		List<StackAction> result = new LinkedList<StackAction>();
 		for (Card card : ((CardPlayer)player).getHand().cardList()) {
 			TurnEightPlayAction action = new TurnEightPlayAction(card);
 			if (action.isAllowed()) {
@@ -72,6 +72,7 @@ public class TurnEightController implements AIHandler {
 	
 	@Override
 	public void move(CardGame game) {
+		// TODO: Support different AIs easily in CardGames
 		CardAI ai;
 //		if (game.getCurrentPlayer().getName().equals("BUBU")) {
 //			ai = new TurnEightAIRandom(game);

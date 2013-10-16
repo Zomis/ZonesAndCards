@@ -1,9 +1,6 @@
 package net.zomis.cards.idiot;
 
-import java.util.LinkedList;
-
 import net.zomis.cards.classics.ClassicCardZone;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.StackAction;
 
 public class DealAction extends StackAction {
@@ -22,9 +19,9 @@ public class DealAction extends StackAction {
 	@Override
 	protected void perform() {
 		for (ClassicCardZone zone : game.getIdiotZones()) {
-			LinkedList<Card> list = game.getDeck().cardList();
-			if (!list.isEmpty())
-				list.getLast().zoneMove(zone, game.getCurrentPlayer());
+			if (!game.getDeck().isEmpty()) {
+				game.getDeck().getTopCard().zoneMoveOnBottom(zone);
+			}
 		}
 	}
 	

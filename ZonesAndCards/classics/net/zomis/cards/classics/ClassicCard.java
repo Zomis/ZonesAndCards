@@ -1,24 +1,8 @@
 package net.zomis.cards.classics;
 
-import java.util.Comparator;
-
-import net.zomis.cards.classics.ClassicGame.AceValue;
 import net.zomis.cards.model.CardModel;
 
 public class ClassicCard extends CardModel {
-	
-	public static class Compare implements Comparator<ClassicCard> {
-		private boolean	suiteFirst;
-		private AceValue aceValue;
-		public Compare(boolean suiteFirst, AceValue aceValue) {
-			this.suiteFirst = suiteFirst;
-			this.aceValue = aceValue;
-		}
-		@Override
-		public int compare(ClassicCard o1, ClassicCard o2) {
-			return o1.getValue(suiteFirst, aceValue) - o1.getValue(suiteFirst, aceValue);
-		}
-	}
 
 	private final Suite suite;
 	private final int rank;
@@ -35,12 +19,6 @@ public class ClassicCard extends CardModel {
 		
 		this.suite = suite;
 		this.rank = rank;
-	}
-
-	public int getValue(boolean suiteFirst, AceValue aceValue) {
-		int suitValue = (suiteFirst ? this.getSuite().ordinal() * 14 : getSuite().ordinal());
-		int rankValue = (suiteFirst ? this.getRank() : this.getRank() * 4);
-		return suitValue + rankValue;
 	}
 
 	public int getRank() {

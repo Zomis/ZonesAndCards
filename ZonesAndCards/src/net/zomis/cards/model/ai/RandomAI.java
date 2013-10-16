@@ -11,7 +11,7 @@ public class RandomAI extends CardAI {
 	public RandomAI(CardGame game) {
 		super(game);
 		
-		this.setConfig(new ScoreConfigFactory<Player, StackAction>().withScorer(new RandomScorer<Player, StackAction>()).build());
+		this.setConfig(new ScoreConfigFactory<Player, StackAction>().withScorer(new RandomScorer<Player, StackAction>(game.getRandom())).build());
 		
 	}
 

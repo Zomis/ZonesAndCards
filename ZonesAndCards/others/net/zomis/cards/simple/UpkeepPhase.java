@@ -16,7 +16,7 @@ public class UpkeepPhase extends PlayerPhase {
 		SimplePlayer pl = (SimplePlayer) this.getPlayer();
 		pl.changeResources(pl.getResourcesPerTurn());
 		if (!pl.library.cardList().isEmpty())
-			pl.library.cardList().element().zoneMove(pl.hand, pl);
+			pl.library.getTopCard().zoneMoveOnBottom(pl.hand);
 	}
 
 	@Override

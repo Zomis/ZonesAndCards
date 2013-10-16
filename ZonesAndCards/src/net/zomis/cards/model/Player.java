@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-public class Player {
+public class Player implements Comparable<Player> {
 
 	@JsonBackReference
 	CardGame game;
@@ -22,7 +22,7 @@ public class Player {
 		List<Player> before = players.subList(0, index);
 		List<Player> after = players.subList(index + 1, players.size());
 		
-		List<Player> result = new ArrayList<>(after.size() + before.size());
+		List<Player> result = new ArrayList<Player>(after.size() + before.size());
 		result.addAll(after);
 		result.addAll(before);
 		return result;
@@ -40,6 +40,11 @@ public class Player {
 	@Override
 	public String toString() {
 		return "Player-" + this.getName();
+	}
+
+	@Override
+	public int compareTo(Player o) {
+		return this.name.compareTo(o.name);
 	}
 	
 }

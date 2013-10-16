@@ -13,7 +13,7 @@ public class CWars2Card extends CardModel {
 
 	public CWars2Card(String name) {
 		super(name);
-		this.extras = new LinkedList<>();
+		this.extras = new LinkedList<StackAction>();
 	}
 
 	ResourceMap costs = new ResourceMap();

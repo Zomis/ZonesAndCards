@@ -35,12 +35,12 @@ public class CardAI implements ScoreStrategy<Player, StackAction>, ScoreProducer
 
 	@Override
 	public FieldScoreProducer<Player, StackAction> createScoreProvider() {
-		return new FieldScoreProducer<>(config, this);
+		return new FieldScoreProducer<Player, StackAction>(config, this);
 	}
 
 	@Override
 	public ParamAndField<Player, StackAction> play() {
-		return ScoreUtils.pickBest(this, new Player[]{ game.getCurrentPlayer() });
+		return ScoreUtils.pickBest(this.createScoreProvider(), new Player[]{ game.getCurrentPlayer() }, this.game.getRandom());
 	}
 
 	@Override

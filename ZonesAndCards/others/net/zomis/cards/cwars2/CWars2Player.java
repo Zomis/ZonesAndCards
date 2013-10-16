@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.util.DeckPlayer;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.custommap.CustomFacade;
 
 
-public class CWars2Player extends Player {
+public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 
 	private final CardZone library;
 	private final CardZone hand;
@@ -25,7 +25,7 @@ public class CWars2Player extends Player {
 		this.library = new CardZone("Deck-" + getName());
 		this.hand = new CardZone("Hand-" + getName());
 		this.hand.setKnown(this, true);
-		this.cards = new LinkedList<>();
+		this.cards = new LinkedList<CWars2Card>();
 		
 	}
 	public ResourceMap getResources() {
@@ -48,14 +48,12 @@ public class CWars2Player extends Player {
 	private void drawCard() {
 		if (library.cardList().isEmpty()) {
 			for (CWars2Card card : this.cards) {
-				Card crd = card.createCard();
-				library.add(crd);
-				crd.zoneMove(library, null);
+				library.createCardOnTop(card);
 			}
 			library.shuffle();
 		}
 		
-		library.cardList().peekFirst().zoneMove(this.hand, null);
+		library.getTopCard().zoneMoveOnBottom(this.hand);
 	}
 	@Override
 	public CWars2Game getGame() {

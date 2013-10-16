@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -15,29 +16,27 @@ public class CardZone implements Comparable<CardZone> {
 	@JsonBackReference
 	CardGame game;
 	
-	private final Map<Player, Boolean> known = new HashMap<>();
+	private final Map<Player, Boolean> known = new HashMap<Player, Boolean>();
 
 	private boolean	knownGlobal;
 
 	@JsonManagedReference
-	private final LinkedList<Card> cards = new LinkedList<>();
+	private final LinkedList<Card> cards = new LinkedList<Card>();
 
-	private final String name;
+	private String name;
 
-	@Deprecated
-	public void remove() {
-		this.game.removeZone(this);
-	}
-	
 	public CardZone(String zoneName) {
 		this.name = zoneName;
 	}
-	
+	public void setName(String name) {
+		this.name = name;
+	}
 	public void setGloballyKnown(boolean knowledge) {
 		this.knownGlobal = knowledge;
 	}
-	public void setKnown(Player player, boolean knowledge) {
+	public CardZone setKnown(Player player, boolean knowledge) {
 		this.known.put(player, knowledge);
+		return this;
 	}
 	
 	public boolean isKnown(Player player) {
@@ -45,22 +44,13 @@ public class CardZone implements Comparable<CardZone> {
 		return (b == null ? knownGlobal : b);
 	}
 
-	public void add(Card card) {
-		this.cards.add(card);
-		card.currentZone = this;
-	}
-	
 	public LinkedList<Card> cardList() {
 		return cards;
 	}
 	
-	public void remove(Card card) {
-		this.cards.remove(card);
-	}
-	
 	@Override
-	public String toString() {
-		return String.format("%s: %b, %s", this.getName(), this.knownGlobal, this.cards);
+	public final String toString() {
+		return String.format("%s: %b, %s, %s", this.getName(), this.knownGlobal, this.known, this.cards);
 	}
 	
 	public String getName() {
@@ -81,10 +71,59 @@ public class CardZone implements Comparable<CardZone> {
 	public void sort(Comparator<Card> comparator) {
 		Collections.sort(this.cards, comparator);
 	}
-	public void moveAll(CardZone destination, Player player) {
-		for (Card card : new ArrayList<>(cardList())) {
-			card.zoneMove(destination, player);
+	public void createCardOnTop(CardModel gcm) {
+		this.cards.addFirst(gcm.createCardInternal(this));
+	}
+	public void createCardOnBottom(CardModel gcm) {
+		this.cards.addFirst(gcm.createCardInternal(this));
+	}
+	public Card getTopCard() {
+		return this.cards.peekFirst();
+	}
+	public Card getBottomCard() {
+		return this.cards.peekLast();
+	}
+	public CardZone extractTopCards(int number) {
+		CardZone copy = this.createEmptyCopy();
+		for (int i = 0; i < number; i++) {
+			this.getTopCard().zoneMoveOnBottom(copy);
 		}
+		return copy;
+	}
+	public CardZone extractBottomCards(int number) {
+		CardZone copy = this.createEmptyCopy();
+		for (int i = 0; i < number; i++) {
+			this.getTopCard().zoneMoveOnTop(copy);
+		}
+		return copy;
 	}
 	
+	public void moveToTopOf(CardZone destination) {
+		ArrayList<Card> list = new ArrayList<Card>(cardList());
+		Collections.reverse(list);
+		for (Card card : list) {
+			card.zoneMoveOnTop(destination);
+		}
+	}
+	public void moveToBottomOf(CardZone destination) {
+		for (Card card : new ArrayList<Card>(cardList())) {
+			card.zoneMoveOnBottom(destination);
+		}
+	}
+
+	private CardZone createEmptyCopy() {
+		CardZone zone = new CardZone(this.getName() + "-Copy");
+//		this.getGame().addZone(zone);
+		zone.setGloballyKnown(this.knownGlobal);
+		for (Entry<Player, Boolean> ee : this.known.entrySet()) {
+			zone.setKnown(ee.getKey(), ee.getValue());
+		}
+		return zone;
+	}
+	public boolean isEmpty() {
+		return this.cards.isEmpty();
+	}
+	public int size() {
+		return this.cards.size();
+	}
 }

@@ -29,16 +29,16 @@ public class CardZoneView implements CardViewClickListener {
 
 	public CardZoneView(CardZone zone) {
 		super();
-		this.cardViews = new LinkedList<>();
+		this.cardViews = new LinkedList<CardView>();
 		this.zone = zone;
 		thisPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
 		thisPanel.setLayout(new BoxLayout(thisPanel, BoxLayout.Y_AXIS));
 		thisPanel.add(new JLabel(zone.getName()));
-		
+
 		cards = new JPanel();
 		cards.setLayout(new FlowLayout());
 		thisPanel.add(cards);
-			
+
 		for (Card card : zone.cardList()) {
 			addCard(card);
 		}
@@ -97,6 +97,7 @@ public class CardZoneView implements CardViewClickListener {
 
 	public void setViewLimit(int i) {
 		this.viewLimit = i;
+		this.updateTexts();
 	}
 
 }

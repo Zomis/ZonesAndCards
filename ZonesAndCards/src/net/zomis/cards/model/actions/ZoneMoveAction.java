@@ -2,15 +2,13 @@ package net.zomis.cards.model.actions;
 
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.model.phases.GamePhase;
-import net.zomis.cards.model.phases.IPlayerPhase;
 
 public class ZoneMoveAction extends StackAction {
 
-	private Card	card;
-	private CardZone	destination;
+	private Card card;
+	private CardZone destination;
+	private boolean sendToTop;
 	
 	public ZoneMoveAction(Card card) {
 		this.card = card;
@@ -25,23 +23,23 @@ public class ZoneMoveAction extends StackAction {
 	public void setDestination(CardZone destination) {
 		this.destination = destination;
 	}
-	@Override
-	protected void perform() {
-//		CustomFacade.getLog().i("Zone Move Action: " + this);
-		card.zoneMove(this.getDestination(), this.getPlayer());
+	public void setSendToTop() {
+		this.sendToTop = true;
 	}
-
-	protected Player getPlayer() {
-		GamePhase phase = card.getCurrentZone().getGame().getActivePhase();
-		if (phase instanceof IPlayerPhase) {
-			return ((IPlayerPhase)phase).getPlayer();
-		}
-		return null;
+	public void setSendToBottom() {
+		this.sendToTop = false;
 	}
 	
 	@Override
+	protected void perform() {
+		if (this.sendToTop)
+			card.zoneMoveOnTop(getDestination());
+		else card.zoneMoveOnBottom(getDestination());
+	}
+
+	@Override
 	public String toString() {
-		return String.format("ZoneMove-%s-->%s by %s", this.getCard(), this.getDestination(), this.getPlayer());
+		return String.format("ZoneMove-%s-->%s", this.getCard(), this.getDestination());
 	}
 	
 }

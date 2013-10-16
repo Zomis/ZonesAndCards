@@ -6,7 +6,6 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.actions.ZoneMoveAction;
-import net.zomis.custommap.CustomFacade;
 
 public class TurnEightPlayAction extends ZoneMoveAction {
 	public TurnEightPlayAction(Card card) {
@@ -67,7 +66,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 		}
 		if (getModel().getRank() == getGame().getAceValue()) {
 			Player currentPlayer = this.getGame().getCurrentPlayer();
-			CustomFacade.getLog().i("All others pick up a card. Everyone except " + currentPlayer);
+//			CustomFacade.getLog().i("All others pick up a card. Everyone except " + currentPlayer);
 			for (Player player : currentPlayer.getOpponents()) {
 				CardPlayer pl2 = (CardPlayer) player;
 				if (!pl2.getHand().cardList().isEmpty())
@@ -75,7 +74,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 			}
 		}
 		TurnEightGame agame = (TurnEightGame) this.getCard().getGame();
-		CustomFacade.getLog().i("Set last player to " + getPlayer());
+//		CustomFacade.getLog().i("Set last player to " + getPlayer());
 		agame.setHasPlayed(getModel());
 	}
 	public ClassicCard getModel() {

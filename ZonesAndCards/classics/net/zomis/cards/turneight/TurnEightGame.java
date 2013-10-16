@@ -10,9 +10,9 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
+import net.zomis.custommap.model.CastedIterator;
 
 public class TurnEightGame extends ClassicGame {
 	private static final int NUM_CARDS = 6;
@@ -24,8 +24,6 @@ public class TurnEightGame extends ClassicGame {
 	private Suite playerChoice = Suite.SPADES;
 	
 	public void setPlayerChoice(Suite playerChoice) {
-		CustomFacade.getLog().i("Set Player suite: " + playerChoice);
-//		new Exception().printStackTrace();
 		this.playerChoice = playerChoice;
 	}
 	public Suite getPlayerChoice() {
@@ -35,6 +33,10 @@ public class TurnEightGame extends ClassicGame {
 	private CardModel	drawCard;
 	private CardModel	nextTurn;
 	private int	drawnCards = 0;
+	public int getDrawnCards() {
+		return drawnCards;
+	}
+	
 	public void setHasPlayed(ClassicCard card) {
 		if (card.getRank() != this.getAceValue())
 			this.hasPlayed = true;
@@ -47,63 +49,55 @@ public class TurnEightGame extends ClassicGame {
 	 * "Vändåtta"
 	 * http://sv.wikipedia.org/wiki/V%C3%A4nd%C3%A5tta
 	 * Var sin tur, lägg ett eller många kort, om man inte kan får man dra kort -- max 3
-	 * ### 2or som sänker och ess som vänder bort osv. är i "**** och President"
 	 * 
 	 * 8or vänder "färg"
 	 * Ess gör att alla andra måste dra ett kort
 	 * */
-	public TurnEightGame(String[] players) {
+	public TurnEightGame() {
 		super(AceValue.HIGH);
-		this.setRandomSeed(42);
 		this.deck = new ClassicCardZone("Deck");
 		this.discard = new ClassicCardZone("Pile");
 		this.discard.setGloballyKnown(true);
 		this.addZone(deck);
 		this.addZone(discard);
 		this.deck.addDeck(0);
-		deck.shuffle();
-		
-		for (final String name : players) {
-			final CardPlayer player = new CardPlayer();
-			player.setName(name);
-			player.setHand(new ClassicCardZone("Hand-" + name));
-			player.getHand().setKnown(player, true);
-			this.addPlayer(player);
-			this.addZone(player.getHand());
-			
-//			player.getHand().setGloballyKnown(true);
-			
-			this.addPhase(new PlayerPhase(player));
-			for (int i = 0; i < NUM_CARDS; i++)
-				deck.getTopCard().zoneMove(player.getHand(), null);
-		}
+		this.deck.shuffle();
 		
 		this.drawCard = new CardModel("Draw card");
 		this.nextTurn = new CardModel("Next turn");
 		
 		CardZone actions = this.addZone(new CardZone("Actions"));
-		actions.add(drawCard.createCard());
-		actions.add(nextTurn.createCard());
+		actions.createCardOnBottom(drawCard);
+		actions.createCardOnBottom(nextTurn);
 		actions.setGloballyKnown(true);
 		
 		CardZone colorPickZone = this.addZone(new CardZone("ChosenSuite"));
 		for (Suite suite : Suite.values()) {
 			if (!suite.isWildcard())
-				colorPickZone.add(new SuiteModel(suite).createCard());
+				colorPickZone.createCardOnBottom(new SuiteModel(suite));
 		}
 		colorPickZone.setGloballyKnown(true);
+	}
+	
+	@Override
+	public void onStart() {
+		for (int i = 0; i < NUM_CARDS; i++) {
+			for (Player player : new CastedIterator<Player, CardPlayer>(this.getPlayers())) {
+				deck.getTopCard().zoneMoveOnBottom(((CardPlayer) player).getHand());
+			}
+		}
 		
 		ClassicCard firstCardModel = null;
 		do {
 			if (firstCardModel != null) {
 				CustomFacade.getLog().i("First card was " + firstCardModel + ", reshuffling.");
 				for (Card card : this.discard.cardList()) {
-					card.zoneMove(deck, null);
+					card.zoneMoveOnBottom(deck);
 				}
 				deck.shuffle();
 			}
 			Card firstCard = deck.cardList().peek();
-			firstCard.zoneMove(this.discard, null);
+			firstCard.zoneMoveOnTop(this.discard);
 			firstCardModel = (ClassicCard) firstCard.getModel();
 			setCurrentSuite(firstCardModel.getSuite());
 		}
@@ -114,7 +108,6 @@ public class TurnEightGame extends ClassicGame {
 		return currentSuite;
 	}
 	public void setCurrentSuite(Suite currentSuite) {
-		CustomFacade.getLog().d("Set current suite to " + currentSuite);
 		this.currentSuite = currentSuite;
 	}
 	public CardZone getDeck() {
@@ -129,12 +122,23 @@ public class TurnEightGame extends ClassicGame {
 		return new TurnEightController();
 	}
 	
+	public TurnEightGame addPlayer(String name) {
+		final CardPlayer player = new CardPlayer();
+		player.setName(name);
+		player.setHand(new ClassicCardZone("Hand-" + name));
+		player.getHand().setKnown(player, true);
+		this.addPlayer(player);
+		this.addZone(player.getHand());
+		this.addPhase(new PlayerPhase(player));
+		return this;
+	}
+	
 	@Override
-	public void setActivePhase(GamePhase phase) {
+	public boolean nextPhase() {
 		if (isNextPhaseAllowed()) {
 			this.hasPlayed = false;
 			this.drawnCards = 0;
-			super.setActivePhase(phase);
+			return super.nextPhase();
 		}
 		else CustomFacade.getLog().w("Player has not made a move.");
 		
@@ -142,12 +146,14 @@ public class TurnEightGame extends ClassicGame {
 			for (Player pl : this.getPlayers()) {
 				CardPlayer player = (CardPlayer) pl;
 				if (!player.getHand().cardList().isEmpty()) { // if any player exist who still have something on their hand
-					nextPhase();
+					this.nextPhase(); // call recursively
 					break;
 				}
 			}
 		}
+		return false;
 	}
+	
 	@Override
 	public boolean isNextPhaseAllowed() {
 		return hasPlayed() || this.drawnCards == DRAW_MAX || getCurrentPlayer().getHand().cardList().isEmpty();
@@ -161,12 +167,11 @@ public class TurnEightGame extends ClassicGame {
 	public void playerForceDraw(CardPlayer player) {
 		if (this.deck.cardList().isEmpty()) {
 			Card last = this.discard.cardList().getLast();
-			this.discard.moveAll(this.deck, null);
-			last.zoneMove(this.discard, null);
+			this.discard.moveToBottomOf(this.deck);
+			last.zoneMoveOnTop(this.discard);
 			this.deck.shuffle();
 		}
-		
-		this.deck.cardList().peek().zoneMove(player.getHand(), player);
+		this.deck.getTopCard().zoneMoveOnBottom(player.getHand());
 	}
 	public boolean playerDrawFromDeck(CardPlayer player) {
 		if (this.drawnCards == DRAW_MAX) {

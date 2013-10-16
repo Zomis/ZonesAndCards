@@ -23,7 +23,6 @@ public class SimpleGame extends CardGame {
 	
 	public SimpleGame() {
 		super();
-		this.setRandomSeed(42);
 		
 		this.addPlayer(new SimplePlayer().setName("Zomis"));
 		this.addPlayer(new SimplePlayer().setName("BUBU"));
@@ -58,28 +57,22 @@ public class SimpleGame extends CardGame {
 			pl2.library = library;
 			for (CardModel card : this.getAvailableCards()) {
 				for (int i = 0; i < 4; i++)
-					library.add(card.createCard());
+					library.createCardOnTop(card);
 			}
 			this.addZone(library);
 			library.shuffle();
 			
 			CardZone hand = new CardZone("Hand-"+pl.getName());
 			for (int i = 0; i < 5; i++)
-				hand.add(library.cardList().removeFirst());
+				hand.cardList().add(library.cardList().removeFirst());
 			this.addZone(hand);
 			
 			pl2.hand = hand;
 			hand.setKnown(pl, true);
 		}
 		this.setActivePhase(firstPhase);
-		log();
 	}
 
-
-	public CardGame getGame() {
-		return this;
-	}
-	
 	@Override
 	public AIHandler getAIHandler() {
 		return new SimpleAIHandler();

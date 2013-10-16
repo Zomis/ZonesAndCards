@@ -32,17 +32,17 @@ public class SimpleCardAI implements ScoreProducer<SimplePlayer, Card>, ScoreStr
 
 	@Override
 	public FieldScoreProducer<SimplePlayer, Card> createScoreProvider() {
-		return new FieldScoreProducer<>(getConfig(), this);
+		return new FieldScoreProducer<SimplePlayer, Card>(getConfig(), this);
 	}
 
 	@Override
 	public ParamAndField<SimplePlayer, Card> play() {
-		return ScoreUtils.pickBest(this, new SimplePlayer[]{ this.player });
+		return ScoreUtils.pickBest(this.createScoreProvider(), new SimplePlayer[]{ this.player }, this.player.getGame().getRandom());
 	}
 
 	@Override
 	public Collection<Card> getFieldsToScore(SimplePlayer params) {
-		Collection<Card> coll = new LinkedList<>();
+		Collection<Card> coll = new LinkedList<Card>();
 		
 		for (Card card : params.getHand().cardList())
 			coll.add(card);

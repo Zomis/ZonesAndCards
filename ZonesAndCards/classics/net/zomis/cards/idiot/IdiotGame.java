@@ -18,11 +18,10 @@ public class IdiotGame extends ClassicGame {
 	
 	public IdiotGame() {
 		super(AceValue.HIGH);
-//		setRandomSeed(42);
 		this.zones = new ClassicCardZone[Suite.suiteCount(false)];
 		this.deck = new ClassicCardZone("Deck");
 		addZone(deck);
-		for (IndexIteratorStatus<ClassicCardZone> zz : new IndexIterator<>(new ArrayIterator<>(zones))) {
+		for (IndexIteratorStatus<ClassicCardZone> zz : new IndexIterator<ClassicCardZone>(new ArrayIterator<ClassicCardZone>(zones))) {
 			ClassicCardZone zone = new ClassicCardZone("Zone" + zz.getIndex());
 			zones[zz.getIndex()] = zone;
 			addZone(zone);
@@ -33,7 +32,6 @@ public class IdiotGame extends ClassicGame {
 		CardPlayer player = new CardPlayer();
 		this.addPlayer(player);
 		this.addPhase(new PlayerPhase(player));
-		this.deck.shuffle();
 	}
 	
 	public ClassicCardZone getDeck() {
@@ -58,6 +56,11 @@ public class IdiotGame extends ClassicGame {
 		}
 		
 		return i;
+	}
+	
+	@Override
+	public void onStart() {
+		this.deck.shuffle();
 	}
 	
 }

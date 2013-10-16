@@ -22,7 +22,7 @@ public class IdiotHandler implements AIHandler {
 		public IdiotGameAI(CardGame game) {
 			super(game);
 			
-			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<>();
+			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
 			config.withScorer(new SubclassFixedScorer<Player, StackAction, RemoveAction>(RemoveAction.class), 10);
 			config.withScorer(new SubclassFixedScorer<Player, StackAction, MoveAction>(MoveAction.class), 5);
 			config.withScorer(new SubclassFixedScorer<Player, StackAction, DealAction>(DealAction.class), 1);
@@ -54,7 +54,7 @@ public class IdiotHandler implements AIHandler {
 		if (remove.isAllowed())
 			return remove;
 		
-		List<StackAction> random = new LinkedList<>();
+		List<StackAction> random = new LinkedList<StackAction>();
 		for (ClassicCardZone zone : game.getIdiotZones()) {
 			if (zone.cardList().isEmpty()) {
 				random.add(new MoveAction(card, zone));

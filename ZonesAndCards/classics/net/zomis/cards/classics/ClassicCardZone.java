@@ -28,7 +28,7 @@ public class ClassicCardZone extends CardZone {
 	}
 	private void addSuite(Suite suite) {
 		for (Entry<Integer, ClassicCard> inner : getGame().getCardModels().get(suite).entrySet()) {
-			add(inner.getValue().createCard());
+			this.createCardOnBottom(inner.getValue());
 		}
 	}
 	public void addWildcards(int count) {
@@ -37,7 +37,7 @@ public class ClassicCardZone extends CardZone {
 			throw new IllegalStateException("No wildcard models found");
 		for (int i = 0; i < count; i++) {
 			for (ClassicCard card : wildcards.values()) {
-				add(card.createCard());
+				this.createCardOnBottom(card);
 			}
 		}
 	}

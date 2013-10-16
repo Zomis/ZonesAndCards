@@ -35,7 +35,7 @@ public class SimpleAIHandler implements AIHandler {
 
 	@Override
 	public List<StackAction> getAvailableActions(Player player) {
-		List<StackAction> result = new LinkedList<>();
+		List<StackAction> result = new LinkedList<StackAction>();
 		for (Card card : ((SimplePlayer)player).getHand().cardList()) {
 			SimpleCard model = (SimpleCard) card.getModel();
 			PublicStackAction action = model.getAction().createAction(model, card, (SimplePlayer) player);
