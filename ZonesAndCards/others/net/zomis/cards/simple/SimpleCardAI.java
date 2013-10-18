@@ -37,7 +37,7 @@ public class SimpleCardAI implements ScoreProducer<SimplePlayer, Card>, ScoreStr
 
 	@Override
 	public ParamAndField<SimplePlayer, Card> play() {
-		return ScoreUtils.pickBest(this.createScoreProvider(), new SimplePlayer[]{ this.player }, this.player.getGame().getRandom());
+		return ScoreUtils.pickBest(this.createScoreProvider(), this.player, this.player.getGame().getRandom());
 	}
 
 	@Override

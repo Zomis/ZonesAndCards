@@ -12,7 +12,12 @@ public class DrawCardAction extends StackAction {
 		return !this.game.hasPlayed();
 	}
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		this.game.playerDrawFromDeck(game.getCurrentPlayer());
+	}
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "--" + game.getCurrentPlayer();
 	}
 }

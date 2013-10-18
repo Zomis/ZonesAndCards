@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.zomis.ZomisList;
+import net.zomis.cards.classics.AceValue;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardComparator;
@@ -20,15 +21,16 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.PlayerPhase;
-import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.CastedIterator;
 
 public class HeartsGame extends ClassicGame {
-
-	private final ClassicCardZone	pile;
-	private final HeartsGiveDirection	giveDirection;
+	public static final int MAGIC_NUMBER = 52 / 4;
+	
+	private final ClassicCardZone pile;
 	private final AIHandler handler = new HeartsHandler();
-	private boolean heartsBroken;
+	
+	protected HeartsGiveDirection	giveDirection;
+	protected boolean heartsBroken;
 	
 	public HeartsGame(HeartsGiveDirection giveDirection) {
 		super(AceValue.HIGH);
@@ -69,16 +71,16 @@ public class HeartsGame extends ClassicGame {
 	}
 	
 	@Override
-	public void onStart() {
+	protected void onStart() {
+		this.pile.moveToBottomOf(null);
+		ClassicCardZone deck = new ClassicCardZone("Deck");
+		deck.addDeck(this, 0);
+		if (deck.cardList().size() % this.getPlayers().size() != 0) 
+			throw new IllegalStateException("Something is horribly wrong with the card count or player count. " + deck.cardList().size() + " modulo " + this.getPlayers().size());
 		if (this.getPlayers().size() != 4)
 			throw new IllegalStateException("Hearts must currently be played with 4 players.");
 		
-		ClassicCardZone deck = new ClassicCardZone("Deck");
-		this.addZone(deck);
-		deck.addDeck(0);
-		deck.shuffle();
-		if (deck.cardList().size() % this.getPlayers().size() != 0) 
-			throw new AssertionError("Something is horribly wrong with the card count or player count. " + deck.cardList().size() + " modulo " + this.getPlayers().size());
+		deck.shuffle(this.getRandom());
 		
 		while (!deck.isEmpty()) {
 			for (CardPlayer player : new CastedIterator<Player, CardPlayer>(this.getPlayers())) {
@@ -86,7 +88,6 @@ public class HeartsGame extends ClassicGame {
 				card.zoneMoveOnBottom(player.getHand());
 			}
 		}
-		this.removeZone(deck);
 		
 		GamePhase phase = new HeartsGivePhase(this.giveDirection);
 		this.setActivePhase(phase);
@@ -101,7 +102,7 @@ public class HeartsGame extends ClassicGame {
 	}
 
 	public void sort(ClassicCardZone zone) {
-		CustomFacade.getLog().i("Sorting: " + zone);
+//		CustomFacade.getLog().d("Sorting: " + zone);
 		Collections.sort(zone.cardList(), compare);
 	}
 	
@@ -119,6 +120,18 @@ public class HeartsGame extends ClassicGame {
 	
 	
 	private Map<Card, CardPlayer> lastPlayed = new HashMap<Card, CardPlayer>();
+	
+	@Override
+	public boolean isNextPhaseAllowed() {
+		if (this.giveDirection.isGive() && this.getCurrentPlayer() == null) {
+			for (Player pl : this.getPlayers()) {
+				CardPlayer player = (CardPlayer) pl;
+				if (HeartsGiveAction.GIVE_COUNT != player.getBoard().size())
+					return false;
+			}
+		}
+		return super.isNextPhaseAllowed();
+	}
 	
 	@Override
 	public boolean nextPhase() {
@@ -141,6 +154,7 @@ public class HeartsGame extends ClassicGame {
 		int maxRank = 0;
 		Card maxCard = null;
 		
+		// Find out who will get the current stick
 		ListIterator<Card> it = this.pile.cardList().listIterator();
 		while (it.hasNext()) {
 			Card card = it.next();
@@ -154,18 +168,22 @@ public class HeartsGame extends ClassicGame {
 			}
 		}
 		CardPlayer nextPlayer = this.lastPlayed.get(maxCard);
+		
+		// Find all the cards that give points
 		LinkedList<Card> hearts = ZomisList.filter2(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
-		LinkedList<Card> queen = ZomisList.filter2(this.pile.cardList(),  new ClassicCardFilter(Suite.SPADES, 12));
+		LinkedList<Card> queen = ZomisList.filter2(this.pile.cardList(),  new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
 		hearts.addAll(queen);
 		for (Card card : hearts) {
+			// give the point cards to the player who won the stick
 			card.zoneMoveOnBottom(nextPlayer.getBoard());
 		}
-		this.pile.moveToBottomOf(null);
-//		this.pile.moveToTopOf(nextPlayer.getBoard());
+		this.pile.moveToBottomOf(null); // move the rest of the cards to /dev/null
+		
 		setActivePlayer(nextPlayer);
+		if (this.getCurrentPlayer().getHand().isEmpty())
+			this.endGame(); // if there are no more cards to play, then game is over
 		
 		this.lastPlayed.clear();
-		
 	}
 	
 	private void setActivePlayer(CardPlayer pl) {
@@ -177,6 +195,29 @@ public class HeartsGame extends ClassicGame {
 				else this.setActivePhaseDirectly(phase);
 			}
 		}
+	}
+	
+	public int calcRealPoints(CardPlayer player) {
+		CardPlayer gotAll = playerGotAll();
+		if (gotAll != null) {
+			return player == gotAll ? 0 : 26; 
+		}
+		else return getPoints(player);
+	}
+	private CardPlayer playerGotAll() {
+		for (Player i : this.getPlayers()) {
+			if (getPoints((CardPlayer) i) == 26)
+				return (CardPlayer) i;
+		}
+		return null;
+	}
+	private int getPoints(CardPlayer player) {
+		if (this.getCurrentPlayer() == null)
+			return 0;
+		int i = 0;
+		i += ZomisList.filter2(player.getBoard().cardList(), new ClassicCardFilter(Suite.HEARTS)).size();
+		i += MAGIC_NUMBER * ZomisList.filter2(player.getBoard().cardList(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN)).size();
+		return i;
 	}
 	
 }

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.ZomisList;
-import net.zomis.aiscores.ParamAndField;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.scorers.SubclassFixedScorer;
 import net.zomis.cards.classics.ClassicCardZone;
@@ -20,7 +19,7 @@ public class IdiotHandler implements AIHandler {
 
 	public static class IdiotGameAI extends CardAI {
 		public IdiotGameAI(CardGame game) {
-			super(game);
+			super();
 			
 			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
 			config.withScorer(new SubclassFixedScorer<Player, StackAction, RemoveAction>(RemoveAction.class), 10);
@@ -30,16 +29,6 @@ public class IdiotHandler implements AIHandler {
 		}
 	}
 	
-	@Override
-	public void move(CardGame game) {
-//		game.addAndProcessStackAction(new RandomAI(game).play().getField());
-		IdiotGameAI ai = new IdiotGameAI(game);
-		ParamAndField<Player, StackAction> action = ai.play();
-		if (action != null)
-			game.addAndProcessStackAction(ai.play().getField());
-		
-	}
-
 	@Override
 	public StackAction click(Card card) {
 		IdiotGame game = (IdiotGame) card.getGame();
@@ -77,7 +66,6 @@ public class IdiotHandler implements AIHandler {
 				result.add(new MoveAction(idiots.cardList().peekLast(), idiot2));
 			}
 		}
-		
 		return result;
 	}
 

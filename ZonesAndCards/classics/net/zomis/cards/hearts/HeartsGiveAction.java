@@ -31,9 +31,9 @@ public class HeartsGiveAction extends ZoneMoveAction {
 	}
 
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		getGame().sort((ClassicCardZone) this.getCard().getCurrentZone());
-		super.perform();
+		super.onPerform();
 		getGame().sort((ClassicCardZone) this.getDestination());
 	}
 	

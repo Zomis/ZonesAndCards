@@ -15,7 +15,7 @@ import net.zomis.cards.model.phases.PlayerPhase;
  *
  */
 public class GregerGame extends CardGame {
-
+	// TODO: GregerGame: http://service.mattel.com/instruction_sheets/42885-0920_Uno_30th_Instr.pdf
 	private List<GregerSuite> suites = new LinkedList<GregerSuite>();
 	private CardZone deck;
 	private CardZone discard;

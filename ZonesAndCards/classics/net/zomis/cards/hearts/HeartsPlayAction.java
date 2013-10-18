@@ -9,6 +9,7 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
+import net.zomis.custommap.CustomFacade;
 
 public class HeartsPlayAction extends ZoneMoveAction {
 
@@ -24,18 +25,27 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	@Override
 	public boolean isAllowed() {
 		CardPlayer player = getGame().findPlayerWithHand(getCard().getCurrentZone());
-		if (player != getGame().getCurrentPlayer())
+		if (player == null && getGame().getCurrentPlayer() != null) {
+			CustomFacade.getLog().e("Horrible error " + this + getGame().getCurrentPlayer());
 			return false;
+		}
+		
+		if (player != getGame().getCurrentPlayer()) {
+			CustomFacade.getLog().e("Mini error " + this + player + getGame().getCurrentPlayer());
+			return false;
+		}
 		
 		if (getGame().getPile().isEmpty()) {
 			if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
 				return true; // Have only HEARTS left, then it doesn't matter.
 			}
-			if (player.getHand().size() == 13) {
+			if (player.getHand().size() == HeartsGame.MAGIC_NUMBER) {
 				// First hand, must play 2 of clubs.
+//				CustomFacade.getLog().i("First hand, looking for 2 of clubs on " + cardModel);
 				return cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2;
 			}
 			// Can only play hearts if hearts has been broken (played before)
+//			CustomFacade.getLog().i("Checking if card is hearts and if hearts is broken " + cardModel + getGame().isHeartsBroken());
 			return cardModel.getSuite() != Suite.HEARTS || getGame().isHeartsBroken();
 		}
 		
@@ -49,6 +59,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 			}
 			if (player.getHand().size() == 13) {
 				// Not allowed to play point cards on the first round
+				CustomFacade.getLog().i("First hand, is point card? " + cardModel + isPoints());
 				return !isPoints();
 			}
 			return true;
@@ -63,13 +74,12 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	}
 
 	private boolean isQueenOfSpades() {
-		Suite.valueOf("");
-		return this.cardModel.getSuite() == Suite.SPADES && this.cardModel.getRank() == 12;
+		return this.cardModel.getSuite() == Suite.SPADES && this.cardModel.getRank() == ClassicCard.RANK_QUEEN;
 	}
 
 	@Override
-	protected void perform() {
-		super.perform();
+	protected void onPerform() {
+		super.onPerform();
 		getGame().nextPhase();
 	}
 

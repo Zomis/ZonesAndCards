@@ -24,7 +24,7 @@ public class CostDecrease extends StackAction implements SimpleStackActionFactor
 				return byPlayer.getResources() >= cardModel.getCost();
 			}
 			@Override
-			public void perform() {
+			public void onPerform() {
 				byPlayer.changeResources(-cardModel.getCost());
 				next.perform(cardModel, card, byPlayer);
 			}

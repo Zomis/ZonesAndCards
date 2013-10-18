@@ -25,7 +25,7 @@ public class SetColorAction extends StackAction {
 	}
 	
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		this.game.setPlayerChoice(suite);
 	}
 

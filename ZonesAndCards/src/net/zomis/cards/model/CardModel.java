@@ -5,7 +5,7 @@ public class CardModel implements Comparable<CardModel> {
 	private String name;
 	
 	public CardModel(String name) {
-		this.name = name;
+		this.setName(name);
 	}
 	
 	public void setName(String name) {

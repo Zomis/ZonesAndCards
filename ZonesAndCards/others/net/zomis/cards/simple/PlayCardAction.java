@@ -39,8 +39,8 @@ public class PlayCardAction extends ZoneMoveAction {
 		return false;
 	}
 	@Override
-	protected void perform() {
-		super.perform();
-		myAction.perform();
+	protected void onPerform() {
+		super.onPerform();
+		myAction.onPerform();
 	}
 }

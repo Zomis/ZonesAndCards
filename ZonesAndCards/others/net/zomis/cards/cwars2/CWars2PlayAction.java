@@ -36,7 +36,7 @@ public class CWars2PlayAction extends ZoneMoveAction {
 	}
 
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		CWars2Player player = (CWars2Player) getCard().getGame().getCurrentPlayer();
 		CWars2Game game = player.getGame();
 		for (Entry<ResourceType, Integer> cost : model.getCosts().getValues()) {
@@ -64,7 +64,7 @@ public class CWars2PlayAction extends ZoneMoveAction {
 		
 		model.perform(game);
 		
-		super.perform();
+		super.onPerform();
 		game.discarded();
 		game.nextPhase();
 		player.fillHand();

@@ -16,7 +16,7 @@ public class ToggleDiscardAction extends StackAction {
 	}
 	
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		game.toggleDiscardMode();
 	}
 

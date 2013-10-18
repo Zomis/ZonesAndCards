@@ -1,5 +1,6 @@
 package net.zomis.cards.turneight;
 
+import net.zomis.cards.classics.AceValue;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
@@ -10,6 +11,7 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.CastedIterator;
@@ -30,8 +32,8 @@ public class TurnEightGame extends ClassicGame {
 		return playerChoice;
 	}
 	private boolean hasPlayed;
-	private CardModel	drawCard;
-	private CardModel	nextTurn;
+	CardModel drawCard;
+	CardModel nextTurn;
 	private int	drawnCards = 0;
 	public int getDrawnCards() {
 		return drawnCards;
@@ -60,7 +62,7 @@ public class TurnEightGame extends ClassicGame {
 		this.discard.setGloballyKnown(true);
 		this.addZone(deck);
 		this.addZone(discard);
-		this.deck.addDeck(0);
+		this.deck.addDeck(this, 0);
 		this.deck.shuffle();
 		
 		this.drawCard = new CardModel("Draw card");
@@ -122,6 +124,11 @@ public class TurnEightGame extends ClassicGame {
 		return new TurnEightController();
 	}
 	
+	public TurnEightGame addPlayer(String name, CardAI ai) {
+		this.addPlayer(name);
+		this.getPlayers().get(this.getPlayers().size() - 1).setAI(ai);
+		return this;
+	}
 	public TurnEightGame addPlayer(String name) {
 		final CardPlayer player = new CardPlayer();
 		player.setName(name);
@@ -135,41 +142,54 @@ public class TurnEightGame extends ClassicGame {
 	
 	@Override
 	public boolean nextPhase() {
+		boolean result = false;
 		if (isNextPhaseAllowed()) {
+			result = super.nextPhase();
 			this.hasPlayed = false;
 			this.drawnCards = 0;
-			return super.nextPhase();
 		}
 		else CustomFacade.getLog().w("Player has not made a move.");
 		
-		if (this.getCurrentPlayer().getHand().cardList().isEmpty()) {
+		if (this.getCurrentPlayer().getHand().isEmpty()) {
 			for (Player pl : this.getPlayers()) {
 				CardPlayer player = (CardPlayer) pl;
 				if (!player.getHand().cardList().isEmpty()) { // if any player exist who still have something on their hand
 					this.nextPhase(); // call recursively
-					break;
+					return result;
 				}
 			}
+			this.endGame();
 		}
-		return false;
+		return result;
 	}
 	
 	@Override
 	public boolean isNextPhaseAllowed() {
 		return hasPlayed() || this.drawnCards == DRAW_MAX || getCurrentPlayer().getHand().cardList().isEmpty();
 	}
-	public CardModel getDrawCardModel() {
-		return this.drawCard;
-	}
-	public CardModel getNextTurnModel() {
-		return this.nextTurn;
-	}
 	public void playerForceDraw(CardPlayer player) {
+		if (player == null)
+			throw new NullPointerException("Null player cannot draw a card.");
 		if (this.deck.cardList().isEmpty()) {
 			Card last = this.discard.cardList().getLast();
 			this.discard.moveToBottomOf(this.deck);
 			last.zoneMoveOnTop(this.discard);
 			this.deck.shuffle();
+		}
+		if (this.deck.getTopCard() == null) {
+			if (this.discard.cardList().size() > 1)
+				throw new AssertionError("Discard not empty");
+			
+			int hands = 0;
+			for (Player pl : this.getPlayers()) {
+				CardPlayer pl2 = (CardPlayer) pl;
+				hands += pl2.getHand().size();
+			}
+			
+			if (hands + this.discard.cardList().size() != 52)
+				throw new AssertionError("Who is sitting on all the cards?");
+			
+			throw new AssertionError("How on earth can top card be null? " + this.getPlayers());
 		}
 		this.deck.getTopCard().zoneMoveOnBottom(player.getHand());
 	}

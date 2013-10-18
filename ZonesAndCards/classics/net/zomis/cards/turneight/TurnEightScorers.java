@@ -11,19 +11,19 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
 
-public class TurnEightScorers {
-
+public enum TurnEightScorers {
+;
+	public static class IsDrawCard extends SubclassFixedScorer<Player, StackAction, DrawCardAction> {
+		public IsDrawCard() {
+			super(DrawCardAction.class);
+		}
+	}
 	public static abstract class PlayCardScorer extends SubclassScorer<Player, StackAction, TurnEightPlayAction> {
 		public PlayCardScorer() {
 			super(TurnEightPlayAction.class);
 		}
 	}
 	
-	public static class IsDrawCard extends SubclassFixedScorer<Player, StackAction, DrawCardAction> {
-		public IsDrawCard() {
-			super(DrawCardAction.class);
-		}
-	}
 	public static class IsNextTurn extends SubclassFixedScorer<Player, StackAction, NextTurnAction> {
 		public IsNextTurn() {
 			super(NextTurnAction.class);
@@ -42,9 +42,7 @@ public class TurnEightScorers {
 		@Override
 		public double scoreSubclass(SetColorAction cast, ScoreParameters<Player> scores) {
 			Suite suite = getPreferredSuite((CardPlayer) scores.getParameters());
-			if (cast.getGame().getCurrentSuite() == suite)
-				return 0;
-			return (cast.getSuite() == suite ? 1 : 0);
+			return (cast.getSuite() == suite && cast.getGame().getCurrentSuite() != suite ? 1 : 0);
 		}
 		private Suite getPreferredSuite(CardPlayer player) {
 			int[] suiteCount = new int[Suite.values().length];

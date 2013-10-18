@@ -9,34 +9,25 @@ import net.zomis.cards.model.Player;
 
 public class ClassicGame extends CardGame {
 
-	public static enum AceValue { LOW, HIGH; }
-	
 	private final SortedMap<Suite, SortedMap<Integer, ClassicCard>> cardModels = new TreeMap<Suite, SortedMap<Integer, ClassicCard>>();
-	private final int	aceValue;
-	private final int	minRank;
-	private final int	maxRank;
+	private final AceValue aceConfig;
 	
 	public SortedMap<Suite, SortedMap<Integer, ClassicCard>> getCardModels() {
 		return new TreeMap<Suite, SortedMap<Integer, ClassicCard>>(cardModels);
 	}
-	public int getMaxRank() {
-		return maxRank;
-	}
-	public int getMinRank() {
-		return minRank;
-	}
 	public int getAceValue() {
-		return this.aceValue;
+		return this.getAceConfig().getAceValue();
+	}
+	public AceValue getAceConfig() {
+		return this.aceConfig;
 	}
 	
 	public ClassicGame(AceValue aceValue) {
-		this.aceValue = (aceValue == AceValue.LOW ? ClassicCard.RANK_ACE_LOW : ClassicCard.RANK_ACE_HIGH);
-		this.minRank = Math.min(2, getAceValue());
-		this.maxRank = Math.max(ClassicCard.RANK_KING, getAceValue());
+		this.aceConfig = aceValue;
 		for (Suite suite : Suite.values()) {
 			if (!suite.isWildcard()) {
 				SortedMap<Integer, ClassicCard> values = new TreeMap<Integer, ClassicCard>();
-				for (int rank = minRank; rank <= maxRank; rank++) {
+				for (int rank : getAceConfig().getRanks()) {
 					ClassicCard card = new ClassicCard(suite, rank);
 					addCard(card);
 					values.put(card.getRank(), card);

@@ -13,7 +13,12 @@ public class NextTurnAction extends StackAction {
 		return this.game.isNextPhaseAllowed();
 	}
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		this.game.nextPhase();
+	}
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "--" + game.getCurrentPlayer();
 	}
 }

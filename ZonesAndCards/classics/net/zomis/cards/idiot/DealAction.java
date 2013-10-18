@@ -17,7 +17,7 @@ public class DealAction extends StackAction {
 	}
 	
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		for (ClassicCardZone zone : game.getIdiotZones()) {
 			if (!game.getDeck().isEmpty()) {
 				game.getDeck().getTopCard().zoneMoveOnBottom(zone);

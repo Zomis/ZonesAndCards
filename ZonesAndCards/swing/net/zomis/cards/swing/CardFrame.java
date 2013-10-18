@@ -1,5 +1,6 @@
 package net.zomis.cards.swing;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,21 +12,25 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.zomis.cards.events.AfterActionEvent;
+import net.zomis.cards.events.GameOverEvent;
 import net.zomis.cards.events.PhaseChangeEvent;
 import net.zomis.cards.events.ZoneChangeEvent;
-import net.zomis.cards.hearts.HeartsGame;
-import net.zomis.cards.hearts.HeartsGiveDirection;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.idiot.IdiotGame;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
@@ -38,10 +43,6 @@ import net.zomis.custommap.view.swing.SimpleAction;
 import net.zomis.custommap.view.swing.ZomisSwingLog4j;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
-import java.awt.BorderLayout;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JSpinner;
 
 
 public class CardFrame extends JFrame implements EventListener, CardViewClickListener {
@@ -60,8 +61,9 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		
 		CustomFacade.getLog().i("Creating game");
 //		this.game = new TurnEightGame().addPlayer("BUBU").addPlayer("Zomis").addPlayer("Minken");
-//		this.game = new IdiotGame();
-		this.game = new HeartsGame(HeartsGiveDirection.NONE).addPlayer("BUBU").addPlayer("Minken").addPlayer("Tejpbit").addPlayer("Zomis");
+		this.game = new IdiotGame();
+//		this.game = new HeartsSuperGame(new String[]{ "BUBU", "Minken", "Tejpbit", "Zomis");
+//		this.game = new HeartsGame(HeartsGiveDirection.NONE).addPlayer("BUBU").addPlayer("Minken").addPlayer("Tejpbit").addPlayer("Zomis");
 		this.game.setRandomSeed(42);
 //		this.game = new MDJQGame();
 //		this.game = new CWars2Game();
@@ -83,8 +85,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		menuA.add(new MenuItemBuilder("Let AI Play", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				AIHandler ai = game.getAIHandler();
-				ai.move(game);
+				game.callPlayerAI();
 			}
 		}).setShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)).getItem());
 		
@@ -248,4 +249,9 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		});
 	}
 
+	@Event
+	public void gameOver(GameOverEvent event) {
+		JOptionPane.showMessageDialog(this, "Game Finished!");
+	}
+	
 }

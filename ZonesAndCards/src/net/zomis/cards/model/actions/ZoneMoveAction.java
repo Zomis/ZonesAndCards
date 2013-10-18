@@ -31,7 +31,7 @@ public class ZoneMoveAction extends StackAction {
 	}
 	
 	@Override
-	protected void perform() {
+	protected void onPerform() {
 		if (this.sendToTop)
 			card.zoneMoveOnTop(getDestination());
 		else card.zoneMoveOnBottom(getDestination());

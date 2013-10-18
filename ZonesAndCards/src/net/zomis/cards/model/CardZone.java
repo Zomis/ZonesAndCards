@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -26,7 +27,7 @@ public class CardZone implements Comparable<CardZone> {
 	private String name;
 
 	public CardZone(String zoneName) {
-		this.name = zoneName;
+		this.setName(zoneName);
 	}
 	public void setName(String name) {
 		this.name = name;
@@ -50,7 +51,8 @@ public class CardZone implements Comparable<CardZone> {
 	
 	@Override
 	public final String toString() {
-		return String.format("%s: %b, %s, %s", this.getName(), this.knownGlobal, this.known, this.cards);
+		return String.format("Zone{%s}", this.getName());
+//		return String.format("Zone{%s: %b, %s}", this.getName(), this.knownGlobal, this.cards);
 	}
 	
 	public String getName() {
@@ -67,6 +69,9 @@ public class CardZone implements Comparable<CardZone> {
 	}
 	public void shuffle() {
 		Collections.shuffle(this.cards, game.getRandom());
+	}
+	public void shuffle(Random random) {
+		Collections.shuffle(this.cards, random);
 	}
 	public void sort(Comparator<Card> comparator) {
 		Collections.sort(this.cards, comparator);

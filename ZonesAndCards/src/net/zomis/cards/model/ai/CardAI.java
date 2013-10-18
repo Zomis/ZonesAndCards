@@ -2,55 +2,72 @@ package net.zomis.cards.model.ai;
 
 import java.util.Collection;
 
+import net.zomis.aiscores.BufferedScoreProducer;
+import net.zomis.aiscores.FieldScore;
 import net.zomis.aiscores.FieldScoreProducer;
 import net.zomis.aiscores.ParamAndField;
 import net.zomis.aiscores.ScoreConfig;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.ScoreProducer;
 import net.zomis.aiscores.ScoreStrategy;
 import net.zomis.aiscores.ScoreUtils;
-import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.InvalidStackAction;
+import net.zomis.custommap.CustomFacade;
 
-public class CardAI implements ScoreStrategy<Player, StackAction>, ScoreProducer<Player, StackAction> {
+public class CardAI implements ScoreStrategy<Player, StackAction> {
 
-	private ScoreConfig<Player, StackAction> config;
-	private CardGame game;
+	private ScoreConfig<Player, StackAction> mConfig;
+	private double minScore = Integer.MIN_VALUE;
+	protected FieldScoreProducer<Player, StackAction> scoreProd;
+	protected boolean buffered;
 	
-	public CardAI(CardGame game) {
-		this.game = game;
+	public void setMinScore(double minScore) {
+		this.minScore = minScore;
 	}
 	
 	public void setConfig(ScoreConfig<Player, StackAction> config) {
-		if (this.config != null)
+		if (this.mConfig != null)
 			throw new IllegalStateException("Config already set.");
-		this.config = config;
+		this.mConfig = config;
+	}
+	
+	public ScoreConfig<Player, StackAction> getConfig() {
+		return this.mConfig;
+	}
+
+	private FieldScoreProducer<Player, StackAction> createScoreProvider() {
+		if (buffered)
+			scoreProd = new BufferedScoreProducer<Player, StackAction>(mConfig, this);
+		else scoreProd = new FieldScoreProducer<Player, StackAction>(mConfig, this);
+		return scoreProd;
+	}
+
+	public ParamAndField<Player, StackAction> play(Player player) {
+		ParamAndField<Player, StackAction> best = ScoreUtils.pickBest(this.createScoreProvider(), 
+				player, player.getGame().getRandom());
+		if (best == null || best.getFieldScore().getScore() < this.minScore) {
+			CustomFacade.getLog().w("Best is " + best + " which was not more than " + minScore + " by " + this);
+			return new ParamAndField<Player, StackAction>(player, nullAction(player));
+		}
+		return best;
 	}
 	
 	@Override
-	public ScoreConfig<Player, StackAction> getConfig() {
-		return this.config;
-	}
-
-	@Override
-	public FieldScoreProducer<Player, StackAction> createScoreProvider() {
-		return new FieldScoreProducer<Player, StackAction>(config, this);
-	}
-
-	@Override
-	public ParamAndField<Player, StackAction> play() {
-		return ScoreUtils.pickBest(this.createScoreProvider(), new Player[]{ game.getCurrentPlayer() }, this.game.getRandom());
-	}
-
-	@Override
 	public Collection<StackAction> getFieldsToScore(Player params) {
-		return game.getAIHandler().getAvailableActions(params);
+		return params.getGame().getAIHandler().getAvailableActions(params);
 	}
 
 	@Override
 	public boolean canScoreField(ScoreParameters<Player> parameters, StackAction field) {
+		if (!field.isAllowed()) {
+//			CustomFacade.getLog().w("AI removing action: " + field);
+		}
 		return field.isAllowed();
+	}
+
+	protected FieldScore<StackAction> nullAction(Player player) {
+		return new FieldScore<StackAction>(new InvalidStackAction("AI Null Action"));
 	}
 
 }

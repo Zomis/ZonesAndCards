@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import net.zomis.aiscores.ScoreConfigFactory;
-import net.zomis.cards.model.AIHandler;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
@@ -34,6 +33,7 @@ public class CWars2Game extends CardGame {
 	private boolean discardMode;
 	
 	public CWars2Game() {
+		this.setAIHandler(new CWars2Handler());
 		this.bricks = new ResourceType("Bricks");
 		this.builders = new ResourceType("Builders");
 		this.weapons = new ResourceType("Weapons");
@@ -81,11 +81,6 @@ public class CWars2Game extends CardGame {
 		addZone(discard);
 	}
 
-	
-	@Override
-	public AIHandler getAIHandler() {
-		return new CWars2Handler();
-	}
 	public List<CWars2Card> getCards() {
 		return Collections.unmodifiableList(cards);
 	}

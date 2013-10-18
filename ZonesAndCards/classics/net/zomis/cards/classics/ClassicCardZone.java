@@ -11,28 +11,28 @@ public class ClassicCardZone extends CardZone {
 	public ClassicCardZone(String zoneName) {
 		super(zoneName);
 	}
-	public void addDeck(int wildcards) {
-		for (Entry<Suite, SortedMap<Integer, ClassicCard>> ee : this.getGame().getCardModels().entrySet()) {
+	public void addDeck(ClassicGame game, int wildcards) {
+		for (Entry<Suite, SortedMap<Integer, ClassicCard>> ee : game.getCardModels().entrySet()) {
 			if (ee.getKey().isWildcard()) {
-				this.addWildcards(wildcards);
+				this.addWildcards(game, wildcards);
 			}
 			else {
-				addSuite(ee.getKey());
+				addSuite(game, ee.getKey());
 			}
 		}
 	}
-	public void addSuites(Suite... suites) {
+	public void addSuites(ClassicGame game, Suite... suites) {
 		for (Suite suite : suites) {
-			this.addSuite(suite);
+			this.addSuite(game, suite);
 		}
 	}
-	private void addSuite(Suite suite) {
-		for (Entry<Integer, ClassicCard> inner : getGame().getCardModels().get(suite).entrySet()) {
+	private void addSuite(ClassicGame game, Suite suite) {
+		for (Entry<Integer, ClassicCard> inner : game.getCardModels().get(suite).entrySet()) {
 			this.createCardOnBottom(inner.getValue());
 		}
 	}
-	public void addWildcards(int count) {
-		SortedMap<Integer, ClassicCard> wildcards = this.getGame().getCardModels().get(Suite.EXTRA);
+	public void addWildcards(ClassicGame game, int count) {
+		SortedMap<Integer, ClassicCard> wildcards = game.getCardModels().get(Suite.EXTRA);
 		if (wildcards == null)
 			throw new IllegalStateException("No wildcard models found");
 		for (int i = 0; i < count; i++) {

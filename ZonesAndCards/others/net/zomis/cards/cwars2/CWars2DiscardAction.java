@@ -22,8 +22,8 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 	}
 	
 	@Override
-	protected void perform() {
-		super.perform();
+	protected void onPerform() {
+		super.onPerform();
 		game.discarded();
 		if (game.getDiscarded() == game.getDiscardsPerTurn())
 			game.nextPhase();

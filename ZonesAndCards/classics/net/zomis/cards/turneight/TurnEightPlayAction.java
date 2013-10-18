@@ -57,8 +57,8 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 		return (TurnEightGame) this.getCard().getGame();
 	}
 	@Override
-	protected void perform() {
-		super.perform();
+	protected void onPerform() {
+		super.onPerform();
 		getGame().setCurrentSuite(getModel().getSuite());
 		if (getModel().getRank() == TurnEightController.EIGHT) {
 			// Välj en färg. GamePhase eller något annat? Kan jämföras med "target color" för diverse andra kortspel

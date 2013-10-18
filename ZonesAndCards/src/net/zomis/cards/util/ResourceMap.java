@@ -39,11 +39,12 @@ public class ResourceMap {
 		if (val == null) val = mDefault;
 		set(type, val + value);
 	}
-	public void set(ResourceType type, int value) {
+	public ResourceMap set(ResourceType type, int value) {
 		int newVal = value;
 		if (newVal > max) newVal = max;
 		if (newVal < min) newVal = min;
 		this.map.put(type, value);
+		return this;
 	}
 	public void setDefault(int i) {
 		this.mDefault = i;

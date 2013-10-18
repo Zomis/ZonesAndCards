@@ -3,22 +3,12 @@ package net.zomis.cards.cwars2;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.aiscores.ParamAndField;
 import net.zomis.cards.model.AIHandler;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.model.ai.RandomAI;
 
 public class CWars2Handler implements AIHandler {
-
-	@Override
-	public void move(CardGame game) {
-		ParamAndField<Player, StackAction> act = new RandomAI(game).play();
-		if (act != null)
-			game.addAndProcessStackAction(act.getField());
-	}
 
 	@Override
 	public StackAction click(Card card) {

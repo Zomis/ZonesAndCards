@@ -3,27 +3,18 @@ package net.zomis.cards.hearts;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.aiscores.ParamAndField;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.model.AIHandler;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.cards.model.ai.RandomAI;
+import net.zomis.custommap.CustomFacade;
 
 public class HeartsHandler implements AIHandler {
 
 	private final StackAction illegal = new InvalidStackAction();
-
-	@Override
-	public void move(CardGame game) {
-		ParamAndField<Player, StackAction> result = new RandomAI(game).play();
-		if (result != null)
-			game.addAndProcessStackAction(result.getField());
-	}
 
 	@Override
 	public StackAction click(Card card) {
@@ -62,9 +53,11 @@ public class HeartsHandler implements AIHandler {
 			}
 		}
 		else {
+			CustomFacade.getLog().i("I can do nothing! It is not my turn!");
 			// Player is not current player and it's not the give cards phase: There's nothing you can do!
 		}
-		
+		if (list.isEmpty())
+			CustomFacade.getLog().i("Player " + player + " with hand " + player.getHand() + " can do " + list);
 		return list;
 	}
 

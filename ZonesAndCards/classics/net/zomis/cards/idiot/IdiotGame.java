@@ -3,21 +3,27 @@ package net.zomis.cards.idiot;
 import net.zomis.ArrayIterator;
 import net.zomis.IndexIterator;
 import net.zomis.IndexIteratorStatus;
+import net.zomis.ZomisList;
+import net.zomis.ZomisList.FilterInterface;
+import net.zomis.cards.classics.AceValue;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.AIHandler;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.cards.util.StackActionAllowedFilter;
 
 public class IdiotGame extends ClassicGame {
 
 	private final ClassicCardZone[] zones;
 	private ClassicCardZone	deck;
+	private static final FilterInterface<StackAction> allowedActionFilter = new StackActionAllowedFilter(true);
 	
 	public IdiotGame() {
 		super(AceValue.HIGH);
+		this.setAIHandler(new IdiotHandler());
 		this.zones = new ClassicCardZone[Suite.suiteCount(false)];
 		this.deck = new ClassicCardZone("Deck");
 		addZone(deck);
@@ -28,7 +34,7 @@ public class IdiotGame extends ClassicGame {
 			zone.setGloballyKnown(true);
 		}
 		
-		this.deck.addDeck(0);
+		this.deck.addDeck(this, 0);
 		CardPlayer player = new CardPlayer();
 		this.addPlayer(player);
 		this.addPhase(new PlayerPhase(player));
@@ -40,10 +46,13 @@ public class IdiotGame extends ClassicGame {
 	public ClassicCardZone[] getIdiotZones() {
 		return zones;
 	}
-
+	
 	@Override
-	public AIHandler getAIHandler() {
-		return new IdiotHandler();
+	public StackAction processStackAction() {
+		StackAction sup = super.processStackAction();
+		if (ZomisList.filter2(this.getAIHandler().getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
+			this.endGame();
+		return sup;
 	}
 
 	public int getCardsLeft() {
