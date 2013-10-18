@@ -61,6 +61,8 @@ public class IdiotHandler implements AIHandler {
 		result.add(new DealAction(game));
 		
 		for (ClassicCardZone idiots : game.getIdiotZones()) {
+			if (idiots.isEmpty())
+				continue;
 			result.add(new RemoveAction(idiots));
 			for (ClassicCardZone idiot2 : game.getIdiotZones()) {
 				result.add(new MoveAction(idiots.cardList().peekLast(), idiot2));

@@ -15,8 +15,8 @@ public class RegenerateAbility implements ActivatedAbility {
 	
 	@Override
 	public MDJQStackAction getAction(MDJQPermanent card) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Implement RegenerateAbility
+		return new MDJQStackAction(null);
 	}
 
 }

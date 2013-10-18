@@ -1,5 +1,6 @@
 package net.zomis.cards.util;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,6 +9,7 @@ import java.util.Set;
 public class ResourceMap {
 
 	private final Map<ResourceType, Integer> map = new LinkedHashMap<ResourceType, Integer>();
+	private final Map<ResourceType, ResourceStrategy> strategies = new HashMap<ResourceType, ResourceStrategy>();
 	private int min = Integer.MIN_VALUE;
 	private int max = Integer.MAX_VALUE;
 	private int mDefault = 0;
@@ -27,6 +29,11 @@ public class ResourceMap {
 	}
 	
 	public int getResources(ResourceType type) {
+		ResourceStrategy strat = this.strategies.get(type);
+		if (strat != null) {
+			return strat.getResourceAmount(type, this);
+		}
+		
 		Integer i = map.get(type);
 		return i == null ? mDefault : i;
 	}
@@ -38,6 +45,15 @@ public class ResourceMap {
 		Integer val = this.map.get(type);
 		if (val == null) val = mDefault;
 		set(type, val + value);
+	}
+	public ResourceMap setResourceStrategy(ResourceType type, ResourceStrategy strategy) {
+		if (strategy == null) {
+			this.strategies.remove(type);
+		}
+		else {
+			this.strategies.put(type, strategy);
+		}
+		return this;
 	}
 	public ResourceMap set(ResourceType type, int value) {
 		int newVal = value;

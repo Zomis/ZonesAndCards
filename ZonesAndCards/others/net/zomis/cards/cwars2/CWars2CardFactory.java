@@ -1,7 +1,5 @@
 package net.zomis.cards.cwars2;
 
-import java.util.List;
-
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.ResourceType;
 
@@ -29,12 +27,8 @@ public class CWars2CardFactory {
 		return this;
 	}
 
-	public CWars2Card getCard() {
-		return card;
-	}
-
-	public void addTo(List<CWars2Card> cards) {
-		cards.add(card);
+	public void addTo(CWars2Game game) {
+		game.addCard(card);
 	}
 	public CWars2CardFactory setResourceCost(ResourceType type, int i) {
 		this.card.costs.set(type, i);

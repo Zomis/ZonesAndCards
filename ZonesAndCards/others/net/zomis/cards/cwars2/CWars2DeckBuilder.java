@@ -19,7 +19,13 @@ public class CWars2DeckBuilder extends DeckBuilder<CWars2Player, CWars2Card> {
 
 	@Override
 	public Collection<CWars2Card> getFieldsToScore(CWars2Player params) {
-		return params.getGame().getCards();
+		// TODO: Hackish solution, see http://docs.oracle.com/javase/tutorial/java/generics/subtyping.html and http://stackoverflow.com/questions/933447/how-do-you-cast-a-list-of-objects-from-one-type-to-another-in-java
+//		return new ArrayList<CWars2Card>(
+//		    Arrays.asList (
+//		        params.getGame().getAvailableCards().toArray(new CWars2Card[0])
+//		    )
+//		);
+		return (Collection<CWars2Card>) (Collection<?>)params.getGame().getAvailableCards();
 	}
 
 	@Override

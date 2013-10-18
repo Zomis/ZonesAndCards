@@ -1,13 +1,11 @@
-package test.net.zomis.cards;
+package test.net.zomis.cards.mdjq;
 
 import static org.junit.Assert.*;
-import net.zomis.cards.mdjq.MDJQRes;
-import net.zomis.cards.mdjq.MDJQSelectTargetsPhase;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
+import net.zomis.cards.mdjq.MDJQSelectTargetsPhase;
 import net.zomis.cards.mdjq.phases.MDJQMainPhase;
 import net.zomis.cards.mdjq.phases.MDJQUntapPhase;
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.util.ResourceMap;
 
 import org.junit.Test;
 
@@ -70,21 +68,6 @@ public class MDJQ extends MDJQTest {
 		
 		assertPhase(MDJQMainPhase.class);
 		
-	}
-
-	@Test
-	public void resourceTest() {
-		ResourceMap manaPool = new ResourceMap();
-		ResourceMap manaCost = new ResourceMap();
-		manaPool.set(MDJQRes.getMana(MColor.BLACK), 4);
-		manaCost.set(MDJQRes.getMana(MColor.BLACK), 2);
-		manaCost.set(MDJQRes.getMana(MColor.COLORLESS), 2);
-		
-		assertTrue("Not enough resources: " + manaPool + " cost " + manaCost, MDJQRes.hasResources(manaPool, manaCost));
-		manaCost.set(MDJQRes.getMana(MColor.COLORLESS), 3);
-		assertFalse("Has enough resources: " + manaPool + " cost " + manaCost, MDJQRes.hasResources(manaPool, manaCost));
-		
-		MDJQRes.changeResources(manaPool, manaCost, -1);
 	}
 
 }

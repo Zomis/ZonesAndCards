@@ -7,6 +7,7 @@ import net.zomis.cards.model.AIHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.NextTurnAction;
 
 public class CWars2Handler implements AIHandler {
 
@@ -32,7 +33,9 @@ public class CWars2Handler implements AIHandler {
 			list.add(new CWars2PlayAction(card, model));
 			list.add(new CWars2DiscardAction(card));
 		}
-		
+		if (pl.getGame().getDiscarded() > 0) {
+			list.add(new NextTurnAction(player.getGame()));
+		}
 		return list;
 	}
 

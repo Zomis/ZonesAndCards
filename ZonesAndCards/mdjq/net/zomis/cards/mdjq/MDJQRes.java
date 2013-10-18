@@ -12,17 +12,41 @@ public final class MDJQRes {
 	private static final Map<MColor, ResourceType> manas = new HashMap<MColor, ResourceType>();
 	
 	public static enum CardType {
-		BASIC, LAND, ARTIFACT, CREATURE, ENCHANTMENT, PLANESWALKER, INSTANT, SORCERY;
+		BASIC, LAND, ARTIFACT, CREATURE, ENCHANTMENT, PLANESWALKER, INSTANT, SORCERY, LEGENDARY, TRIBAL;
 
 		public boolean isPermanent() {
 			return this == LAND || this == ARTIFACT || this == CREATURE || this == ENCHANTMENT || this == PLANESWALKER;
 		}
 	}
-	public static enum TribalType {
-		HUMAN, SOLDIER, ROUGE, MERCENARY;
+	public static class TribalType {
+		private static Map<String, TribalType> types = new HashMap<String, TribalType>();
+		private final String	type;
+		
+		private TribalType(String type) {
+//			CustomFacade.getLog().i("Creating TribalType: " + type);
+			this.type = type;
+			types.put(type, this);
+		}
+		
+		public static TribalType valueOf(String type) {
+			if (types.containsKey(type))
+				return types.get(type);
+			else return new TribalType(type);
+		}
+		
+		@Override
+		public String toString() {
+			return type;
+		}
+		
+		public static TribalType HUMAN = new TribalType("Human");
+		public static TribalType SOLDIER = new TribalType("Soldier");
+		public static TribalType ROUGE = new TribalType("Rouge");
+		public static TribalType MERCENARY = new TribalType("Mercenary");
 	}
 	
 	private static final ResourceType power = new ResourceType("Power");
+	private static final ResourceType xCost = new ResourceType("X");
 	private static final ResourceType toughness = new ResourceType("Toughness");
 	public static ResourceType getMana(MColor color) {
 		return manas.get(color);
@@ -38,7 +62,9 @@ public final class MDJQRes {
 	public static ResourceType getToughness() {
 		return toughness;
 	}
-	
+	public static ResourceType getXCost() {
+		return xCost;
+	}
 	public static enum MColor {
 		COLORLESS, WHITE, BLUE, BLACK, RED, GREEN;
 	}

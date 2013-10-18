@@ -25,7 +25,11 @@ import net.zomis.events.IEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-public class CardGame {
+public class CardGame implements EventListener {
+	
+	public CardGame() {
+		this.events.registerListener(this);
+	}
 	
 	private Random random = new Random();
 	private boolean gameOver = false;
@@ -90,7 +94,7 @@ public class CardGame {
 		return zone;
 	}
 
-	protected void addCard(CardModel card) {
+	public void addCard(CardModel card) {
 		this.availableCards.add(card);
 	}
 
@@ -155,8 +159,12 @@ public class CardGame {
 	}
 
 	@JsonIgnore
+	private EventExecutor events = new EventExecutor();
+	
+	@JsonIgnore
 	protected EventExecutor getEvents() {
-		return CustomFacade.getGlobalEvents();
+		return events;
+//		return CustomFacade.getGlobalEvents();
 	}
 
 	public boolean isStarted() {

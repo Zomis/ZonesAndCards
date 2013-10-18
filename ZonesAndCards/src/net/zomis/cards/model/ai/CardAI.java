@@ -7,6 +7,7 @@ import net.zomis.aiscores.FieldScore;
 import net.zomis.aiscores.FieldScoreProducer;
 import net.zomis.aiscores.ParamAndField;
 import net.zomis.aiscores.ScoreConfig;
+import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.aiscores.ScoreStrategy;
 import net.zomis.aiscores.ScoreUtils;
@@ -26,6 +27,9 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 		this.minScore = minScore;
 	}
 	
+	public void setConfig(ScoreConfigFactory<Player, StackAction> config) {
+		this.setConfig(config.build());
+	}
 	public void setConfig(ScoreConfig<Player, StackAction> config) {
 		if (this.mConfig != null)
 			throw new IllegalStateException("Config already set.");

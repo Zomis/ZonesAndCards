@@ -106,9 +106,7 @@ public class MDJQGame extends CardGame {
 				}
 			}
 		}
-		
-		// TODO: Make sure that all stack actions has targets (scan from bottom to top on the stack). If they do, THEN call super.processStack();
-		
+
 		MDJQStackAction action = (MDJQStackAction) this.getStack().pollFirst();
 		if (action == null) 
 			action = new MDJQStackAction(null);

@@ -1,8 +1,10 @@
-package test.net.zomis.cards;
+package test.net.zomis.cards.mdjq;
 
 import static org.junit.Assert.*;
 
 import java.util.List;
+
+import test.net.zomis.cards.CardsTest;
 
 import net.zomis.ZomisList;
 import net.zomis.cards.mdjq.MDJQGame;
@@ -17,6 +19,7 @@ import net.zomis.cards.mdjq.MDJQTarget;
 import net.zomis.cards.mdjq.MDJQZone;
 import net.zomis.cards.mdjq.actions.MDJQTargetAction;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.util.ResourceMap;
 import net.zomis.custommap.CustomFacade;
 
 public class MDJQTest extends CardsTest<MDJQGame> {
@@ -77,6 +80,9 @@ public class MDJQTest extends CardsTest<MDJQGame> {
 		CustomFacade.getLog().i("Player Hand: " + game.getCurrentPlayer().getHand());
 	}
 
+	protected void assertMana(ResourceMap res, MColor color, int i) {
+		assertEquals(i, res.getResources(MDJQRes.getMana(color)));
+	}
 	protected void assertMana(MDJQPlayer player, MColor color, int i) {
 		assertEquals(i, player.getManaPool().getResources(MDJQRes.getMana(color)));
 	}

@@ -20,8 +20,9 @@ public abstract class DeckBuilder<PlayerType extends DeckPlayer<CardModelType>, 
 		
 		while (player.getCardCount() < cards) {
 			ParamAndField<PlayerType, CardModelType> result = ScoreUtils.pickBest(scorer, player, player.getGame().getRandom());
-			if (result == null)
-				break;
+			if (result == null) {
+				throw new IllegalStateException("Error adding cards to deck player: " + player + ", " + player.getCardCount() + "/" + cards);
+			}
 			player.addCard(result.getField());
 		}
 	}

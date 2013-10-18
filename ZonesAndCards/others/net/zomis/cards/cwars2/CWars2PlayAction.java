@@ -8,13 +8,19 @@ import net.zomis.cards.util.ResourceType;
 
 public class CWars2PlayAction extends ZoneMoveAction {
 
-	private CWars2Card	model;
-
+	private final CWars2Card	model;
+	private final CWars2Player player;
+	
 	public CWars2PlayAction(Card card, CWars2Card model) {
 		super(card);
 		this.model = model;
 		CWars2Game game = (CWars2Game) card.getGame();
+		player = game.getCurrentPlayer();
 		this.setDestination(game.getDiscard());
+	}
+	
+	public CWars2Player getPlayer() {
+		return player;
 	}
 	
 	@Override
