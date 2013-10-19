@@ -78,7 +78,9 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 	}
 	@Override
 	public String toString() {
-		return super.toString() + "--" + this.getHand().cardList().toString() + " Resources " + this.resources;
+		return super.toString() + "--" + this.getHand() + " Resources " + this.resources;
+//		return super.toString() + "--" + this.getHand().cardList().toString() + " Resources " + this.resources;
+		
 //		StringBuilder str = new StringBuilder();
 //		for (CWars2Card card : this.cards) {
 //			if (str.length() > 0) str.append(",");
@@ -88,6 +90,9 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 	}
 	public List<CWars2Card> getCards() {
 		return Collections.unmodifiableList(this.cards);
+	}
+	public CWars2Player getNextPlayer() {
+		return (CWars2Player) this.getOpponents().get(0);
 	}
 	
 }

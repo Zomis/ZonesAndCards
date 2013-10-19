@@ -1,14 +1,14 @@
 package net.zomis.cards.cwars2;
 
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.util.ResourceType;
+import net.zomis.cards.util.IResource;
 
 public class RequiresTwo extends StackAction {
 	private CWars2Game	game;
-	private ResourceType	res;
+	private IResource	res;
 	private int	amount;
 
-	public RequiresTwo(CWars2Game cWars2Game, ResourceType val, int amount) {
+	public RequiresTwo(CWars2Game cWars2Game, IResource val, int amount) {
 		this.game = cWars2Game;
 		this.res = val;
 		this.amount = amount;

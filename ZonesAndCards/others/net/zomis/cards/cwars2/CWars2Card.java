@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.util.IResource;
 import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.ResourceType;
 
 public class CWars2Card extends CardModel {
 
@@ -32,15 +32,15 @@ public class CWars2Card extends CardModel {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append(this.getName());
-		for (Entry<ResourceType, Integer> type : costs.getValues()) {
+		for (Entry<IResource, Integer> type : costs.getValues()) {
 			if (type.getValue() != null)
 				str.append("\n" + type.getValue() + " " + type.getKey());
 		}
-		for (Entry<ResourceType, Integer> type : effects.getValues()) {
+		for (Entry<IResource, Integer> type : effects.getValues()) {
 			if (type.getValue() != null)
 				str.append("\nMe " + type.getValue() + " " + type.getKey());
 		}
-		for (Entry<ResourceType, Integer> type : opponentEffects.getValues()) {
+		for (Entry<IResource, Integer> type : opponentEffects.getValues()) {
 			if (type.getValue() != null)
 				str.append("\nOpp " + type.getValue() + " " + type.getKey());
 		}

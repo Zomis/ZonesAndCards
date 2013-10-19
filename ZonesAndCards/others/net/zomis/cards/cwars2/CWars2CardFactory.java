@@ -1,7 +1,7 @@
 package net.zomis.cards.cwars2;
 
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.util.ResourceType;
+import net.zomis.cards.util.IResource;
 
 public class CWars2CardFactory {
 	
@@ -14,11 +14,11 @@ public class CWars2CardFactory {
 		card.damage = i;
 		return this;
 	}
-	public CWars2CardFactory setMyEffect(ResourceType type, int i) {
+	public CWars2CardFactory setMyEffect(IResource type, int i) {
 		card.effects.set(type, i);
 		return this;
 	}
-	public CWars2CardFactory setOppEffect(ResourceType type, int i) {
+	public CWars2CardFactory setOppEffect(IResource type, int i) {
 		card.opponentEffects.set(type, i);
 		return this;
 	}
@@ -30,7 +30,7 @@ public class CWars2CardFactory {
 	public void addTo(CWars2Game game) {
 		game.addCard(card);
 	}
-	public CWars2CardFactory setResourceCost(ResourceType type, int i) {
+	public CWars2CardFactory setResourceCost(IResource type, int i) {
 		this.card.costs.set(type, i);
 		return this;
 	}

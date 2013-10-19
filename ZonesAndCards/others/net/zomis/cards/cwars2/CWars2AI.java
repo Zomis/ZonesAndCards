@@ -1,9 +1,7 @@
-package test.net.zomis.cards;
+package net.zomis.cards.cwars2;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.scorers.SubclassFixedScorer;
-import net.zomis.cards.cwars2.CWars2DiscardAction;
-import net.zomis.cards.cwars2.CWars2PlayAction;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;

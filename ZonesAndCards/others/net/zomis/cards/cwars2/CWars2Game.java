@@ -1,11 +1,13 @@
 package net.zomis.cards.cwars2;
 
+import net.zomis.ZomisUtils;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.cards.events.AfterActionEvent;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.util.IResource;
 import net.zomis.cards.util.ResourceType;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.Event;
@@ -17,52 +19,73 @@ public class CWars2Game extends CardGame {
 	private int discarded = 0;
 	private final int discardsPerTurn = 3;
 	
-	ResourceType bricks;
-	ResourceType weapons;
-	ResourceType crystals;
-	ResourceType builders;
-	ResourceType recruits;
-	ResourceType wizards;
-	ResourceType castle;
-	ResourceType wall;
-	ResourceType[] restypes;
-	ResourceType[] producers;
+	public static enum Resources implements IResource {
+		BRICKS, WEAPONS, CRYSTALS;
+		@Override
+		public int getMax() {
+			return Integer.MAX_VALUE;
+		}
+		@Override
+		public int getMin() {
+			return 0;
+		}
+		@Override
+		public int getDefault() {
+			return 8;
+		}
+		public Producers getProducer() {
+			return Producers.values()[this.ordinal()];
+		}
+		@Override
+		public String toString() {
+			return ZomisUtils.capitalize(super.toString());
+		}
+	}
+	public static enum Producers implements IResource {
+		BUILDERS, RECRUITS, WIZARDS;
+		@Override
+		public int getMax() {
+			return Integer.MAX_VALUE;
+		}
+		@Override
+		public int getMin() {
+			return 1;
+		}
+		@Override
+		public int getDefault() {
+			return 2;
+		}
+		public Resources getResource() {
+			return Resources.values()[this.ordinal()];
+		}
+		@Override
+		public String toString() {
+			return ZomisUtils.capitalize(super.toString());
+		}
+	}
+	public static final IResource CASTLE = new ResourceType("Castle").setDefault(25).unmodifiable();
+	public static final IResource WALL = new ResourceType("Wall").setDefault(15).unmodifiable();
+	
 	private CardZone	discard;
 	private boolean discardMode;
 	
 	public CWars2Game() {
 		this.setAIHandler(new CWars2Handler());
-		this.bricks = new ResourceType("Bricks");
-		this.builders = new ResourceType("Builders");
-		this.weapons = new ResourceType("Weapons");
-		this.recruits = new ResourceType("Recruits");
-		this.crystals = new ResourceType("Crystals");
-		this.wizards = new ResourceType("Mage");
-		this.castle = new ResourceType("Castle");
-		this.wall = new ResourceType("Wall");
-		this.restypes = new ResourceType[]{ bricks, weapons, crystals };
-		this.producers = new ResourceType[]{ builders, recruits, wizards };
-//		this.cards = new ArrayList<CWars2Card>();
-		
 		new CWars2CardSet().addCards(this);
-		
-//		for (CWars2Card card : this.cards) {
-//			this.addCard(card);
-//		}
-		
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			CWars2Player player = new CWars2Player("Player" + i);
 			this.addPlayer(player);
 			this.addPhase(new CWars2Phase(player));
 			
-			for (ResourceType res : restypes) {
-				player.getResources().set(res, 8);
+			for (IResource res : Resources.values()) {
+				player.getResources().set(res, res.getDefault());
 			}
-			for (ResourceType res : producers) {
-				player.getResources().set(res, 2);
+			for (IResource res : Producers.values()) {
+				player.getResources().set(res, res.getDefault());
 			}
-			player.getResources().set(castle, 25);
-			player.getResources().set(wall, 15);
+			player.getResources().set(CASTLE, CASTLE.getDefault());
+			player.getResources().set(WALL, WALL.getDefault());
+			
 			addZone(player.getDeck());
 			addZone(player.getHand());
 			
@@ -83,7 +106,7 @@ public class CWars2Game extends CardGame {
 		else CustomFacade.getLog().i("Action: " + event.getAction());
 		for (Player pl : this.getPlayers()) {
 			CWars2Player player = (CWars2Player) pl;
-			int castle = player.getResources().getResources(this.castle);
+			int castle = player.getResources().getResources(CWars2Game.CASTLE);
 			if (castle <= 0)
 				this.endGame();
 			if (castle >= 100)
@@ -104,22 +127,12 @@ public class CWars2Game extends CardGame {
 		}
 	}
 	
-//	public List<CWars2Card> getCards() {
-//		return Collections.unmodifiableList(cards);
-//	}
-	public ResourceType[] getRestypes() {
-		return restypes;
-	}
-	public ResourceType[] getProducers() {
-		return producers;
-	}
 	@Override
 	public boolean nextPhase() {
-		if (!this.isNextPhaseAllowed())
-			return false;
-		
 		boolean sup = super.nextPhase();
-		// TODO: listen for PhaseChangeEvent
+		if (!sup) return false;
+		// TODO: listen for PhaseChangeEvent instead
+		CustomFacade.getLog().i("Next phase: " + this.getActivePhase());
 		this.fillHands();
 		this.discarded = 0;
 		this.discardMode = false;
@@ -144,12 +157,13 @@ public class CWars2Game extends CardGame {
 	public void discarded() {
 		this.discarded++;
 	}
-
-	public ResourceType getResWall() {
-		return this.wall;
+	@Deprecated
+	public IResource getResWall() {
+		return CWars2Game.WALL;
 	}
-	public ResourceType getResCastle() {
-		return castle;
+	@Deprecated
+	public IResource getResCastle() {
+		return CASTLE;
 	}
 	@Override
 	public CWars2Player getCurrentPlayer() {
@@ -166,7 +180,7 @@ public class CWars2Game extends CardGame {
 	@Override
 	public boolean isNextPhaseAllowed() {
 		// this.discarded > 0 ||  // discarded is also increased directly before nextphase is called when you play
-		return getCurrentPlayer().getHand().size() < getCurrentPlayer().getHandSize(); 
+		return this.discarded > 0 || getCurrentPlayer().getHand().size() < getCurrentPlayer().getHandSize(); 
 	}
 
 	public int getDiscardsPerTurn() {

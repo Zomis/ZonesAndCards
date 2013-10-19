@@ -1,0 +1,16 @@
+package net.zomis.cards.util;
+
+public class FixedResourceStrategy implements ResourceStrategy {
+
+	private int	value;
+
+	public FixedResourceStrategy(int value) {
+		this.value = value;
+	}
+	
+	@Override
+	public int getResourceAmount(IResource type, ResourceMap map) {
+		return value;
+	}
+
+}

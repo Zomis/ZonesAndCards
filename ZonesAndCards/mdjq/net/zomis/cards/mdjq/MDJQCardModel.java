@@ -15,8 +15,8 @@ import net.zomis.cards.mdjq.cards.TriggeredAbility;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.util.IResource;
 import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.ResourceType;
 import net.zomis.custommap.model.CastedIterator;
 
 public class MDJQCardModel extends CardModel {
@@ -69,7 +69,7 @@ public class MDJQCardModel extends CardModel {
 		this.manaCost.set(MDJQRes.getMana(type), cost);
 		return this;
 	}
-	public MDJQCardModel addCost(ResourceType type, int cost) {
+	public MDJQCardModel addCost(IResource type, int cost) {
 		this.manaCost.set(type, cost);
 		return this;
 	}

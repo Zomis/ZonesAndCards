@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import net.zomis.ZomisList;
+import net.zomis.cards.cwars2.CWars2AI;
 import net.zomis.cards.cwars2.CWars2Game;
 import net.zomis.cards.cwars2.CWars2PlayAction;
 import net.zomis.cards.cwars2.CWars2Player;
