@@ -14,7 +14,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 		this.setDestination(game.getDiscard());
 	}
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		TurnEightGame game = (TurnEightGame) getCard().getGame();
 		CardZone discard = game.getDiscard();
 		if (discard.cardList().isEmpty())

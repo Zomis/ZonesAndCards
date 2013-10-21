@@ -40,7 +40,7 @@ public class IdiotHandler implements AIHandler {
 			return new InvalidStackAction();
 		
 		RemoveAction remove = new RemoveAction((ClassicCardZone) card.getCurrentZone());
-		if (remove.isAllowed())
+		if (remove.actionIsAllowed())
 			return remove;
 		
 		List<StackAction> random = new LinkedList<StackAction>();

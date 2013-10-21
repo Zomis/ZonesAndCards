@@ -9,19 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 public class CardZone implements Comparable<CardZone> {
 
-	@JsonBackReference
 	CardGame game;
 	
 	private final Map<Player, Boolean> known = new HashMap<Player, Boolean>();
 
 	private boolean	knownGlobal;
 
-	@JsonManagedReference
 	private final LinkedList<Card> cards = new LinkedList<Card>();
 
 	private String name;

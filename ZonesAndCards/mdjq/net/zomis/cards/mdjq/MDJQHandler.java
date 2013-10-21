@@ -35,7 +35,7 @@ public class MDJQHandler implements AIHandler {
 		List<StackAction> actions = new LinkedList<StackAction>();
 		for (MDJQPermanent card : new CastedIterator<Card, MDJQPermanent>(player.getHand().cardList())) {
 			StackAction act = this.click(card);
-			if (act.isAllowed())
+			if (act.actionIsAllowed())
 				actions.add(act);
 		}
 		return actions;

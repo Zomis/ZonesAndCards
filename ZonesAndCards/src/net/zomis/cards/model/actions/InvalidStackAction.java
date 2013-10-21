@@ -15,7 +15,7 @@ public class InvalidStackAction extends StackAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return false;
 	}
 	@Override

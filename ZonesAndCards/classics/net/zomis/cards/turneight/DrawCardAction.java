@@ -8,7 +8,7 @@ public class DrawCardAction extends StackAction {
 		this.game = game;
 	}
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return !this.game.hasPlayed();
 	}
 	@Override

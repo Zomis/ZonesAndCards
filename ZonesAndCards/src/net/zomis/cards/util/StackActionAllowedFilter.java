@@ -13,7 +13,7 @@ public class StackActionAllowedFilter implements FilterInterface<StackAction> {
 	
 	@Override
 	public boolean shouldKeep(StackAction obj) {
-		return obj.isAllowed() == this.allowed;
+		return obj.actionIsAllowed() == this.allowed;
 	}
 
 }

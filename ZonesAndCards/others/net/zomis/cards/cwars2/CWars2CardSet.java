@@ -1,13 +1,12 @@
 package net.zomis.cards.cwars2;
 
-import static net.zomis.cards.cwars2.CWars2Game.Producers.*;
-import static net.zomis.cards.cwars2.CWars2Game.Resources.*;
+import static net.zomis.cards.cwars2.CWars2Res.Producers.*;
+import static net.zomis.cards.cwars2.CWars2Res.Resources.*;
 
-import java.util.Map;
 import java.util.Map.Entry;
 
-import net.zomis.cards.cwars2.CWars2Game.Producers;
-import net.zomis.cards.cwars2.CWars2Game.Resources;
+import net.zomis.cards.cwars2.CWars2Res.Producers;
+import net.zomis.cards.cwars2.CWars2Res.Resources;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.FixedResourceStrategy;
 import net.zomis.cards.util.IResource;
@@ -19,9 +18,7 @@ public class CWars2CardSet {
 	
 	private CWars2Game	game;
 
-	public CWars2CardSet() {
-		
-	}
+	public CWars2CardSet() {}
 	
 	public void addCards(CWars2Game game) {
 		this.game = game;
@@ -54,8 +51,7 @@ public class CWars2CardSet {
 	private void addUnlockableCards() {
 		for (Producers val : Producers.values()) {
 			IResource resource = val.getResource();
-			new CWars2CardFactory("Sacrifice " + val).setResourceCost(val, 1).setResourceCost(resource, 6)
-				.setOppEffect(val, -1)
+			new CWars2CardFactory("Sacrifice " + val).setResourceCost(val, 1).setResourceCost(resource, 6).setOppEffect(val, -1)
 				.addAction(new RequiresTwo(game, val, 2)).addTo(game);
 		}
 		
@@ -69,36 +65,36 @@ public class CWars2CardSet {
 			curse.setOppEffect(res, -1);
 			curse.setOppEffect(res.getProducer(), -1);
 		}
-		curse.setOppEffect(CWars2Game.WALL, -1);
-		curse.setOppEffect(CWars2Game.CASTLE, -1);
+		curse.setOppEffect(CWars2Res.WALL, -1);
+		curse.setOppEffect(CWars2Res.CASTLE, -1);
 		curse.addTo(game);
 	}
 
 	private void addBrickCards() {
 		new CWars2CardFactory("Builder").setResourceCost(BRICKS, 8).setMyEffect(BUILDERS, 1).addTo(game);
-		new CWars2CardFactory("Tower").setResourceCost(BRICKS, 10).setMyEffect(CWars2Game.CASTLE, 10).addTo(game);
-		new CWars2CardFactory("Tavern").setResourceCost(BRICKS, 12).setMyEffect(CWars2Game.CASTLE, 15).addTo(game);
-		new CWars2CardFactory("House").setResourceCost(BRICKS, 5).setMyEffect(CWars2Game.CASTLE, 5).addTo(game);
-		new CWars2CardFactory("Babylon").setResourceCost(BRICKS, 25).setMyEffect(CWars2Game.CASTLE, 30).addTo(game);
-		new CWars2CardFactory("Wall").setResourceCost(BRICKS, 4).setMyEffect(CWars2Game.WALL, 6).addTo(game);
+		new CWars2CardFactory("Tower").setResourceCost(BRICKS, 10).setMyEffect(CWars2Res.CASTLE, 10).addTo(game);
+		new CWars2CardFactory("Tavern").setResourceCost(BRICKS, 12).setMyEffect(CWars2Res.CASTLE, 15).addTo(game);
+		new CWars2CardFactory("House").setResourceCost(BRICKS, 5).setMyEffect(CWars2Res.CASTLE, 5).addTo(game);
+		new CWars2CardFactory("Babylon").setResourceCost(BRICKS, 25).setMyEffect(CWars2Res.CASTLE, 30).addTo(game);
+		new CWars2CardFactory("Wall").setResourceCost(BRICKS, 4).setMyEffect(CWars2Res.WALL, 6).addTo(game);
 		new CWars2CardFactory("School").setResourceCost(BRICKS, 30).setMyEffect(BUILDERS, 1)
 			.setMyEffect(RECRUITS, 1).setMyEffect(WIZARDS, 1).addTo(game);
 		
-		new CWars2CardFactory("Fence").setResourceCost(BRICKS, 5).setMyEffect(CWars2Game.WALL, 9).addTo(game);
+		new CWars2CardFactory("Fence").setResourceCost(BRICKS, 5).setMyEffect(CWars2Res.WALL, 9).addTo(game);
 		new CWars2CardFactory("Catapult").setResourceCost(BRICKS, 10).setDamage(12).addTo(game);
 		new CWars2CardFactory("Battering Ram").setResourceCost(BRICKS, 7).setDamage(9).addTo(game);
-		new CWars2CardFactory("Wain").setResourceCost(BRICKS, 10).setOppEffect(CWars2Game.CASTLE, -6).setMyEffect(CWars2Game.CASTLE, 6).addTo(game);
+		new CWars2CardFactory("Wain").setResourceCost(BRICKS, 10).setOppEffect(CWars2Res.CASTLE, -6).setMyEffect(CWars2Res.CASTLE, 6).addTo(game);
 		new CWars2CardFactory("All Bricks").setResourceCost(BRICKS, 1).addAction(new AllResourcesFocusOn(game, BRICKS)).addTo(game);
-		new CWars2CardFactory("Large Wall").setResourceCost(BRICKS, 14).setMyEffect(CWars2Game.WALL, 20).addTo(game);
-		new CWars2CardFactory("Reverse").setResourceCost(BRICKS, 3).setResourceCost(CWars2Game.WALL, 4).setMyEffect(CWars2Game.CASTLE, 8).addTo(game);
+		new CWars2CardFactory("Large Wall").setResourceCost(BRICKS, 14).setMyEffect(CWars2Res.WALL, 20).addTo(game);
+		new CWars2CardFactory("Reverse").setResourceCost(BRICKS, 3).setResourceCost(CWars2Res.WALL, 4).setMyEffect(CWars2Res.CASTLE, 8).addTo(game);
 	}
 
 	private void addCrystalCards() {
 		new CWars2CardFactory("Mage").setResourceCost(CRYSTALS, 8).setMyEffect(WIZARDS, 1).addTo(game);
 		new CWars2CardFactory("Lightning").setResourceCost(CRYSTALS, 20).setDamage(22).addTo(game);
 		new CWars2CardFactory("Quake").setResourceCost(CRYSTALS, 24).setDamage(27).addTo(game);
-		new CWars2CardFactory("Pixies").setResourceCost(CRYSTALS, 18).setMyEffect(CWars2Game.CASTLE, 22).addTo(game);
-		new CWars2CardFactory("Magic Wall").setResourceCost(CRYSTALS, 14).setMyEffect(CWars2Game.WALL, 20).addTo(game);
+		new CWars2CardFactory("Pixies").setResourceCost(CRYSTALS, 18).setMyEffect(CWars2Res.CASTLE, 22).addTo(game);
+		new CWars2CardFactory("Magic Wall").setResourceCost(CRYSTALS, 14).setMyEffect(CWars2Res.WALL, 20).addTo(game);
 		new CWars2CardFactory("Magic Defense").setResourceCost(CRYSTALS, 10).addAction(new MagicAttackMultiply(game, false, 0)).addTo(game);
 		new CWars2CardFactory("Magic Weapons").setResourceCost(CRYSTALS, 15).addAction(new MagicAttackMultiply(game, true, 2)).addTo(game);
 		
@@ -122,17 +118,18 @@ public class CWars2CardSet {
 		new CWars2CardFactory("Knight").setResourceCost(WEAPONS, 10).setDamage(10).addTo(game);
 		new CWars2CardFactory("Thief").setResourceCost(WEAPONS, 17).addAction(new ThiefAction(game, 8)).addTo(game);
 		new CWars2CardFactory("Recruit").setResourceCost(WEAPONS, 8).setMyEffect(RECRUITS, 1).addTo(game);
-		new CWars2CardFactory("Guards").setResourceCost(WEAPONS, 7).setMyEffect(CWars2Game.WALL, 12).addTo(game);
+		new CWars2CardFactory("Guards").setResourceCost(WEAPONS, 7).setMyEffect(CWars2Res.WALL, 12).addTo(game);
 		new CWars2CardFactory("Roadblock").setResourceCost(WEAPONS, 8).addAction(new MultiplyNextResourceIncome(game, 0, false)).addTo(game);
 		new CWars2CardFactory("All Weapons").setResourceCost(WEAPONS, 1).addAction(new AllResourcesFocusOn(game, WEAPONS)).addTo(game);
 //		new CWars2CardFactory("Sabotage").setResourceCost(weapons, 13).addTo(cards);
 	}
 	
-	private static class AllResourcesFocusOn extends StackAction implements ResourceStrategy {
+	public static class AllResourcesFocusOn extends StackAction implements ResourceStrategy {
 
 		private Resources resource;
 		private CWars2Game	game;
 
+		AllResourcesFocusOn() {}
 		public AllResourcesFocusOn(CWars2Game game, Resources resource) {
 			this.game = game;
 			this.resource = resource;
@@ -148,10 +145,8 @@ public class CWars2CardSet {
 
 		@Override
 		public int getResourceAmount(IResource type, ResourceMap map) {
-//			Producers prod = (Producers) type;
-			Map<IResource, Integer> data = map.getMapData();
 			int total = 0;
-			for (Entry<IResource, Integer> ee : data.entrySet()) {
+			for (Entry<IResource, Integer> ee : map.getValues()) {
 				if (ee.getKey() instanceof Producers) {
 					total += ee.getValue();
 				}
@@ -160,7 +155,7 @@ public class CWars2CardSet {
 		}
 		
 	}
-	private static class ProtectResourcesAction extends StackAction {
+	public static class ProtectResourcesAction extends StackAction {
 
 		private final CWars2Game game;
 
@@ -170,25 +165,32 @@ public class CWars2CardSet {
 		@Override
 		protected void onPerform() {
 			final CWars2Player protectedPlayer = game.getCurrentPlayer();
-			ResourceListener listener = new ResourceListener() {
-				@Override
-				public boolean onResourceChange(ResourceMap map, IResource type, int value) {
-					if (value > 0) return true;
-					if (game.getCurrentPlayer() == protectedPlayer) return true;
-					
-					
-					return false;
-				}
-			};
+			final ResourceListener listener = new ResListener(protectedPlayer);
 			for (Resources type : Resources.values())
 				game.getCurrentPlayer().getResources().setListener(type, listener);
 		}
+		
+		public static class ResListener implements ResourceListener {
+			private final CWars2Player	protectedPlayer;
+			ResListener() {this(null); }
+			public ResListener(CWars2Player protectedPlayer) {
+				this.protectedPlayer = protectedPlayer;
+			}
+			@Override
+			public boolean onResourceChange(ResourceMap map, IResource type, int value) {
+				if (value > 0) return true;
+				if (protectedPlayer.getGame().getCurrentPlayer() == protectedPlayer) return true;
+				return false;
+			}
+		}
+		
 	}
-	private static class MagicAttackMultiply extends StackAction implements ResourceListener {
+	public static class MagicAttackMultiply extends StackAction implements ResourceListener {
 		private final boolean	opponent;
 		private final double	multiplier;
 		private final CWars2Game	game;
 
+		MagicAttackMultiply() { this(null, false, 0); }
 		public MagicAttackMultiply(CWars2Game game, boolean opponent, double multiplier) {
 			this.opponent = opponent;
 			this.multiplier = multiplier;
@@ -198,34 +200,39 @@ public class CWars2CardSet {
 		@Override
 		protected void onPerform() {
 			CWars2Player player = opponent ? game.getCurrentPlayer().getNextPlayer() : game.getCurrentPlayer();
-			ResourceListener old = player.getResources().getListener(CWars2Game.CASTLE);
+			ResourceListener old = player.getResources().getListener(CWars2Res.CASTLE);
 			if (old instanceof MagicAttackMultiply) {
 				MagicAttackMultiply previous = (MagicAttackMultiply) old;
-				MagicAttackMultiply listener = new MagicAttackMultiply(null, false, multiplier * previous.multiplier); // opponent setting does not matter here really, neither does game.
-				player.getResources().setListener(CWars2Game.CASTLE, listener);
-				player.getResources().setListener(CWars2Game.WALL, listener);
+				if (previous == this) // Don't allow Magic Weapon twice
+					return;
+				// opponent setting does not matter here really, neither does game. We just want the ResourceListener-part.
+				MagicAttackMultiply listener = new MagicAttackMultiply(null, false, multiplier * previous.multiplier);
+				player.getResources().setListener(CWars2Res.CASTLE, listener);
+				player.getResources().setListener(CWars2Res.WALL, listener);
 			}
 			else {
-				player.getResources().setListener(CWars2Game.CASTLE, this);
-				player.getResources().setListener(CWars2Game.WALL, this);
+				player.getResources().setListener(CWars2Res.CASTLE, this);
+				player.getResources().setListener(CWars2Res.WALL, this);
 			}
 		}
 		
 		@Override
 		public boolean onResourceChange(ResourceMap map, IResource type, int value) {
-			map.setListener(type, null);
+			map.setListener(CWars2Res.CASTLE, null);
+			map.setListener(CWars2Res.WALL, null);
 			int change = (int)(value * multiplier);
 			map.changeResources(type, change);
 			return false;
 		}
 	}
 	
-	private static class MultiplyNextResourceIncome extends StackAction implements ResourceStrategy {
+	public static class MultiplyNextResourceIncome extends StackAction implements ResourceStrategy {
 		
 		private CWars2Game game;
 		private int	multiplier;
 		private boolean	currentPlayer;
 
+		MultiplyNextResourceIncome() {}
 		public MultiplyNextResourceIncome(CWars2Game game, int multiplier, boolean currentPlayer) {
 			this.game = game;
 			this.multiplier = multiplier;

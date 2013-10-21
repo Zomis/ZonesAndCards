@@ -43,7 +43,7 @@ public class IdiotPlayAGameAndListen extends CardsTest<IdiotGame> { // Deckard C
 		boolean allowed;
 		do {
 			move = ai.play(game.getCurrentPlayer());
-			allowed = move.getField().isAllowed();
+			allowed = move.getField().actionIsAllowed();
 			if (allowed) {
 				game.addAndProcessStackAction(move.getField());
 			}

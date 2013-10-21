@@ -13,7 +13,7 @@ public class StackAction {
 	 * 
 	 * @return True if this action is currently allowed, false otherwise
 	 */
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return true;
 	}
 	/**
@@ -45,7 +45,7 @@ public class StackAction {
 		return performCounter;
 	}
 	
-	public boolean isPerformed() {
+	public boolean actionIsPerformed() {
 		return performCounter > 0;
 	}
 }

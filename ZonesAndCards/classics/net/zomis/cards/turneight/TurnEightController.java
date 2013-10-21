@@ -25,7 +25,7 @@ public class TurnEightController implements AIHandler {
 		List<StackAction> result = new LinkedList<StackAction>();
 		for (Card card : ((CardPlayer)player).getHand().cardList()) {
 			TurnEightPlayAction action = new TurnEightPlayAction(card);
-			if (action.isAllowed()) {
+			if (action.actionIsAllowed()) {
 				result.add(action);
 			}
 		}

@@ -11,7 +11,7 @@ public class ToggleDiscardAction extends StackAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return game.getDiscarded() == 0;
 	}
 	

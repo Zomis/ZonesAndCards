@@ -4,7 +4,6 @@ import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.cards.mdjq.MDJQCardModel;
 import net.zomis.cards.mdjq.MDJQPlayer;
-import net.zomis.cards.mdjq.MDJQRes;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 
 public class IsColorScorer extends AbstractScorer<MDJQPlayer, MDJQCardModel> {
@@ -22,7 +21,7 @@ public class IsColorScorer extends AbstractScorer<MDJQPlayer, MDJQCardModel> {
 
 	@Override
 	public double getScoreFor(MDJQCardModel field, ScoreParameters<MDJQPlayer> scores) {
-		return field.getManaCost().getResources(MDJQRes.getMana(color)) > 0 ? 1 : 0;
+		return field.getManaCost().getResources(color) > 0 ? 1 : 0;
 	}
 
 }

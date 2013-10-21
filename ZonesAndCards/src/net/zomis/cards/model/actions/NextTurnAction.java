@@ -9,7 +9,7 @@ public class NextTurnAction extends StackAction {
 		this.game = game;
 	}
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return this.game.isNextPhaseAllowed();
 	}
 	@Override

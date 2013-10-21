@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.model.ai.CardAI;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import net.zomis.cards.util.ResourceMap;
 
 public class Player implements Comparable<Player> {
 
-	@JsonBackReference
 	CardGame game;
 	
 	private String name;
 	private CardAI ai;
+	private final ResourceMap resources = new ResourceMap();
 	
 	public CardGame getGame() {
 		if (game == null)
@@ -21,6 +20,9 @@ public class Player implements Comparable<Player> {
 		return game;
 	}
 	
+	public ResourceMap getResources() {
+		return resources;
+	}
 	public List<Player> getOpponents() {
 		List<Player> players = game.getPlayers();
 		int index = players.indexOf(this);
@@ -52,8 +54,6 @@ public class Player implements Comparable<Player> {
 	}
 
 	public CardAI getAI() {
-		if (this.ai == null)
-			throw new NullPointerException("Player does not have an AI specified: " + this);
 		return this.ai;
 	}
 	

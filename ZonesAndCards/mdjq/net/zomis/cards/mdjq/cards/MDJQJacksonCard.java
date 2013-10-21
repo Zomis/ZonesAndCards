@@ -11,7 +11,7 @@ import net.zomis.cards.mdjq.MDJQRes.TribalType;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.custommap.CustomFacade;
 
-public class MDJQJackCard {
+public class MDJQJacksonCard {
 	public int id;
 	public String name;
 	
@@ -28,14 +28,14 @@ public class MDJQJackCard {
 			if (curr.length() > 2)
 				CustomFacade.getLog().w("Not implemented complete support for '" + curr.substring(1) + "' in card " + this.name);
 			char c = curr.charAt(1);
-			if (c == 'W') this.cost.changeResources(MDJQRes.getMana(MColor.WHITE), 1);
-			else if (c == 'U') this.cost.changeResources(MDJQRes.getMana(MColor.BLUE), 1);
-			else if (c == 'B') this.cost.changeResources(MDJQRes.getMana(MColor.BLACK), 1);
-			else if (c == 'R') this.cost.changeResources(MDJQRes.getMana(MColor.RED), 1);
-			else if (c == 'G') this.cost.changeResources(MDJQRes.getMana(MColor.GREEN), 1);
+			if (c == 'W') this.cost.changeResources(MColor.WHITE, 1);
+			else if (c == 'U') this.cost.changeResources(MColor.BLUE, 1);
+			else if (c == 'B') this.cost.changeResources(MColor.BLACK, 1);
+			else if (c == 'R') this.cost.changeResources(MColor.RED, 1);
+			else if (c == 'G') this.cost.changeResources(MColor.GREEN, 1);
 			else if (c == 'X') this.cost.changeResources(MDJQRes.getXCost(), 1);
 			else {
-				this.cost.changeResources(MDJQRes.getMana(MColor.COLORLESS), Integer.parseInt(curr.substring(1)));
+				this.cost.changeResources(MColor.COLORLESS, Integer.parseInt(curr.substring(1)));
 			}
 		}
 		scan.close();

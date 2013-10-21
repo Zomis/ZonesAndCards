@@ -64,10 +64,10 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 
 	@Override
 	public boolean canScoreField(ScoreParameters<Player> parameters, StackAction field) {
-		if (!field.isAllowed()) {
+		if (!field.actionIsAllowed()) {
 //			CustomFacade.getLog().w("AI removing action: " + field);
 		}
-		return field.isAllowed();
+		return field.actionIsAllowed();
 	}
 
 	protected FieldScore<StackAction> nullAction(Player player) {

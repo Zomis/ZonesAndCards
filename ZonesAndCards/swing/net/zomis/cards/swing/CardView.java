@@ -49,7 +49,7 @@ public class CardView implements ActionListener {
 		
 		StackAction action = this.card.getGame().getAIHandler().click(getCard());
 		button.setText("<html>" + html.replaceAll("\\n", "<br>") + "</html>");
-		button.setEnabled(action == null ? false : action.isAllowed());
+		button.setEnabled(action == null ? false : action.actionIsAllowed());
 	}
 
 	@Override

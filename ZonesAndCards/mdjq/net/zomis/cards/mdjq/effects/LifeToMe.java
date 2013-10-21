@@ -12,8 +12,8 @@ public class LifeToMe implements TriggeredEffect {
 		this.life = life;
 	}
 	@Override
-	public void apply(TriggerData event) {
-		event.getPlayer().changeLife(life);
+	public void apply(TriggerData data) {
+		data.getPlayer().changeLife(life);
 	}
 
 }

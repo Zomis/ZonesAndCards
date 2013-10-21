@@ -29,14 +29,14 @@ public abstract class CardsTest<E> {
 	}
 
 	protected void assertResourceMapNoStrategies(ResourceMap resources) {
-		for (Entry<IResource, Integer> ee : resources.getMapData().entrySet()) {
+		for (Entry<IResource, Integer> ee : resources.getValues()) {
 			assertEquals("A strategy is messing with the values for " + ee.getKey() + " in resource map " + resources,
 				(int)ee.getValue(), resources.getResources(ee.getKey()));
 		}
 	}
 
 	protected void assertResourceMapNoListeners(ResourceMap resources) {
-		for (Entry<IResource, Integer> ee : resources.getMapData().entrySet()) {
+		for (Entry<IResource, Integer> ee : resources.getValues()) {
 			assertNull("Resource Map " + resources + " has listener for " + ee.getKey(), resources.getListener(ee.getKey()));
 		}
 	}
@@ -52,8 +52,8 @@ public abstract class CardsTest<E> {
 	}
 	protected void assertResourcesEqual(ResourceMap map1, ResourceMap map2, IResource[] ignore) {
 		List<IResource> ignoreList = Arrays.asList(ignore);
-		assertEquals("Resource Size not same: " + map1 + " vs. " + map2, map1.getMapData().size(), map2.getMapData().size());
-		for (Entry<IResource, Integer> ee : map1.getMapData().entrySet()) {
+		assertEquals("Resource Size not same: " + map1 + " vs. " + map2, map1.getValues().size(), map2.getValues().size());
+		for (Entry<IResource, Integer> ee : map1.getValues()) {
 			if (ignoreList.contains(ee.getKey()))
 				continue;
 			
@@ -80,10 +80,6 @@ public abstract class CardsTest<E> {
 	protected void onBefore() {
 	}
 
-	public E getGame() {
-		return game;
-	}
-	
 	protected E newTestObject() {
 		return null;
 	}

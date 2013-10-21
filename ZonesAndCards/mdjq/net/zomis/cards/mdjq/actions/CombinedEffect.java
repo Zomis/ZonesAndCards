@@ -19,7 +19,7 @@ public class CombinedEffect extends MDJQTargetAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		for (TriggeredEffect effect : effects) {
 			if (effect instanceof HasTargets) {
 				HasTargets eff = (HasTargets) effect;

@@ -1,7 +1,6 @@
 package net.zomis.cards.mdjq.activated;
 
 import net.zomis.cards.mdjq.MDJQPermanent;
-import net.zomis.cards.mdjq.MDJQRes;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.MDJQStackAction;
 
@@ -33,14 +32,14 @@ public class TapForMana implements ActivatedAbility {
 			this.useStack = false;
 		}
 		@Override
-		public boolean isAllowed() {
+		public boolean actionIsAllowed() {
 			return !card.isTapped() && card.getController().hasPriority();
 		}
 		
 		@Override
 		public void onPerform() {
 			card.tap();
-			card.getController().getManaPool().changeResources(MDJQRes.getMana(color), count);
+			card.getController().getManaPool().changeResources(color, count);
 		}
 		
 	}

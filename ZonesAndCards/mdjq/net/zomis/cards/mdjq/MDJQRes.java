@@ -46,9 +46,11 @@ public final class MDJQRes {
 		public static TribalType MERCENARY = new TribalType("Mercenary");
 	}
 	
-	private static final ResourceType power = new ResourceType("Power");
-	private static final ResourceType xCost = new ResourceType("X");
-	private static final ResourceType toughness = new ResourceType("Toughness");
+	public static final ResourceType power = new ResourceType("Power");
+	public static final ResourceType xCost = new ResourceType("X");
+	public static final ResourceType toughness = new ResourceType("Toughness");
+	
+	@Deprecated
 	public static IResource getMana(MColor color) {
 		return color;
 	}
@@ -64,14 +66,6 @@ public final class MDJQRes {
 	}
 	public static enum MColor implements IResource {
 		COLORLESS, WHITE, BLUE, BLACK, RED, GREEN;
-		@Override
-		public int getMax() {
-			return Integer.MAX_VALUE;
-		}
-		@Override
-		public int getMin() {
-			return 0;
-		}
 		@Override
 		public int getDefault() {
 			return 0;
@@ -134,9 +128,8 @@ public final class MDJQRes {
 	private static IResource colorlessMana() {
 		return getMana(MColor.COLORLESS);
 	}
-	public static ResourceMap manaCost(MColor black, int i) {
-		
-		return null;
+	public static ResourceMap manaCost(MColor color, int value) {
+		return new ResourceMap().set(color, value);
 	}
 	
 }

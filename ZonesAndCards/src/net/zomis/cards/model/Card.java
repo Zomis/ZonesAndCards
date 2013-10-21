@@ -2,15 +2,12 @@ package net.zomis.cards.model;
 
 import net.zomis.cards.events.ZoneChangeEvent;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 public class Card {
 	private final CardModel model;
 	
-	@JsonBackReference
 	protected CardZone currentZone;
 
-	Card() { this.model = null; }
+	Card() { this(null); }
 	protected Card(CardModel model) {
 		this.model = model;
 	}

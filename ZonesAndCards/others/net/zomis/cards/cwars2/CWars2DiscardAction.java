@@ -14,7 +14,7 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 	}
 
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		if (!game.getCurrentPlayer().getHand().cardList().contains(getCard()))
 			return false;
 		

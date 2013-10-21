@@ -3,25 +3,12 @@ package net.zomis.cards.util;
 public class UnmodifiableResource implements IResource {
 
 	private final String	name;
-	private final int	min;
-	private final int	max;
 	private final int	mDefault;
 
-	public UnmodifiableResource(String name, int min, int max, int defaultValue) {
+	UnmodifiableResource() { this(null, 0); }
+	public UnmodifiableResource(String name, int defaultValue) {
 		this.name = name;
-		this.min = min;
-		this.max = max;
 		this.mDefault = defaultValue;
-	}
-
-	@Override
-	public int getMax() {
-		return this.max;
-	}
-
-	@Override
-	public int getMin() {
-		return this.min;
 	}
 
 	@Override

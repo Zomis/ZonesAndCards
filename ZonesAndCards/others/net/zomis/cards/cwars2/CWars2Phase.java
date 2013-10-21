@@ -1,6 +1,6 @@
 package net.zomis.cards.cwars2;
 
-import net.zomis.cards.cwars2.CWars2Game.Producers;
+import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.PlayerPhase;
@@ -9,6 +9,9 @@ import net.zomis.cards.util.ResourceMap;
 
 public class CWars2Phase extends PlayerPhase {
 
+	CWars2Phase() {
+		super(null);
+	}
 	public CWars2Phase(Player pl) {
 		super(pl);
 	}

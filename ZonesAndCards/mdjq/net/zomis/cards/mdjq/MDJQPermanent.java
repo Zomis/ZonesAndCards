@@ -32,7 +32,9 @@ public class MDJQPermanent extends Card implements MDJQObject {
  * 
  * */	
 //	private List<MDJQPermanent> attachments;
-	private ResourceMap values;
+	private ResourceMap values; // TODO: MDJQPermanent ResourceMap: tapped, counters, current damage/remaining toughness, static abilities (flying etc.)
+	// TODO: ActivatedAbilities ResourceMap can include mana costs (X also), tapping costs
+	// TODO: Triggered-/Static -Effects can affect ResourceMaps: life (for players), P/T for creatures (perhaps don't even need to use strategies so much?) 
 	private MDJQPlayer controller;
 	private final MDJQPlayer owner;
 	private boolean	tapped;

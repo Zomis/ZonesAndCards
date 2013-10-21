@@ -11,14 +11,15 @@ import net.zomis.cards.util.ResourceMap;
 
 public class CWars2Card extends CardModel {
 
+	CWars2Card() { this(null); }
 	public CWars2Card(String name) {
 		super(name);
 		this.extras = new LinkedList<StackAction>();
 	}
 
-	ResourceMap costs = new ResourceMap();
-	ResourceMap effects = new ResourceMap();
-	ResourceMap opponentEffects = new ResourceMap();
+	final ResourceMap costs = new ResourceMap();
+	final ResourceMap effects = new ResourceMap();
+	final ResourceMap opponentEffects = new ResourceMap();
 	
 	int	damage;
 	int	castleDamage;
@@ -55,9 +56,9 @@ public class CWars2Card extends CardModel {
 		this.extras.add(action);
 	}
 
-	public boolean isAllowed() {
+	public boolean checkAllowed() {
 		for (StackAction act : extras) {
-			if (!act.isAllowed())
+			if (!act.actionIsAllowed())
 				return false;
 		}
 		return true;

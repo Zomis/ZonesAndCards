@@ -8,6 +8,8 @@ import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.events.GameOverEvent;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.util.IResource;
+import net.zomis.cards.util.ResourceType;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
@@ -15,7 +17,7 @@ import net.zomis.events.EventListener;
 public class HeartsSuperGame extends HeartsGame implements EventListener {
 
 	private HeartsGiveDirection currentGive;
-	private int[] points = new int[]{ 0, 0, 0, 0 };
+	private static final IResource score = new ResourceType("Points").setDefault(0).unmodifiable();
 	
 	public HeartsSuperGame(String[] names) {
 		super(HeartsGiveDirection.LEFT);
@@ -50,19 +52,19 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 	@Event
 	public void onGameEnd(GameOverEvent event) {
 		if (event.getGame() == this) {
-			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.points));
+			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
 			int distributedPoints = 0;
 			for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
 				int inc = this.calcRealPoints((CardPlayer) player.getValue());
 				distributedPoints += inc;
-				this.points[player.getIndex()] += inc;
+				player.getValue().getResources().changeResources(score, inc);
 			}
-			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.points));
+			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.getScores()));
 			if (distributedPoints != 26 && distributedPoints != 26 * (this.getPlayers().size() - 1))
 				throw new AssertionError("Unexpected distributed points: " + distributedPoints);
 			
-			for (int i : points) {
-				if (i > 100) return;
+			for (Player player : getPlayers()) {
+				if (player.getResources().getResources(score) >= 100) return;
 			}
 			event.setCancelled(true);
 			this.newGame();
@@ -70,7 +72,10 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 	}
 
 	public int[] getScores() {
-		return this.points;
+		int[] arr = new int[getPlayers().size()];
+		for (int i = 0; i < arr.length; i++)
+			arr[i] = getPlayers().get(i).getResources().getResources(score);
+		return arr;
 	}
 	
 	@Override

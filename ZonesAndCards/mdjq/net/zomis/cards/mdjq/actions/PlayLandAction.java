@@ -15,7 +15,7 @@ public class PlayLandAction extends MDJQStackAction {
 	}
 
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return card.getController().isAllowLandPlay() && card.getController().isActivePlayer();
 	}
 	

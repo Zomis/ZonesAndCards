@@ -9,10 +9,11 @@ public class MoveAction extends ZoneMoveAction {
 	public MoveAction(Card from, ClassicCardZone to) {
 		super(from);
 		setDestination(to);
+		setSendToBottom();
 	}
 
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return getCard() != null && getDestination().cardList().isEmpty() &&
 			getCard().getCurrentZone().cardList().peekLast() == getCard();
 	}

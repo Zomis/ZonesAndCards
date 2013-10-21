@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
+import net.zomis.ZomisList;
 import net.zomis.cards.classics.CardPlayer;
+import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.hearts.HeartsGame;
 import net.zomis.cards.hearts.HeartsSuperGame;
 import net.zomis.cards.hearts.SimpleHeartsAI;
@@ -27,6 +29,9 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 	
 	@Test
 	public void f() {
+		Assert.assertEquals(ClassicCard.RANK_2, game.getAceConfig().getMinRank());
+		Assert.assertEquals(ClassicCard.RANK_ACE_HIGH, game.getAceConfig().getMaxRank());
+		
 		SimpleHeartsAI ai = new SimpleHeartsAI(game.getRandom());
 		for (Player pl : game.getPlayers()) {
 			pl.setAI(ai);
@@ -35,7 +40,10 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 		for (Player pl : game.getPlayers()) {
 			CardPlayer player = (CardPlayer) pl;
 			Assert.assertEquals(HeartsGame.MAGIC_NUMBER, player.getHand().size());
+			ClassicCard randomCard = (ClassicCard) ZomisList.getRandom(player.getHand().cardList()).getModel();
+			Assert.assertNotSame(randomCard.getSuite().isBlack(), randomCard.getSuite().isRed());
 		}
+		
 		
 		int i = 0;
 		while (!game.isGameOver() && i < 4000) {
@@ -43,7 +51,7 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 			if (game.getCurrentPlayer() == null) {
 				for (Player pl : game.getPlayers()) {
 					sa = game.callPlayerAI(pl);
-					Assert.assertTrue(i + pl.toString() + " tried to do illegal action: " + sa.toString(), sa.isPerformed() || game.getCurrentPlayer() != null);
+					Assert.assertTrue(i + pl.toString() + " tried to do illegal action: " + sa.toString(), sa.actionIsPerformed() || game.getCurrentPlayer() != null);
 //					CustomFacade.getLog().i("Action By Player: " + pl + sa);
 					if (game.getCurrentPlayer() != null)
 						break;
@@ -53,7 +61,7 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 				CardPlayer pl = game.getCurrentPlayer();
 				sa = game.callPlayerAI();
 				Assert.assertTrue("Current player is " + game.getCurrentPlayer() + " old is " + pl + " pile is " + game.getPile(), game.getCurrentPlayer() != pl || game.getPile().isEmpty());
-				Assert.assertTrue(i + sa.toString(), sa.isPerformed());
+				Assert.assertTrue(i + sa.toString(), sa.actionIsPerformed());
 //				CustomFacade.getLog().i("Action: " + pl + sa);
 			}
 			if (game.getPile().isEmpty()) verifyHands();

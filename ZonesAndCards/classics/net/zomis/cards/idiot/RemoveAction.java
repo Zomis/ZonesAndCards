@@ -12,7 +12,7 @@ public class RemoveAction extends ZoneMoveAction {
 	}
 
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		if (this.getCard() == null)
 			return false;
 		

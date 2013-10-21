@@ -15,15 +15,15 @@ public class MDJQ extends MDJQTest {
 		// Play a land
 		assertPhase(MDJQMainPhase.class);
 		currentPlayerPlayCard("Plains");
-		assertFalse(findActionForCard(game.getCurrentPlayer().getHand(), "Plains").isAllowed());
+		assertFalse(findActionForCard(game.getCurrentPlayer().getHand(), "Plains").actionIsAllowed());
 		assertBattlefieldSize(1);
 		
 		// Tap land for mana
 		StackAction sa = game.getAIHandler().click(game.getBattlefield().getBottomCard());
-		assertTrue(sa.isAllowed());
+		assertTrue(sa.actionIsAllowed());
 		game.addAndProcessStackAction(sa);
 		assertMana(game.getCurrentPlayer(), MColor.WHITE, 1);
-		assertFalse(sa.isAllowed());
+		assertFalse(sa.actionIsAllowed());
 		
 		// Play "Eager Cadet"
 		currentPlayerPlayCard("Eager Cadet");

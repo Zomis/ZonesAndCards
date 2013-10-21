@@ -36,15 +36,4 @@ public class ClassicCard extends CardModel {
 	public Suite getSuite() {
 		return suite;
 	}
-	
-	public boolean isRed() {
-		return suite.isRed();
-	}
-	public boolean isBlack() {
-		return suite.isBlack();
-	}
-	public boolean isWildcard() {
-		return suite.isWildcard();
-	}
-	
 }

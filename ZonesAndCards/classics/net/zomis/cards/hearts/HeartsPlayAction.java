@@ -23,7 +23,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		CardPlayer player = getGame().findPlayerWithHand(getCard().getCurrentZone());
 		if (player == null && getGame().getCurrentPlayer() != null) {
 			CustomFacade.getLog().e("Horrible error " + this + getGame().getCurrentPlayer());

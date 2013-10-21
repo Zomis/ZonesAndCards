@@ -12,7 +12,7 @@ public class DealAction extends StackAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return !game.getDeck().cardList().isEmpty();
 	}
 	

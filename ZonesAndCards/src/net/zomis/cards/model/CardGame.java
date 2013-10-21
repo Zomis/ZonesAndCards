@@ -22,9 +22,6 @@ import net.zomis.events.EventExecutor;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 public class CardGame implements EventListener {
 	
 	public CardGame() {
@@ -34,7 +31,6 @@ public class CardGame implements EventListener {
 	private Random random = new Random();
 	private boolean gameOver = false;
 	
-	@JsonManagedReference
 	private final List<Player> players = new LinkedList<Player>();
 	
 	private final List<GamePhase> phases = new ArrayList<GamePhase>();
@@ -48,7 +44,6 @@ public class CardGame implements EventListener {
 		return stack;
 	}
 	
-	@JsonManagedReference
 	private final Set<CardZone> zones = new HashSet<CardZone>();
 	private final Set<CardModel> availableCards = new HashSet<CardModel>();
 	
@@ -158,10 +153,8 @@ public class CardGame implements EventListener {
 		return true;
 	}
 
-	@JsonIgnore
 	private EventExecutor events = new EventExecutor();
 	
-	@JsonIgnore
 	protected EventExecutor getEvents() {
 		return events;
 //		return CustomFacade.getGlobalEvents();
@@ -179,7 +172,7 @@ public class CardGame implements EventListener {
 		if (action == null) 
 			action = new StackAction();
 		
-		if (action.isAllowed()) {
+		if (action.actionIsAllowed()) {
 //			CustomFacade.getLog().d("Action Perform: " + action);
 			action.internalPerform();
 			executeEvent(new AfterActionEvent(this, action));
@@ -250,23 +243,28 @@ public class CardGame implements EventListener {
 	public StackAction callPlayerAI() {
 		return this.callPlayerAI(this.getCurrentPlayer());
 	}
+	public StackAction callPlayerAI(CardAI ai) {
+		return this.callPlayerAI(getCurrentPlayer(), ai);
+	}
+	public StackAction callPlayerAI(Player player, CardAI ai) {
+		if (ai == null)
+			return new InvalidStackAction("No AI specified to use for " + player);
+		ParamAndField<Player, StackAction> action = ai.play(player);
+		StackAction field = action.getField();
+		this.addAndProcessStackAction(field);
+		return action.getField();
+	}
 	
 	public StackAction callPlayerAI(Player player) {
 		if (player == null) {
-			StackAction last = null;
+			StackMultiAction action = new StackMultiAction();
 			for (Player pl : this.getPlayers()) {
-				last = this.callPlayerAI(pl);
+				action.addAction(this.callPlayerAI(pl));
 			}
-			return last;
+			return action;
 		}
 		else {
-			CardAI ai = player.getAI();
-			if (ai == null)
-				return new InvalidStackAction("No AI set for " + player);
-			ParamAndField<Player, StackAction> action = ai.play(player);
-			StackAction field = action.getField();
-			this.addAndProcessStackAction(field);
-			return action.getField();
+			return this.callPlayerAI(player, player.getAI());
 		}
 	}
 	public boolean isGameOver() {

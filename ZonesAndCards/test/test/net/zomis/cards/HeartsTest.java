@@ -8,6 +8,7 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.hearts.HeartsGame;
+import net.zomis.cards.hearts.HeartsGiveAction;
 import net.zomis.cards.hearts.HeartsGiveDirection;
 import net.zomis.cards.hearts.SimpleHeartsAI;
 import net.zomis.cards.model.Card;
@@ -88,7 +89,7 @@ public class HeartsTest extends CardsTest<HeartsGame> {
 		game.startGame();
 		Assert.assertNull(game.getCurrentPlayer());
 		
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < HeartsGiveAction.GIVE_COUNT; i++) {
 			Assert.assertFalse("Failed on i " + i, game.isNextPhaseAllowed());
 			game.callPlayerAI();
 		}
@@ -97,7 +98,7 @@ public class HeartsTest extends CardsTest<HeartsGame> {
 		Player player = game.getPlayers().get(0);
 		ParamAndField<Player, StackAction> saScore = player.getAI().play(player);
 		StackAction sa = saScore.getField();
-		Assert.assertFalse("Player is allowed to do something: " + sa + " with score " + saScore.getFieldScore().getScore(), sa.isAllowed()
+		Assert.assertFalse("Player is allowed to do something: " + sa + " with score " + saScore.getFieldScore().getScore(), sa.actionIsAllowed()
 				&& !(sa instanceof NextTurnAction));
 		
 		Assert.assertTrue(game.isNextPhaseAllowed());

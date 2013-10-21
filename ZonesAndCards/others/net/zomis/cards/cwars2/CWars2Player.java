@@ -7,31 +7,27 @@ import java.util.List;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.util.DeckPlayer;
-import net.zomis.cards.util.ResourceMap;
 
 
 public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 
-	private final CardZone library;
+	private final CardZone deck;
 	private final CardZone hand;
 	private final int handSize = 8;
 	
-	private ResourceMap resources = new ResourceMap();
 	private List<CWars2Card> cards;
 	
+	CWars2Player() { this(null); }
 	public CWars2Player(String name) {
 		this.setName(name);
-		this.library = new CardZone("Deck-" + getName());
+		this.deck = new CardZone("Deck-" + getName());
 		this.hand = new CardZone("Hand-" + getName());
 		this.hand.setKnown(this, true);
 		this.cards = new LinkedList<CWars2Card>();
 		
 	}
-	public ResourceMap getResources() {
-		return resources;
-	}
 	public CardZone getDeck() {
-		return library;
+		return deck;
 	}
 	public CardZone getHand() {
 		return hand;
@@ -40,32 +36,31 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 	public int getHandSize() {
 		return handSize;
 	}
-	public void fillHand() {
+	void fillHand() {
 		while (this.getHand().cardList().size() < this.handSize) {
-//			CustomFacade.getLog().i(this + " Hand size is " + this.getHand().cardList().size());
 			drawCard();
 		}
 	}
 	
 	private void drawCard() {
-		if (library.cardList().isEmpty()) {
+		if (deck.cardList().isEmpty()) {
 			if (this.cards.isEmpty())
 				throw new IllegalStateException("Player has no cards: " + this);
 			
 			for (CWars2Card card : this.cards) {
-				library.createCardOnTop(card);
+				deck.createCardOnTop(card);
 			}
-			library.shuffle();
+			deck.shuffle();
 		}
 		
-		library.getTopCard().zoneMoveOnBottom(this.hand);
+		deck.getTopCard().zoneMoveOnBottom(this.hand);
 	}
 	@Override
 	public CWars2Game getGame() {
 		return (CWars2Game) super.getGame();
 	}
+	@Override
 	public void addCard(CWars2Card field) {
-//		CustomFacade.getLog().i(this + " Add card " + field);
 		this.cards.add(field);
 	}
 	public void saveDeck() {
@@ -78,7 +73,7 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card> {
 	}
 	@Override
 	public String toString() {
-		return super.toString() + "--" + this.getHand() + " Resources " + this.resources;
+		return super.toString() + "--" + this.getHand() + " Resources " + this.getResources();
 //		return super.toString() + "--" + this.getHand().cardList().toString() + " Resources " + this.resources;
 		
 //		StringBuilder str = new StringBuilder();

@@ -15,7 +15,7 @@ public class PlaySpellAction extends MDJQStackAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		ResourceMap manaPool = card.getController().getManaPool();
 		ResourceMap manaCost = card.getModel().getManaCost();
 		return card.getController().hasPriority() && MDJQRes.hasResources(manaPool, manaCost);

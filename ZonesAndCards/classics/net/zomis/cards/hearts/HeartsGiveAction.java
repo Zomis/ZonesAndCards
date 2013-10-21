@@ -15,7 +15,7 @@ public class HeartsGiveAction extends ZoneMoveAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return isGiven() ? true : getPlayer().getBoard().size() < GIVE_COUNT;
 	}
 	private CardPlayer getPlayer() {

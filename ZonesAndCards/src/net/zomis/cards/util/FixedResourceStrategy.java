@@ -2,8 +2,9 @@ package net.zomis.cards.util;
 
 public class FixedResourceStrategy implements ResourceStrategy {
 
-	private int	value;
+	private final int	value;
 
+	FixedResourceStrategy() { this(0); }
 	public FixedResourceStrategy(int value) {
 		this.value = value;
 	}

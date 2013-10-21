@@ -15,7 +15,7 @@ public class RequiresTwo extends StackAction {
 	}
 	
 	@Override
-	public boolean isAllowed() {
+	public boolean actionIsAllowed() {
 		return game.getCurrentPlayer().getResources().hasResources(res, amount);
 	}
 

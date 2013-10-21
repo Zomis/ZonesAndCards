@@ -4,15 +4,12 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import test.net.zomis.cards.CardsTest;
-
 import net.zomis.ZomisList;
 import net.zomis.cards.mdjq.MDJQGame;
 import net.zomis.cards.mdjq.MDJQObject;
 import net.zomis.cards.mdjq.MDJQPermanent;
 import net.zomis.cards.mdjq.MDJQPhase;
 import net.zomis.cards.mdjq.MDJQPlayer;
-import net.zomis.cards.mdjq.MDJQRes;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.MDJQStackAction;
 import net.zomis.cards.mdjq.MDJQTarget;
@@ -21,6 +18,7 @@ import net.zomis.cards.mdjq.actions.MDJQTargetAction;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.custommap.CustomFacade;
+import test.net.zomis.cards.CardsTest;
 
 public class MDJQTest extends CardsTest<MDJQGame> {
 
@@ -81,10 +79,10 @@ public class MDJQTest extends CardsTest<MDJQGame> {
 	}
 
 	protected void assertMana(ResourceMap res, MColor color, int i) {
-		assertEquals(i, res.getResources(MDJQRes.getMana(color)));
+		assertEquals(i, res.getResources(color));
 	}
 	protected void assertMana(MDJQPlayer player, MColor color, int i) {
-		assertEquals(i, player.getManaPool().getResources(MDJQRes.getMana(color)));
+		assertEquals(i, player.getManaPool().getResources(color));
 	}
 
 	protected void nextPhaseUntil(Class<? extends MDJQPhase> class1) {

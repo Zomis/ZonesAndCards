@@ -7,7 +7,7 @@ import java.io.File;
 import net.zomis.cards.mdjq.MDJQGame;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.cards.MCCardsScanFiles;
-import net.zomis.cards.mdjq.cards.MDJQJackCard;
+import net.zomis.cards.mdjq.cards.MDJQJacksonCard;
 import net.zomis.cards.mdjq.cards.MDJQJackCards;
 import net.zomis.custommap.CustomFacade;
 
@@ -22,7 +22,7 @@ public class MDJQReadFiles extends MDJQTest {
 	public void test() {
 //		MCCardsScanFiles scanner = new MCCardsScanFiles(new File("C:/Games/MagicAssistant/_test"));
 		
-		MDJQJackCard jq = new MDJQJackCard();
+		MDJQJacksonCard jq = new MDJQJacksonCard();
 		jq.setCost("{4}{W}{W}{W}{U}{B}{R}{G}{G}");
 		assertMana(jq.getCost(), MColor.COLORLESS, 4);
 		assertMana(jq.getCost(), MColor.WHITE, 3);

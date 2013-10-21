@@ -6,9 +6,11 @@ import java.util.Map.Entry;
 
 import net.zomis.cards.cwars2.CWars2CardFactory;
 import net.zomis.cards.cwars2.CWars2Game;
-import net.zomis.cards.cwars2.CWars2Game.Producers;
-import net.zomis.cards.cwars2.CWars2Game.Resources;
 import net.zomis.cards.cwars2.CWars2Player;
+import net.zomis.cards.cwars2.CWars2Res;
+import net.zomis.cards.cwars2.CWars2Res.Producers;
+import net.zomis.cards.cwars2.CWars2Res.Resources;
+import net.zomis.cards.jackson.CardsIO;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
@@ -33,10 +35,10 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 				assertEquals(prod, player.getResources().getResources(r.getProducer()));
 			else assertEquals(0, player.getResources().getResources(r.getProducer()));
 		}
-		
+		loadSave();
 		skipTurn();
 		assertResourceDifference(values, getResources(), res, prod);
-		for (Entry<IResource, Integer> ee : values.getMapData().entrySet()) {
+		for (Entry<IResource, Integer> ee : values.getValues()) {
 			if (ee.getKey() != res) {
 				assertResourceDifference(values, getResources(), ee.getKey(), 0);
 			}
@@ -51,10 +53,36 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		skipTurn();
 		cheat();
 		performCard("Magic Weapons");
+		loadSave();
 		skipTurn();
 		performCard("Archer");
 		int newTotal = getLife();
 		assertEquals(total - 4, newTotal);
+	}
+	@Test
+	public void magicWeaponsDouble() {
+		int total = getLife();
+		skipTurn();
+		cheat();
+		performCard("Magic Weapons");
+		skipTurn();
+		performCard("Magic Weapons");
+		loadSave();
+		skipTurn();
+		performCard("Archer");
+		int newTotal = getLife();
+		assertEquals("Failed: " + getResources(), total - 4, newTotal);
+	}
+	@Test
+	public void magicWeapons2() {
+		int total = getLife();
+		skipTurn();
+		cheat();
+		performCard("Magic Weapons");
+		skipTurn();
+		performCard("Fire Archer");
+		int newTotal = getLife();
+		assertEquals("Failed: " + getResources(), total - 10, newTotal);
 	}
 	private void cheat() {
 		for (Resources res : Resources.values()) {
@@ -63,7 +91,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	}
 
 	private int getLife() {
-		return game.getCurrentPlayer().getResources().getResources(CWars2Game.CASTLE) + game.getCurrentPlayer().getResources().getResources(CWars2Game.WALL);
+		return game.getCurrentPlayer().getResources().getResources(CWars2Res.CASTLE) + game.getCurrentPlayer().getResources().getResources(CWars2Res.WALL);
 	}
 	
 	@Test
@@ -81,11 +109,45 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		}
 	}
 	@Test
+	public void doNotAllowSacrifice() {
+		Resources res = Resources.BRICKS;
+		game.getCurrentPlayer().getResources().set(res, 8);
+		game.getCurrentPlayer().getResources().set(res.getProducer(), 1);
+		StackAction action = game.getAIHandler().click(findCard("Sacrifice " + res.getProducer()));
+		assertFalse(action.actionIsAllowed());
+	}
+	@Test
+	public void curse() {
+		ResourceMap old = getResources();
+		skipTurn();
+		cheat();
+		performCard("Curse");
+		for (Resources res : Resources.values()) {
+			assertResourceDifference(old, getResources(), res, getResources().getResources(res.getProducer()) - 1);
+			assertResourceDifference(old, getResources(), res.getProducer(), -1);
+		}
+	}
+	@Test
+	public void sacrificeBuilder() {
+		final Resources res = Resources.BRICKS;
+		final Producers prod = res.getProducer();
+		game.getCurrentPlayer().getResources().set(res, 8);
+		ResourceMap mine = getResources();
+		ResourceMap opp = game.getCurrentPlayer().getNextPlayer().getResources();
+		assertEquals(2, mine.getResources(prod));
+		assertEquals(2, opp.getResources(prod));
+		performCard("Sacrifice " + prod);
+		assertEquals(1, getResources().getResources(prod));
+		skipTurn();
+		assertEquals(1, getResources().getResources(prod));
+	}
+	@Test
 	public void protectResources() {
 		game.getCurrentPlayer().getResources().set(Resources.WEAPONS, 8);
 		game.getCurrentPlayer().getResources().set(Resources.BRICKS, 7);
 		ResourceMap oldRes = getResources();
 		performCard("Protect Resources");
+		loadSave();
 		game.getCurrentPlayer().getResources().set(Resources.WEAPONS, 20);
 		ResourceMap beforeThief = getResources();
 		performCard("Thief");
@@ -104,6 +166,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		int old = getLife();
 		game.getCurrentPlayer().getResources().set(Resources.CRYSTALS, 10);
 		performCard("Magic Defense");
+		loadSave();
 		performCard("Archer");
 		assertEquals(old, getLife());
 		skipTurn();
@@ -115,8 +178,10 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		int old = getLife();
 		cheat();
 		performCard("Magic Defense");
+		loadSave();
 		cheat();
 		performCard("Magic Weapons");
+		loadSave();
 		skipTurn();
 		performCard("Archer");
 		int newV = getLife();
@@ -128,8 +193,10 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		skipTurn();
 		cheat();
 		performCard("Magic Weapons");
+		loadSave();
 		cheat();
 		performCard("Magic Defense");
+		loadSave();
 		performCard("Archer");
 		int newV = getLife();
 		assertEquals(old, newV);
@@ -182,7 +249,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	}
 	private int totalProducers() {
 		int total = 0;
-		for (Entry<IResource, Integer> ee : game.getCurrentPlayer().getResources().getMapData().entrySet()) {
+		for (Entry<IResource, Integer> ee : game.getCurrentPlayer().getResources().getValues()) {
 			if (ee.getKey() instanceof Producers) {
 				total += ee.getValue();
 			}
@@ -199,7 +266,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		assertEquals(0, game.getDiscarded());
 		game.addAndProcessStackAction(act);
 		CustomFacade.getLog().i(game.getActivePhase().toString());
-		assertTrue("Action could not be performed: " + act + " for card " + name + " because of " + act.getMessage(), act.isPerformed());
+		assertTrue("Action could not be performed: " + act + " for card " + name + " because of " + act.getMessage(), act.actionIsPerformed());
 		assertNotSame("Current player did not change, was " + currPlayer + " action " + act + " message is " + act.getMessage(), currPlayer, game.getCurrentPlayer());
 	}
 	
@@ -228,18 +295,34 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 			player.getResources().set(Producers.RECRUITS, 2);
 			player.getResources().set(Producers.WIZARDS, 2);
 			
-			player.getResources().set(CWars2Game.CASTLE, 5);
-			player.getResources().set(CWars2Game.WALL, 5);
+			player.getResources().set(CWars2Res.CASTLE, 5);
+			player.getResources().set(CWars2Res.WALL, 5);
 			
 			for (CardModel c : game.getAvailableCards()) {
 				if (c.getName().equals("Dummy")) {
 					player.getHand().createCardOnBottom(c);
 					player.getHand().createCardOnBottom(c);
-					player.getHand().createCardOnBottom(c);
 				}
+				player.getHand().createCardOnBottom(c);
 				player.getHand().createCardOnBottom(c);
 			}
 		}
+	}
+	
+	private void loadSave() {
+		ResourceMap res = game.getCurrentPlayer().getResources();
+
+		String data = CardsIO.save(game);
+		CustomFacade.getLog().i("Data is: " + data);
+		CWars2Game loaded = CardsIO.load(data, CWars2Game.class);
+
+		assertEquals(game.getCurrentPlayer().getName(), loaded.getCurrentPlayer().getName());
+		assertEquals(game.getAvailableCards().size(), loaded.getAvailableCards().size());
+		assertEquals(game.getActivePhase().getClass(), loaded.getActivePhase().getClass());
+		assertNotSame(game.getActivePhase(), loaded.getActivePhase());
+		assertNotSame(game.getCurrentPlayer(), loaded.getCurrentPlayer());
+		assertNotSame(res, loaded.getCurrentPlayer().getResources());
+		assertResourcesEqual(res, loaded.getCurrentPlayer().getResources());
 	}
 	
 }

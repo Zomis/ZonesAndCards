@@ -6,8 +6,8 @@ import net.zomis.cards.model.StackAction;
 
 public class ZoneMoveAction extends StackAction {
 
-	private Card card;
-	private CardZone source;
+	private final Card card;
+	private final CardZone source;
 	private CardZone destination;
 	private boolean sendToTop;
 	

@@ -14,18 +14,18 @@ public class MDJQJackCards {
 	public String comment;
 	public String type;
 	
-	public List<MDJQJackCard> list;
+	public List<MDJQJacksonCard> list;
 	
 	@JsonIgnore
-	private MDJQJackCard selected;
+	private MDJQJacksonCard selected;
 	
 	@JsonIgnore
-	public MDJQJackCard getSelected() {
+	public MDJQJacksonCard getSelected() {
 		return selected;
 	}
 
 	void select(String cardName) {
-		for (MDJQJackCard ac : list) {
+		for (MDJQJacksonCard ac : list) {
 			if (ac.name.matches(cardName)) {
 				this.selected = ac;
 				break;
