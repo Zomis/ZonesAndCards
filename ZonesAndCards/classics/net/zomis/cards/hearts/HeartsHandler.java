@@ -5,14 +5,14 @@ import java.util.List;
 
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicGame;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.custommap.CustomFacade;
 
-public class HeartsHandler implements AIHandler {
+public class HeartsHandler implements ActionHandler {
 
 	private final StackAction illegal = new InvalidStackAction();
 

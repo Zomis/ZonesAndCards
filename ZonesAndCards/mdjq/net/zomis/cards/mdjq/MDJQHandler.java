@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.cards.mdjq.activated.ActivatedAbility;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.custommap.model.CastedIterator;
 
-public class MDJQHandler implements AIHandler {
+public class MDJQHandler implements ActionHandler {
 
 	@Override
 	public StackAction click(Card c) {
@@ -26,7 +26,7 @@ public class MDJQHandler implements AIHandler {
 			}
 		}
 		
-		return new InvalidStackAction();
+		return new InvalidStackAction("No Action");
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
@@ -27,7 +27,7 @@ public class HeartsGame extends ClassicGame {
 	public static final int MAGIC_NUMBER = 52 / 4;
 	
 	private final ClassicCardZone pile;
-	private final AIHandler handler = new HeartsHandler();
+	private final ActionHandler handler = new HeartsHandler();
 	
 	protected HeartsGiveDirection	giveDirection;
 	protected boolean heartsBroken;
@@ -97,7 +97,7 @@ public class HeartsGame extends ClassicGame {
 	}
 
 	@Override
-	public AIHandler getAIHandler() {
+	public ActionHandler getActionHandler() {
 		return this.handler;
 	}
 

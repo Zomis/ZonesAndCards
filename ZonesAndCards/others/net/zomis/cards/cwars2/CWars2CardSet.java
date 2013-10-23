@@ -7,9 +7,10 @@ import java.util.Map.Entry;
 
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.cwars2.CWars2Res.Resources;
-import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.PublicAction;
 import net.zomis.cards.util.FixedResourceStrategy;
 import net.zomis.cards.util.IResource;
+import net.zomis.cards.util.ResourceData;
 import net.zomis.cards.util.ResourceListener;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.cards.util.ResourceStrategy;
@@ -124,7 +125,7 @@ public class CWars2CardSet {
 //		new CWars2CardFactory("Sabotage").setResourceCost(weapons, 13).addTo(cards);
 	}
 	
-	public static class AllResourcesFocusOn extends StackAction implements ResourceStrategy {
+	public static class AllResourcesFocusOn extends PublicAction implements ResourceStrategy {
 
 		private Resources resource;
 		private CWars2Game	game;
@@ -136,7 +137,7 @@ public class CWars2CardSet {
 		}
 		
 		@Override
-		protected void onPerform() {
+		public void onPerform() {
 			ResourceMap res = this.game.getCurrentPlayer().getResources();
 			for (Producers prod : Producers.values()) {
 				res.setResourceStrategy(prod, prod == resource.getProducer() ? this : new FixedResourceStrategy(0));
@@ -144,18 +145,18 @@ public class CWars2CardSet {
 		}
 
 		@Override
-		public int getResourceAmount(IResource type, ResourceMap map) {
+		public int getResourceAmount(ResourceData type, ResourceMap map) {
 			int total = 0;
-			for (Entry<IResource, Integer> ee : map.getValues()) {
+			for (Entry<IResource, ResourceData> ee : map.getData().entrySet()) {
 				if (ee.getKey() instanceof Producers) {
-					total += ee.getValue();
+					total += ee.getValue().getRealValueOrDefault();
 				}
 			}
 			return total;
 		}
 		
 	}
-	public static class ProtectResourcesAction extends StackAction {
+	public static class ProtectResourcesAction extends PublicAction {
 
 		private final CWars2Game game;
 
@@ -163,7 +164,7 @@ public class CWars2CardSet {
 			this.game = game;
 		}
 		@Override
-		protected void onPerform() {
+		public void onPerform() {
 			final CWars2Player protectedPlayer = game.getCurrentPlayer();
 			final ResourceListener listener = new ResListener(protectedPlayer);
 			for (Resources type : Resources.values())
@@ -177,7 +178,7 @@ public class CWars2CardSet {
 				this.protectedPlayer = protectedPlayer;
 			}
 			@Override
-			public boolean onResourceChange(ResourceMap map, IResource type, int value) {
+			public boolean onResourceChange(ResourceMap map, ResourceData type, int value) {
 				if (value > 0) return true;
 				if (protectedPlayer.getGame().getCurrentPlayer() == protectedPlayer) return true;
 				return false;
@@ -185,7 +186,7 @@ public class CWars2CardSet {
 		}
 		
 	}
-	public static class MagicAttackMultiply extends StackAction implements ResourceListener {
+	public static class MagicAttackMultiply extends PublicAction {
 		private final boolean	opponent;
 		private final double	multiplier;
 		private final CWars2Game	game;
@@ -198,35 +199,46 @@ public class CWars2CardSet {
 		}
 		
 		@Override
-		protected void onPerform() {
+		public void onPerform() {
 			CWars2Player player = opponent ? game.getCurrentPlayer().getNextPlayer() : game.getCurrentPlayer();
 			ResourceListener old = player.getResources().getListener(CWars2Res.CASTLE);
-			if (old instanceof MagicAttackMultiply) {
-				MagicAttackMultiply previous = (MagicAttackMultiply) old;
-				if (previous == this) // Don't allow Magic Weapon twice
+			double previousMult = 1;
+			if (old instanceof MagicAttackListener) {
+				MagicAttackListener previous = (MagicAttackListener) old;
+				if (previous.multiplier == this.multiplier) // Don't allow Magic Weapon twice
 					return;
 				// opponent setting does not matter here really, neither does game. We just want the ResourceListener-part.
-				MagicAttackMultiply listener = new MagicAttackMultiply(null, false, multiplier * previous.multiplier);
-				player.getResources().setListener(CWars2Res.CASTLE, listener);
-				player.getResources().setListener(CWars2Res.WALL, listener);
+				previousMult = previous.multiplier;
 			}
-			else {
-				player.getResources().setListener(CWars2Res.CASTLE, this);
-				player.getResources().setListener(CWars2Res.WALL, this);
-			}
+			MagicAttackListener listener = new MagicAttackListener(player, multiplier * previousMult);
+			player.getResources().setListener(CWars2Res.CASTLE, listener);
+			player.getResources().setListener(CWars2Res.WALL, listener);
 		}
 		
-		@Override
-		public boolean onResourceChange(ResourceMap map, IResource type, int value) {
-			map.setListener(CWars2Res.CASTLE, null);
-			map.setListener(CWars2Res.WALL, null);
-			int change = (int)(value * multiplier);
-			map.changeResources(type, change);
-			return false;
+		public static class MagicAttackListener implements ResourceListener {
+			private final CWars2Player	player;
+			private final double	multiplier;
+			MagicAttackListener() { this.player = null; this.multiplier = 1; }
+			public MagicAttackListener(CWars2Player player, double multiplier) {
+				this.player = player;
+				this.multiplier = multiplier;
+			}
+			@Override
+			public boolean onResourceChange(ResourceMap map, ResourceData type, int value) {
+				if (this.player == player.getGame().getCurrentPlayer()) {
+					// Self-inflicted damage should be performed.
+					return true;
+				}
+				map.setListener(CWars2Res.CASTLE, null);
+				map.setListener(CWars2Res.WALL, null);
+				int change = (int)(value * multiplier);
+				map.changeResources(type.getResource(), change);
+				return false;
+			}
 		}
 	}
 	
-	public static class MultiplyNextResourceIncome extends StackAction implements ResourceStrategy {
+	public static class MultiplyNextResourceIncome extends PublicAction implements ResourceStrategy {
 		
 		private CWars2Game game;
 		private int	multiplier;
@@ -240,7 +252,7 @@ public class CWars2CardSet {
 		}
 
 		@Override
-		protected void onPerform() {
+		public void onPerform() {
 			ResourceMap res = currentPlayer ? game.getCurrentPlayer().getResources() : ((CWars2Player) game.getCurrentPlayer().getOpponents().get(0)).getResources();
 			for (Producers prod : Producers.values()) {
 				res.setResourceStrategy(prod, this);
@@ -248,13 +260,13 @@ public class CWars2CardSet {
 		}
 
 		@Override
-		public int getResourceAmount(IResource type, ResourceMap map) {
-			int value = new ResourceMap(map).getResources(type);
+		public int getResourceAmount(ResourceData type, ResourceMap map) {
+			int value = new ResourceMap(map).setResourceStrategy(type.getResource(), null).getResources(type.getResource());
 			return value * multiplier;
 		}
 	}
 	
-	private static class ThiefAction extends StackAction {
+	private static class ThiefAction extends PublicAction {
 
 		private CWars2Game	game;
 		private int	steal;
@@ -265,7 +277,7 @@ public class CWars2CardSet {
 		}
 		
 		@Override
-		protected void onPerform() {
+		public void onPerform() {
 			for (Resources res : Resources.values()) {
 				CWars2Player next = (CWars2Player) game.getCurrentPlayer().getOpponents().get(0);
 				int oldValue = next.getResources().getResources(res);

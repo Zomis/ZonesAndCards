@@ -1,6 +1,6 @@
 package net.zomis.cards.cwars2;
 
-import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.PublicAction;
 import net.zomis.cards.util.IResource;
 
 public class CWars2CardFactory {
@@ -34,7 +34,7 @@ public class CWars2CardFactory {
 		this.card.costs.set(type, i);
 		return this;
 	}
-	public CWars2CardFactory addAction(StackAction action) {
+	public CWars2CardFactory addAction(PublicAction action) {
 		this.card.addAction(action);
 		return this;
 	}

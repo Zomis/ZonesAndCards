@@ -24,63 +24,71 @@ import net.zomis.events.IEvent;
 
 public class CardGame implements EventListener {
 	
-	public CardGame() {
-		this.events.registerListener(this);
-	}
-	
-	private Random random = new Random();
-	private boolean gameOver = false;
-	
-	private final List<Player> players = new LinkedList<Player>();
-	
-	private final List<GamePhase> phases = new ArrayList<GamePhase>();
-	/**
-	 * Possible stack actions: Activate ability, play spell, play land, next phase, auto-triggered effects, +more
-	 * Stack actions in Castle Wars: Play card, discard cards
-	 */
-	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();
-	
-	protected LinkedList<StackAction> getStack() {
-		return stack;
-	}
-	
-	private final Set<CardZone> zones = new HashSet<CardZone>();
-	private final Set<CardModel> availableCards = new HashSet<CardModel>();
-	
-	private GamePhase currentPhase;
-
-	private boolean	started;
-
-	private static class UselessAIHandler implements AIHandler {
+	private static class UselessAIHandler implements ActionHandler {
+		@Override
+		public StackAction click(Card card) {
+			return new InvalidStackAction("Useless Handler");
+		}
+		
 		@Override
 		public List<StackAction> getAvailableActions(Player player) {
 			return new ArrayList<StackAction>(0);
 		}
-		
-		@Override
-		public StackAction click(Card card) {
-			return new InvalidStackAction();
-		}
-	};
+	}
+	
+	private ActionHandler actionHandler = new UselessAIHandler();
+	private final Set<CardModel> availableCards = new HashSet<CardModel>();
+	private boolean callingOnEnd;
+	private GamePhase currentPhase;
+	private EventExecutor events = new EventExecutor();
+	private Exception exc;
+	private boolean gameOver = false;
+	private final List<GamePhase> phases = new ArrayList<GamePhase>();
+	private final List<Player> players = new LinkedList<Player>();
+	private Random random = new Random();
+
+	/**
+	 * The Stack is used as a history manager as well.
+	 * Possible stack actions: Activate a card, play card, discard card, next phase, auto-triggered effects, +more
+	 */
+	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();;
 
 	
-	private AIHandler aiHandler = new UselessAIHandler();
+	private boolean	started;
 	
-	protected void setAIHandler(AIHandler aiHandler) {
-		this.aiHandler = aiHandler;
+	private final Set<CardZone> zones = new HashSet<CardZone>();
+	
+	public CardGame() {
+		this.events.registerListener(this);
+	}
+	/**
+	 * A combination of {@link #addStackAction(StackAction)} and {@link #processStackAction()}
+	 * @param action {@link StackAction} to add and process.
+	 */
+	public void addAndProcessStackAction(StackAction action) {
+		this.addStackAction(action);
+		this.processStackAction();
+	}
+
+	public void addCard(CardModel card) {
+		this.availableCards.add(card);
 	}
 	
-	public Set<CardModel> getAvailableCards() {
-		return new TreeSet<CardModel>(availableCards);
+	protected void addPhase(GamePhase phase) {
+		this.phases.add(phase);
 	}
-	
+
 	protected void addPlayer(Player player) {
 		this.players.add(player);
 		player.game = this;
 	}
 
-	public Set<CardZone> getPublicZones() {
-		return new TreeSet<CardZone>(zones);
+	/**
+	 * Adds a {@link StackAction} to the Stack and records it in history. <b>Should not be used for actions that trigger through other actions than an order by a player.</b>
+	 * @param action Action to add to stack
+	 */
+	protected void addStackAction(StackAction action) {
+		this.stack.push(action);
 	}
 	
 	protected CardZone addZone(CardZone zone) {
@@ -88,44 +96,102 @@ public class CardGame implements EventListener {
 		zone.game = this;
 		return zone;
 	}
-
-	public void addCard(CardModel card) {
-		this.availableCards.add(card);
+	public StackAction callPlayerAI() {
+		return this.callPlayerAI(this.getCurrentPlayer());
 	}
-
-	public List<Player> getPlayers() {
-		return Collections.unmodifiableList(players);
+	public StackAction callPlayerAI(CardAI ai) {
+		return this.callPlayerAI(getCurrentPlayer(), ai);
+	}
+	public StackAction callPlayerAI(Player player) {
+		if (player == null) {
+			StackMultiAction action = new StackMultiAction();
+			for (Player pl : this.getPlayers()) {
+				action.addAction(this.callPlayerAI(pl));
+			}
+			return action;
+		}
+		else {
+			return this.callPlayerAI(player, player.getAI());
+		}
 	}
 	
-	protected List<GamePhase> getPhases() {
-		return phases;
+	public StackAction callPlayerAI(Player player, CardAI ai) {
+		if (ai == null)
+			return new InvalidStackAction("No AI specified to use for " + player);
+		ParamAndField<Player, StackAction> action = ai.play(player);
+		StackAction field = action.getField();
+		this.addAndProcessStackAction(field);
+		return action.getField();
 	}
-	protected void setActivePhaseDirectly(GamePhase phase) {
-		GamePhase oldPhase = getActivePhase();
-		this.currentPhase = phase;
-		GamePhase newPhase = getActivePhase();
-		newPhase.onStart(this);
-		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase));
-	}
-	private boolean callingOnEnd;
-	protected void setActivePhase(GamePhase phase) {
-		if (!callingOnEnd) {
-			callingOnEnd = true;
-			// TODO: There's gotta be a better solution for letting phases go to the next phase by themselves.
-			GamePhase active = getActivePhase();
-			if (active != null)
-				active.onEnd(this);
+
+	protected final void endGame() {
+		if (this.isGameOver()) {
+			exc.printStackTrace();
+			throw new IllegalStateException("Game is already finished, previously called at ", exc);
 		}
-		callingOnEnd = false;
-		setActivePhaseDirectly(phase);
+		if (!this.getEvents().executeEvent(new GameOverEvent(this)).isCancelled()) {
+			exc = new Exception("End game called");
+			this.gameOver = true;
+		}
+	}
+
+	protected void executeEvent(IEvent event) {
+		getEvents().executeEvent(event);
+	}
+
+	public ActionHandler getActionHandler() {
+		return this.actionHandler;
 	}
 	
 	public GamePhase getActivePhase() {
 		return this.currentPhase;
 	}
 
-	protected void addPhase(GamePhase phase) {
-		this.phases.add(phase);
+	public Set<CardModel> getAvailableCards() {
+		return new TreeSet<CardModel>(availableCards);
+	}
+	
+	public Player getCurrentPlayer() {
+		GamePhase phase = getActivePhase();
+		if (phase instanceof IPlayerPhase) {
+			IPlayerPhase phase2 = (IPlayerPhase) phase;
+			return phase2.getPlayer();
+		}
+		return null;
+	}
+
+	protected EventExecutor getEvents() {
+		return events;
+	}
+	protected List<GamePhase> getPhases() {
+		return phases;
+	}
+
+	public List<Player> getPlayers() {
+		return Collections.unmodifiableList(players);
+	}
+
+	public Set<CardZone> getPublicZones() {
+		return new TreeSet<CardZone>(zones);
+	}
+	
+	
+	public final Random getRandom() {
+//		CustomFacade.getLog().i("Using random! " + new Exception().getStackTrace()[1]);
+		return this.random;
+	}
+
+	protected LinkedList<StackAction> getStack() {
+		return stack;
+	}
+	public final boolean isGameOver() {
+		return gameOver;
+	}
+	public boolean isNextPhaseAllowed() {
+		return true;
+	}
+	public boolean isStarted() {
+		return started;
 	}
 
 	public boolean nextPhase() {
@@ -152,21 +218,18 @@ public class CardGame implements EventListener {
 		} 
 		return true;
 	}
-
-	private EventExecutor events = new EventExecutor();
 	
-	protected EventExecutor getEvents() {
-		return events;
-//		return CustomFacade.getGlobalEvents();
-	}
+	protected void onStart() {}
 
-	public boolean isStarted() {
-		return started;
-	}
-	
+	/**
+	 * Take the top {@link StackAction} of the stack and process it if it is allowed.
+	 * @return The {@link StackAction} that was removed from the stack and possibly processed.
+	 */
 	public StackAction processStackAction() {
+		if (this.isGameOver())
+			return new InvalidStackAction("Game has already ended.");
 		if (!this.started)
-			throw new IllegalStateException("Game is not started. Did you forget to call startGame() ?");
+			return new InvalidStackAction("Game is not started. Did you forget to call startGame() ?");
 		
 		StackAction action = this.stack.pollFirst();
 		if (action == null) 
@@ -180,50 +243,43 @@ public class CardGame implements EventListener {
 		else CustomFacade.getLog().d("StackAction was not allowed: " + action);
 		return action;
 	}
-
-	protected void addStackAction(StackAction action) {
-		this.stack.push(action);
-	}
-	public void addAndProcessStackAction(StackAction action) {
-		this.addStackAction(action);
-		this.processStackAction();
-	}
-
-	public AIHandler getAIHandler() {
-		return this.aiHandler;
-	}
-
-	public Random getRandom() {
-		return this.random;
-	}
 	
-	
-	public void setRandomSeed(long seed) {
-		this.random = new Random(seed);
-	}
-
 	public void registerListener(EventListener listener) {
 		getEvents().registerListener(listener);
 	}
+	
 	public void removeListener(EventListener listener) {
 		getEvents().removeListener(listener);
 	}
-	protected void executeEvent(IEvent event) {
-		getEvents().executeEvent(event);
-	}
-	public Player getCurrentPlayer() {
-		GamePhase phase = getActivePhase();
-		if (phase instanceof IPlayerPhase) {
-			IPlayerPhase phase2 = (IPlayerPhase) phase;
-			return phase2.getPlayer();
-		}
-		return null;
-	}
-
-	public boolean isNextPhaseAllowed() {
-		return true;
+//	protected boolean removeZone(CardZone zone) {
+//		return this.zones.remove(zone);
+//	}
+	protected void setActionHandler(ActionHandler aiHandler) {
+		this.actionHandler = aiHandler;
 	}
 	
+	protected void setActivePhase(GamePhase phase) {
+		if (!callingOnEnd) {
+			callingOnEnd = true;
+			// TODO: There's gotta be a better solution for letting phases go to the next phase by themselves.
+			GamePhase active = getActivePhase();
+			if (active != null)
+				active.onEnd(this);
+		}
+		callingOnEnd = false;
+		setActivePhaseDirectly(phase);
+	}
+	protected void setActivePhaseDirectly(GamePhase phase) {
+		GamePhase oldPhase = getActivePhase();
+		this.currentPhase = phase;
+		GamePhase newPhase = getActivePhase();
+		newPhase.onStart(this);
+		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase));
+	}
+	public final void setRandomSeed(long seed) {
+//		CustomFacade.getLog().i("Set seed to " + seed);
+		this.random = new Random(seed);
+	}
 	public final void startGame() {
 		if (this.started)
 			throw new IllegalStateException("Game is already initialized.");
@@ -231,51 +287,6 @@ public class CardGame implements EventListener {
 		this.onStart();
 		if (this.getActivePhase() == null) {
 			this.setActivePhase(this.phases.get(0));
-		}
-	}
-
-	protected void onStart() {}
-	
-	protected boolean removeZone(CardZone zone) {
-		return this.zones.remove(zone);
-	}
-	
-	public StackAction callPlayerAI() {
-		return this.callPlayerAI(this.getCurrentPlayer());
-	}
-	public StackAction callPlayerAI(CardAI ai) {
-		return this.callPlayerAI(getCurrentPlayer(), ai);
-	}
-	public StackAction callPlayerAI(Player player, CardAI ai) {
-		if (ai == null)
-			return new InvalidStackAction("No AI specified to use for " + player);
-		ParamAndField<Player, StackAction> action = ai.play(player);
-		StackAction field = action.getField();
-		this.addAndProcessStackAction(field);
-		return action.getField();
-	}
-	
-	public StackAction callPlayerAI(Player player) {
-		if (player == null) {
-			StackMultiAction action = new StackMultiAction();
-			for (Player pl : this.getPlayers()) {
-				action.addAction(this.callPlayerAI(pl));
-			}
-			return action;
-		}
-		else {
-			return this.callPlayerAI(player, player.getAI());
-		}
-	}
-	public boolean isGameOver() {
-		return gameOver;
-	}
-	protected void endGame() {
-		if (this.isGameOver())
-			throw new IllegalStateException("Game is already finished.");
-		if (!this.getEvents().executeEvent(new GameOverEvent(this)).isCancelled()) {
-//			new Exception("End game called").printStackTrace();
-			this.gameOver = true;
 		}
 	}
 }

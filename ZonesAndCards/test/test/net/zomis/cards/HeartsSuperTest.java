@@ -15,7 +15,6 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
-import net.zomis.custommap.CustomFacade;
 
 import org.junit.Test;
 
@@ -28,7 +27,7 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 	}
 	
 	@Test
-	public void f() {
+	public void playHeartsSuperGame() {
 		Assert.assertEquals(ClassicCard.RANK_2, game.getAceConfig().getMinRank());
 		Assert.assertEquals(ClassicCard.RANK_ACE_HIGH, game.getAceConfig().getMaxRank());
 		
@@ -69,7 +68,7 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 		}
 		
 		Assert.assertTrue(i + " -- " + Arrays.toString(game.getScores()), game.isGameOver());
-		CustomFacade.getLog().i("Stopped after i " + i + Arrays.toString(game.getScores()));
+//		CustomFacade.getLog().i("Stopped after i " + i + Arrays.toString(game.getScores()));
 	}
 
 	private Set<CardModel> cards = new HashSet<CardModel>();

@@ -1,23 +1,34 @@
 package test.net.zomis.cards;
 
+import static org.junit.Assert.*;
 import junit.framework.Assert;
 import net.zomis.cards.classics.CardPlayer;
+import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.ai.RandomAI;
 import net.zomis.cards.turneight.TurnEightController;
 import net.zomis.cards.turneight.TurnEightGame;
 import net.zomis.cards.turneight.TurnEightScorers;
-import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.CastedIterator;
 
 import org.junit.Test;
 
 public class TurnEightTest extends CardsTest<TurnEightGame> {
+	@Test
+	public void reshuffleTest() {
+		game = new TurnEightGame();
+		game.addPlayer("BUBU");
+		game.addPlayer("Bakkit");
+		game.setRandomSeed(9); // Hearts-14 is first
+		game.startGame();
+		assertFalse(TurnEightController.isSpecial((ClassicCard) game.getDiscard().getTopCard().getModel(), game.getAceConfig().getAceValue()));
+		
+	}
 	@Test(timeout = 50000)
 	public void testGame() {
-		Assert.assertEquals(0, TurnEightScorers.values().length);
+		assertEquals(0, TurnEightScorers.values().length);
 		
-		int it = 0;
+//		int it = 0;
 		
 		for (int i = 0; i < 42; i++) {
 			game.callPlayerAI();
@@ -30,10 +41,10 @@ public class TurnEightTest extends CardsTest<TurnEightGame> {
 			CardPlayer player = game.getCurrentPlayer();
 			while (game.getCurrentPlayer() == player) {
 				game.callPlayerAI();
-				++it;
+//				++it;
 			}
-			if (player.getHand().cardList().isEmpty())
-				CustomFacade.getLog().i("Player " + player + " is out after " + it);
+//			if (player.getHand().cardList().isEmpty())
+//				CustomFacade.getLog().i("Player " + player + " is out after " + it);
 		}
 		while (!game.getCurrentPlayer().getHand().cardList().isEmpty());
 		

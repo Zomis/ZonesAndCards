@@ -39,16 +39,12 @@ public class MDJQTest extends CardsTest<MDJQGame> {
 		for (MDJQTarget target : act.getTargets().getTargets()) {
 			if (!target.isTargetChosen()) {
 				List<MDJQObject> targets = target.findLegalTargets(act);
-				log("Legal targets for " + act + ": " + targets.toString());
+//				log("Legal targets for " + act + ": " + targets.toString());
 				target.setChosenTarget(ZomisList.getRandom(targets, game.getRandom()));
 				assertTrue(target.isTargetChosen());
 			}
 		}
 		assertTrue(act.getTargets().isAllChosen());
-	}
-
-	protected void log(String string) {
-		CustomFacade.getLog().i(string);
 	}
 
 	protected void logStack() {
@@ -68,7 +64,7 @@ public class MDJQTest extends CardsTest<MDJQGame> {
 	protected static StackAction findActionForCard(MDJQZone zone, String cardName) {
 		MDJQPermanent card = zone.findCardWithName(cardName);
 		assertNotNull("Could not find card by name " + cardName + " in " + zone, card);
-		return zone.getGame().getAIHandler().click(card);
+		return zone.getGame().getActionHandler().click(card);
 	}
 	protected void currentPlayerPlayCard(String cardName) {
 		game.addStackAction(findActionForCard(game.getCurrentPlayer().getHand(), cardName));

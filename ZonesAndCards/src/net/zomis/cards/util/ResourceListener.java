@@ -1,5 +1,5 @@
 package net.zomis.cards.util;
 
 public interface ResourceListener {
-	boolean onResourceChange(ResourceMap map, IResource type, int value);
+	boolean onResourceChange(ResourceMap map, ResourceData type, int value);
 }

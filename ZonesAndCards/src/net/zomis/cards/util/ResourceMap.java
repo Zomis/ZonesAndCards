@@ -1,82 +1,94 @@
 package net.zomis.cards.util;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 public final class ResourceMap {
 
-	private final Map<IResource, Integer> map = new LinkedHashMap<IResource, Integer>();
-	private final Map<IResource, ResourceStrategy> strategies = new HashMap<IResource, ResourceStrategy>();
-	private final Map<IResource, ResourceListener> listeners = new HashMap<IResource, ResourceListener>();
-	// TODO: Use Map<IResource, ResourceData> with a bunch of properties - can then re-add min and mix and stuff. Add method to create ResourceData to IResource interface?
-
-	public Map<IResource, ResourceListener> getListeners() {
-		return new HashMap<IResource, ResourceListener>(listeners);
+	private final Map<IResource, ResourceData> data = new TreeMap<IResource, ResourceData>(new ResourceComparator());
+	public static class ResourceComparator implements Comparator<IResource> {
+		@Override
+		public int compare(IResource o1, IResource o2) {
+			return o1.toString().compareTo(o2.toString());
+		}
 	}
-	public Map<IResource, ResourceStrategy> getStrategies() {
-		return new HashMap<IResource, ResourceStrategy>(strategies);
+	
+	public Map<IResource, ResourceData> getData() {
+		return new HashMap<IResource, ResourceData>(data);
 	}
 	
 	public ResourceMap() {}
 	public ResourceMap(ResourceMap copyOf) {
-		for (Entry<IResource, Integer> ee : copyOf.map.entrySet()) {
-			this.set(ee.getKey(), ee.getValue());
+		for (Entry<IResource, ResourceData> ee : copyOf.data.entrySet()) {
+			if (ee.getValue() == null)
+				throw new NullPointerException("ee value null");
+			this.set(ee.getKey(), ee.getValue().getRealValue());
 		}
 	}
 	
-	public int getResources(IResource type) {
-		ResourceStrategy strat = this.strategies.get(type);
-		if (strat != null) {
-			return strat.getResourceAmount(type, this); // Strategies can ignore max and min values
+	public ResourceData dataFor(IResource type) {
+		ResourceData data = this.data.get(type);
+		if (data == null) {
+			data = type.createData(type);
+			if (data == null || data.getResource() != type)
+				throw new IllegalStateException("Resource did not return a correct ResourceData object: " + type);
+			this.data.put(type, data);
 		}
-		Integer i = map.get(type);
-		return i == null ? type.getDefault() : clamp(type, i);
+		return data;
+	}
+	
+	public int getResources(IResource type) {
+		return dataFor(type).getValueWithStrategy(this);
 	}
 	
 	public boolean hasResources(IResource type, int amount) {
 		return getResources(type) >= amount;
 	}
-	public void changeResources(IResource type, int value) {
+	public void changeResources(IResource type, Integer value) {
+		if (value == null) return;
+		
 		ResourceListener listener = getListener(type);
-		if (listener != null && !listener.onResourceChange(this, type, value)) {
+		if (listener != null && !listener.onResourceChange(this, dataFor(type), value)) {
 			return;
 		}
-		Integer val = this.map.get(type);
-		if (val == null) val = type.getDefault();
+		ResourceData dat = dataFor(type);
+		Integer val = dat.getRealValue();
+		if (val == null) val = dat.getDefaultValue();
 		set(type, val + value);
 	}
 	public ResourceListener getListener(IResource type) {
-		return listeners.get(type);
+		return dataFor(type).getListener();
 	}
 	public ResourceMap setResourceStrategy(IResource type, ResourceStrategy strategy) {
 		if (strategy == null)
-			this.strategies.remove(type);
-		else this.strategies.put(type, strategy);
+			dataFor(type).strategy = null;
+		else dataFor(type).strategy = strategy;
 		return this;
 	}
-	public ResourceMap set(IResource type, int value) {
-		int newVal = clamp(type, value);
-		this.map.put(type, newVal);
+	public ResourceMap set(IResource type, Integer value) {
+		dataFor(type).value = value;
 		return this;
 	}
-	@Deprecated
-	public static int clamp(IResource type, int value) {
-//		int max = type.getMax();
-//		int min = type.getMin();
-//		if (value > max) value = max;
-//		if (value < min) value = min;
-		return value;
+	public Set<IResource> getKeys() {
+		return new HashSet<IResource>(this.data.keySet());
 	}
 	public Set<Entry<IResource, Integer>> getValues() {
-		return this.map.entrySet();
+		Map<IResource, Integer> values = new LinkedHashMap<IResource, Integer>();
+		for (Entry<IResource, ResourceData> ee : this.data.entrySet()) {
+			values.put(ee.getKey(), ee.getValue().value);
+		}
+		return values.entrySet();
 	}
 
 	@Override
 	public String toString() {
-		return this.map.toString();
+		return this.data.toString(); // or getValues().toString() ?
 	}
 	public boolean hasResources(ResourceMap cost) {
 		for (Entry<IResource, Integer> ee : cost.getValues()) {
@@ -86,14 +98,22 @@ public final class ResourceMap {
 		}
 		return true;
 	}
-	@Deprecated
+	
 	public void change(ResourceMap modifications, int multiplier) {
 		for (Entry<IResource, Integer> ee : modifications.getValues()) {
+			if (ee.getValue() == null) continue;
 			this.changeResources(ee.getKey(), ee.getValue() * multiplier);
 		}
 	}
+	
 	public void setListener(IResource type, ResourceListener listener) {
-		this.listeners.put(type, listener);
+		dataFor(type).listener = listener;
+	}
+
+	public void clamp() {
+		for (Entry<IResource, ResourceData> ee : this.data.entrySet()) {
+			ee.getValue().clamp();
+		}
 	}
 	
 }

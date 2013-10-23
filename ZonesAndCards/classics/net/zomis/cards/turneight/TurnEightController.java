@@ -9,7 +9,7 @@ import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
@@ -17,7 +17,7 @@ import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.ai.CardAI;
 
 
-public class TurnEightController implements AIHandler {
+public class TurnEightController implements ActionHandler {
 	static final int EIGHT = 8;
 
 	@Override
@@ -87,7 +87,7 @@ public class TurnEightController implements AIHandler {
 	public StackAction click(Card card) {
 		TurnEightGame game = (TurnEightGame) card.getGame();
 		if (card.getModel() instanceof SuiteModel) {
-			return new SetColorAction(game, (SuiteModel)card.getModel());
+			return new SetColorAction(game, ((SuiteModel)card.getModel()).getSuite());
 		}
 		else if (isNextTurn(card)) {
 			return new NextTurnAction(game);

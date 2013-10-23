@@ -2,8 +2,8 @@ package net.zomis.cards.util;
 
 public class ResourceType implements IResource {
 
-	private String	name;
-	private int	mDefault;
+	private final String	name;
+	private final int	mDefault;
 
 	public ResourceType(String name) {
 		this(name, 0);
@@ -13,18 +13,6 @@ public class ResourceType implements IResource {
 		this.mDefault = defaultValue;
 	}
 	
-	@Override
-	public int getDefault() {
-		return mDefault;
-	}
-	public ResourceType setDefault(int mDefault) {
-		this.mDefault = mDefault;
-		return this;
-	}
-	public IResource unmodifiable() {
-		return new UnmodifiableResource(this.name, this.getDefault());
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -32,6 +20,10 @@ public class ResourceType implements IResource {
 	@Override
 	public String toString() {
 		return this.getName();
+	}
+	@Override
+	public ResourceData createData(IResource resource) {
+		return ResourceData.forResource(resource, this.mDefault);
 	}
 	
 }

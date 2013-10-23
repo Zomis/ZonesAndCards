@@ -4,8 +4,11 @@ import static org.junit.Assert.*;
 
 import java.util.Map.Entry;
 
+import net.zomis.cards.cwars2.CWars2AI_InstantWin;
+import net.zomis.cards.cwars2.CWars2Card;
 import net.zomis.cards.cwars2.CWars2CardFactory;
 import net.zomis.cards.cwars2.CWars2Game;
+import net.zomis.cards.cwars2.CWars2PlayAction;
 import net.zomis.cards.cwars2.CWars2Player;
 import net.zomis.cards.cwars2.CWars2Res;
 import net.zomis.cards.cwars2.CWars2Res.Producers;
@@ -16,8 +19,8 @@ import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.IResource;
+import net.zomis.cards.util.ResourceData;
 import net.zomis.cards.util.ResourceMap;
-import net.zomis.custommap.CustomFacade;
 
 import org.junit.Test;
 
@@ -46,7 +49,40 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		assertResourceMapNoStrategies(game.getCurrentPlayer().getResources());
 		assertResourceMapNoListeners(game.getCurrentPlayer().getResources());
 	}
-	
+
+	@Test
+	public void reverseMagic() {
+		game.getCurrentPlayer().getResources().set(Resources.CRYSTALS, 42);
+		game.getCurrentPlayer().getResources().set(Resources.BRICKS, 42);
+		performCard("Magic Defense");
+		skipTurn();
+		ResourceMap old = getResources();
+		performCard("Reverse");
+		assertResourceDifference(old, game.getCurrentPlayer().getNextPlayer().getResources(), CWars2Res.WALL, -4);
+		
+		skipTurn();
+		performCard("Magic Weapons");
+		game.getCurrentPlayer().getResources().set(Resources.BRICKS, 42);
+		game.getCurrentPlayer().getResources().set(CWars2Res.WALL, 42);
+		old = getResources();
+		performCard("Reverse");
+		assertResourceDifference(old, game.getCurrentPlayer().getNextPlayer().getResources(), CWars2Res.WALL, -4);
+//		game.getCurrentPlayer().getResources().set(CWars2Res.WALL, 20);
+//		skipTurn();
+//		performCard("Battering Ram");
+	}
+	private void assertResources() {
+		for (Player player : game.getPlayers()) {
+			for (Entry<IResource, ResourceData> ee : player.getResources().getData().entrySet()) {
+				if (ee.getKey() instanceof Resources)
+					assertTrue(ee.getValue() + " of " + ee.getKey() + player.getResources(), ee.getValue().getRealValueOrDefault() >= 0);
+				if (ee.getKey() instanceof Producers)
+					assertTrue(ee.getValue() + " of " + ee.getKey() + player.getResources(), ee.getValue().getRealValueOrDefault() >= 1);
+				if (ee.getKey() == CWars2Res.WALL)
+					assertTrue(ee.getValue() + " of " + ee.getKey() + player.getResources(), ee.getValue().getRealValueOrDefault() >= 0);
+			}
+		}
+	}
 	@Test
 	public void magicWeapons() {
 		int total = getLife();
@@ -95,6 +131,32 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	}
 	
 	@Test
+	public void gest() {
+		game.getCurrentPlayer().getResources().set(Resources.CRYSTALS, 2);
+		game.getCurrentPlayer().getResources().set(Resources.CRYSTALS.getProducer(), 1);
+		skipTurn();
+		game.getCurrentPlayer().getResources().set(Resources.CRYSTALS, 5);
+		performCard("Remove " + Resources.CRYSTALS);
+		assertEquals(1, getResources().getResources(Resources.CRYSTALS));
+	}
+	@Test
+	public void aiTest() {
+		game.getCurrentPlayer().setAI(new CWars2AI_InstantWin());
+		Player pl = game.getCurrentPlayer();
+		ResourceMap res = getResources();
+		
+		StackAction act = game.getCurrentPlayer().getAI().play(game.getCurrentPlayer()).getField();
+//		StackAction act = game.callPlayerAI();
+		CWars2PlayAction play = (CWars2PlayAction) act;
+		CWars2Card model = (CWars2Card) play.getCard().getModel();
+		assertEquals("Archer", model.getName());
+		assertResourceDifference(res, pl.getResources(), CWars2Res.CASTLE, 0);
+		
+		game.callPlayerAI();
+		game.callPlayerAI();
+		assertResourceDifference(res, pl.getResources(), CWars2Res.CASTLE, 0);
+	}
+	@Test
 	public void thief() {
 		game.getCurrentPlayer().getResources().set(Resources.WEAPONS, 17);
 		game.getCurrentPlayer().getNextPlayer().getResources().set(Resources.BRICKS, 42);
@@ -113,7 +175,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		Resources res = Resources.BRICKS;
 		game.getCurrentPlayer().getResources().set(res, 8);
 		game.getCurrentPlayer().getResources().set(res.getProducer(), 1);
-		StackAction action = game.getAIHandler().click(findCard("Sacrifice " + res.getProducer()));
+		StackAction action = game.getActionHandler().click(findCard("Sacrifice " + res.getProducer()));
 		assertFalse(action.actionIsAllowed());
 	}
 	@Test
@@ -221,6 +283,15 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	}
 
 	@Test
+	public void sacrifice() {
+		cheat();
+		game.getCurrentPlayer().getResources().set(Producers.WIZARDS, 4);
+		performCard("Sacrifice Wizards");
+		skipTurn();
+		performCard("Sacrifice Wizards");
+		assertEquals(1, getResources().getResources(Producers.WIZARDS));
+	}
+	@Test
 	public void roadblock() {
 		ResourceMap oldResources = getResources();
 		skipTurn();
@@ -260,12 +331,14 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		CWars2Player currPlayer = game.getCurrentPlayer();
 		assertFalse(game.isDiscardMode());
 		assertEquals(0, game.getDiscarded());
-		StackAction act = game.getAIHandler().click(findCard(name));
-		CustomFacade.getLog().i(game.getActivePhase().toString() + " Perform " + act);
+		StackAction act = game.getActionHandler().click(findCard(name));
+//		CustomFacade.getLog().i(game.getActivePhase().toString() + " Perform " + act);
 		assertFalse(game.isDiscardMode());
 		assertEquals(0, game.getDiscarded());
+		assertResources();
 		game.addAndProcessStackAction(act);
-		CustomFacade.getLog().i(game.getActivePhase().toString());
+		assertResources();
+//		CustomFacade.getLog().i(game.getActivePhase().toString());
 		assertTrue("Action could not be performed: " + act + " for card " + name + " because of " + act.getMessage(), act.actionIsPerformed());
 		assertNotSame("Current player did not change, was " + currPlayer + " action " + act + " message is " + act.getMessage(), currPlayer, game.getCurrentPlayer());
 	}
@@ -313,7 +386,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		ResourceMap res = game.getCurrentPlayer().getResources();
 
 		String data = CardsIO.save(game);
-		CustomFacade.getLog().i("Data is: " + data);
+//		CustomFacade.getLog().i("Data is: " + data);
 		CWars2Game loaded = CardsIO.load(data, CWars2Game.class);
 
 		assertEquals(game.getCurrentPlayer().getName(), loaded.getCurrentPlayer().getName());

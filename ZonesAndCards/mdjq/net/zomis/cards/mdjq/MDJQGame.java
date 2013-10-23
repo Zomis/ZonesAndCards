@@ -22,7 +22,7 @@ import net.zomis.cards.mdjq.phases.MDJQUntapPhase;
 import net.zomis.cards.mdjq.phases.MDJQUpkeepPhase;
 import net.zomis.cards.mdjq.scorers.CardNameScorer;
 import net.zomis.cards.mdjq.scorers.IsColorScorer;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
@@ -117,7 +117,7 @@ public class MDJQGame extends CardGame {
 	}
 	@Override
 	public void executeEvent(IEvent ev) {
-		CustomFacade.getLog().d("Execute event: " + ev);
+//		CustomFacade.getLog().d("Execute event: " + ev);
 		if (ev instanceof ZoneChangeEvent) {
 			ZoneChangeEvent eev = (ZoneChangeEvent) ev;
 			ev = new MDJQZoneChangeEvent(eev.getCard(), eev.getFromCardZone(), eev.getToCardZone());
@@ -159,13 +159,13 @@ public class MDJQGame extends CardGame {
 	}
 	
 	@Override
-	public AIHandler getAIHandler() {
+	public ActionHandler getActionHandler() {
 		return new MDJQHandler();
 	}
 	
 	@Override
 	public void addStackAction(StackAction a) {
-		CustomFacade.getLog().d("Add to Stack: " + a);
+//		CustomFacade.getLog().d("Add to Stack: " + a);
 		
 		if (a instanceof InvalidStackAction)
 			return;
@@ -191,10 +191,6 @@ public class MDJQGame extends CardGame {
 
 	public boolean isEmptyStack() {
 		return this.getStack().isEmpty();
-	}
-
-	public void addCard(MDJQCardModel card) {
-		super.addCard(card);
 	}
 
 	@Override

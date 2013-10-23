@@ -29,4 +29,9 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 			game.nextPhase();
 	}
 	
+	@Override
+	public String toString() {
+		return "Discard " + this.getCard().getModel().getName();
+	}
+	
 }

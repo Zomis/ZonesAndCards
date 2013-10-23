@@ -16,6 +16,18 @@ public class ZoneMoveAction extends StackAction {
 		this.source = card.getCurrentZone();
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((card == null) ? 0 : card.hashCode());
+//		result = prime * result
+//				+ ((destination == null) ? 0 : destination.hashCode());
+//		result = prime * result + (sendToTop ? 1231 : 1237);
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		return result;
+	}
+
 	public Card getCard() {
 		return card;
 	}

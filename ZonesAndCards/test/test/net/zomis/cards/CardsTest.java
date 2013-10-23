@@ -28,6 +28,10 @@ public abstract class CardsTest<E> {
 		}
 	}
 
+	protected void log(String string) {
+		CustomFacade.getLog().i(string);
+	}
+
 	protected void assertResourceMapNoStrategies(ResourceMap resources) {
 		for (Entry<IResource, Integer> ee : resources.getValues()) {
 			assertEquals("A strategy is messing with the values for " + ee.getKey() + " in resource map " + resources,

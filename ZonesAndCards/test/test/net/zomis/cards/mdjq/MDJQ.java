@@ -19,7 +19,7 @@ public class MDJQ extends MDJQTest {
 		assertBattlefieldSize(1);
 		
 		// Tap land for mana
-		StackAction sa = game.getAIHandler().click(game.getBattlefield().getBottomCard());
+		StackAction sa = game.getActionHandler().click(game.getBattlefield().getBottomCard());
 		assertTrue(sa.actionIsAllowed());
 		game.addAndProcessStackAction(sa);
 		assertMana(game.getCurrentPlayer(), MColor.WHITE, 1);
@@ -34,24 +34,24 @@ public class MDJQ extends MDJQTest {
 		
 		nextPhaseUntil(MDJQUntapPhase.class);
 		nextPhaseUntil(MDJQMainPhase.class);
-		log("Player 2");
+//		log("Player 2");
 		
 		assertZoneSize(8, game.getCurrentPlayer().getHand());
 		currentPlayerPlayCard("Swamp");
 		assertBattlefieldSize(3);
-		game.addAndProcessStackAction(game.getAIHandler().click(game.getBattlefield().getBottomCard()));
+		game.addAndProcessStackAction(game.getActionHandler().click(game.getBattlefield().getBottomCard()));
 		assertMana(game.getCurrentPlayer(), MColor.BLACK, 1);
 		
 		nextPhaseUntil(MDJQUntapPhase.class);
 		nextPhaseUntil(MDJQMainPhase.class);
 		logHand();
-		log("Player 1 again");
+//		log("Player 1 again");
 		
 		// Play a card which will trigger an ability
 		assertZoneSize(6, game.getCurrentPlayer().getHand());
 		currentPlayerPlayCard("Test");
 		assertStackSize(1);
-		log("Now processing special");
+//		log("Now processing special");
 		game.processStackAction();
 		assertStackSize(1);
 		logStack();

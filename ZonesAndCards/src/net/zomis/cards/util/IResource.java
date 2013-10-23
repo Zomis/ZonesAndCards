@@ -1,7 +1,5 @@
 package net.zomis.cards.util;
 
 public interface IResource {
-
-	int getDefault();
-
+	ResourceData createData(IResource resource);
 }

@@ -9,23 +9,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import net.zomis.cards.events.CardCreatedEvent;
+import net.zomis.events.IEvent;
+
 public class CardZone implements Comparable<CardZone> {
 
 	CardGame game;
 	
 	private final Map<Player, Boolean> known = new HashMap<Player, Boolean>();
+	private final LinkedList<Card> cards = new LinkedList<Card>();
+	private final String name;
 
 	private boolean	knownGlobal;
 
-	private final LinkedList<Card> cards = new LinkedList<Card>();
-
-	private String name;
-
 	public CardZone(String zoneName) {
-		this.setName(zoneName);
-	}
-	public void setName(String name) {
-		this.name = name;
+		this.name = zoneName;
 	}
 	public void setGloballyKnown(boolean knowledge) {
 		this.knownGlobal = knowledge;
@@ -71,11 +69,19 @@ public class CardZone implements Comparable<CardZone> {
 	public void sort(Comparator<Card> comparator) {
 		Collections.sort(this.cards, comparator);
 	}
-	public void createCardOnTop(CardModel gcm) {
-		this.cards.addFirst(gcm.createCardInternal(this));
+	public void createCardOnTop(CardModel cardModel) {
+		Card card = cardModel.createCardInternal(this);
+		this.cards.addFirst(card);
+		this.executeEvent(new CardCreatedEvent(card));
 	}
-	public void createCardOnBottom(CardModel gcm) {
-		this.cards.addFirst(gcm.createCardInternal(this));
+	private void executeEvent(IEvent event) {
+		if (this.game != null)
+			this.game.executeEvent(event);
+	}
+	public void createCardOnBottom(CardModel cardModel) {
+		Card card = cardModel.createCardInternal(this);
+		this.cards.addLast(card);
+		this.executeEvent(new CardCreatedEvent(card));
 	}
 	public Card getTopCard() {
 		return this.cards.peekFirst();
@@ -93,7 +99,7 @@ public class CardZone implements Comparable<CardZone> {
 	public CardZone extractBottomCards(int number) {
 		CardZone copy = this.createEmptyCopy();
 		for (int i = 0; i < number; i++) {
-			this.getTopCard().zoneMoveOnTop(copy);
+			this.getBottomCard().zoneMoveOnTop(copy);
 		}
 		return copy;
 	}
@@ -111,9 +117,16 @@ public class CardZone implements Comparable<CardZone> {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (knownGlobal ? 1231 : 1237);
+		result = prime * result + (name.hashCode());
+		return result;
+	}
 	private CardZone createEmptyCopy() {
 		CardZone zone = new CardZone(this.getName() + "-Copy");
-//		this.getGame().addZone(zone);
 		zone.setGloballyKnown(this.knownGlobal);
 		for (Entry<Player, Boolean> ee : this.known.entrySet()) {
 			zone.setKnown(ee.getKey(), ee.getValue());

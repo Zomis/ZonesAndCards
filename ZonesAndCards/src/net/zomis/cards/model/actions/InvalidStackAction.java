@@ -11,7 +11,7 @@ public class InvalidStackAction extends StackAction {
 	}
 	
 	public InvalidStackAction() {
-		this.description = super.toString();
+		this.description = "No description";
 	}
 	
 	@Override
@@ -25,7 +25,7 @@ public class InvalidStackAction extends StackAction {
 	
 	@Override
 	public String toString() {
-		return this.getClass().getCanonicalName() + ": " + this.description;
+		return this.getClass().getSimpleName() + ": " + this.description;
 	}
 	
 }

@@ -1,15 +1,26 @@
 package test.net.zomis.cards;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 import net.zomis.aiscores.ParamAndField;
 import net.zomis.cards.idiot.IdiotGame;
 import net.zomis.cards.idiot.IdiotHandler.IdiotGameAI;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.custommap.CustomFacade;
 
 import org.junit.Test;
 
 public class IdiotPlayAGameAndListen extends CardsTest<IdiotGame> { // Deckard Cain reference just for fun
+	@Test
+	public void playOrganized() {
+		game = new IdiotGame();
+		game.setRandomSeed(42);
+		game.startGame();
+		
+		game.addAndProcessStackAction(game.getActionHandler().click(game.getDeck().getTopCard()));
+		assertEquals(48, game.getDeck().size());
+	}
+	
 	@Test(timeout = 20000)
 	public void playMany() {
 		int win = 0;
@@ -21,9 +32,9 @@ public class IdiotPlayAGameAndListen extends CardsTest<IdiotGame> { // Deckard C
 			if (value == 5) almost++;
 			if (value == 6) close++;
 		}
-		System.out.println("4 is " + win);
-		System.out.println("5 is " + almost);
-		System.out.println("6 is " + close);
+		CustomFacade.getLog().i("4 is " + win);
+		CustomFacade.getLog().i("5 is " + almost);
+		CustomFacade.getLog().i("6 is " + close);
 	}
 	@Override
 	protected void onBefore() {
@@ -38,7 +49,7 @@ public class IdiotPlayAGameAndListen extends CardsTest<IdiotGame> { // Deckard C
 		game.startGame();
 		
 		IdiotGameAI ai = new IdiotGameAI(game);
-		Assert.assertNotNull(game.getCurrentPlayer());
+		assertNotNull(game.getCurrentPlayer());
 		ParamAndField<Player, StackAction> move;
 		boolean allowed;
 		do {
@@ -50,7 +61,7 @@ public class IdiotPlayAGameAndListen extends CardsTest<IdiotGame> { // Deckard C
 		}
 		while (allowed);
 		
-		Assert.assertTrue(game.isGameOver());
+		assertTrue(game.isGameOver());
 		
 		return game.getCardsLeft();
 //		System.out.println("Cards left: " + game.getCardsLeft());

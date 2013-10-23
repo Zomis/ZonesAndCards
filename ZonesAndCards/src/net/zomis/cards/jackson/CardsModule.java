@@ -7,7 +7,6 @@ import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.UnmodifiableResource;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -30,14 +29,10 @@ public class CardsModule extends SimpleModule {
 		context.setMixInAnnotations(CardModel.class, MixCardModel.class);
 		context.setMixInAnnotations(Player.class, MixPlayer.class);
 		
-//		context.setMixInAnnotations(CWars2Player.class, MixPlayer.class);
-//		context.setMixInAnnotations(CWars2Card.class, MixCardModel.class);
-		
 		context.setMixInAnnotations(ResourceMap.class, MixResource.class);
 		context.setMixInAnnotations(CardAI.class, MixAI.class);
-		context.setMixInAnnotations(UnmodifiableResource.class, MixUnmodifiable.class);
+//		context.setMixInAnnotations(UnmodifiableResource.class, MixUnmodifiable.class);
 //		context.setMixInAnnotations(UnmodifiableResource.class, MixAddObjectId.class);
-//		context.setMixInAnnotations(IResource.class, MixResource.class);
 	}
 
 }

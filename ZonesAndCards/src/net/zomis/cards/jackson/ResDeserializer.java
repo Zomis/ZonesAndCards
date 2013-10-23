@@ -2,7 +2,7 @@ package net.zomis.cards.jackson;
 
 import java.io.IOException;
 
-import net.zomis.cards.jackson.MixResource.ResourceData;
+import net.zomis.cards.jackson.MixResource.ResourceSaveData;
 import net.zomis.cards.jackson.MixResource.ResourceMapSave;
 import net.zomis.cards.util.ResourceMap;
 
@@ -22,7 +22,7 @@ public class ResDeserializer extends StdDeserializer<ResourceMap> {
 	public ResourceMap deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
 		ResourceMap map = new ResourceMap();
 		ResourceMapSave data = parser.readValueAs(ResourceMapSave.class);
-		for (ResourceData ee : data.getData()) {
+		for (ResourceSaveData ee : data.getData()) {
 			map.set(ee.resource, ee.value);
 			map.setListener(ee.resource, ee.listener);
 			map.setResourceStrategy(ee.resource, ee.strategy);

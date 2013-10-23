@@ -29,4 +29,9 @@ public class CardModel implements Comparable<CardModel> {
 	public String toString() {
 		return this.getName();
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.getName().hashCode();
+	}
 }

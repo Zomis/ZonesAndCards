@@ -1,11 +1,14 @@
 package test.net.zomis.cards.jackson;
 
 import static org.junit.Assert.*;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import net.zomis.cards.cwars2.CWars2AI;
 import net.zomis.cards.cwars2.CWars2Game;
 import net.zomis.cards.jackson.CardsIO;
 import net.zomis.cards.util.ResourceMap;
-import net.zomis.custommap.CustomFacade;
 
 import org.junit.Test;
 
@@ -25,7 +28,7 @@ public class CardsLoadSaveTest extends CardsUntypedTest {
 		ResourceMap res = game.getCurrentPlayer().getResources();
 
 		String data = CardsIO.save(game);
-		CustomFacade.getLog().i("Data is: " + data);
+//		CustomFacade.getLog().i("Data is: " + data);
 		CWars2Game loaded = CardsIO.load(data, CWars2Game.class);
 
 		assertEquals(game.getCurrentPlayer().getName(), loaded.getCurrentPlayer().getName());
@@ -35,6 +38,12 @@ public class CardsLoadSaveTest extends CardsUntypedTest {
 		assertNotSame(game.getCurrentPlayer(), loaded.getCurrentPlayer());
 		assertNotSame(res, loaded.getCurrentPlayer().getResources());
 		assertResourcesEqual(res, loaded.getCurrentPlayer().getResources());
+		
+		NumberFormat my = NumberFormat.getInstance(Locale.US);
+		my.setMaximumFractionDigits(2);
+		my.setMinimumFractionDigits(2);
+		String str = my.format(123456.1234);
+		System.out.println(str);
 	}
 	
 }

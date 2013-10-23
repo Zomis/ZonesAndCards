@@ -14,7 +14,6 @@ import net.zomis.aiscores.ScoreUtils;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.custommap.CustomFacade;
 
 public class CardAI implements ScoreStrategy<Player, StackAction> {
 
@@ -51,7 +50,7 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 		ParamAndField<Player, StackAction> best = ScoreUtils.pickBest(this.createScoreProvider(), 
 				player, player.getGame().getRandom());
 		if (best == null || best.getFieldScore().getScore() < this.minScore) {
-			CustomFacade.getLog().w("Best is " + best + " which was not more than " + minScore + " by " + this);
+//			CustomFacade.getLog().w("Best is " + best + " which was not more than " + minScore + " by " + this);
 			return new ParamAndField<Player, StackAction>(player, nullAction(player));
 		}
 		return best;
@@ -59,7 +58,7 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 	
 	@Override
 	public Collection<StackAction> getFieldsToScore(Player params) {
-		return params.getGame().getAIHandler().getAvailableActions(params);
+		return params.getGame().getActionHandler().getAvailableActions(params);
 	}
 
 	@Override

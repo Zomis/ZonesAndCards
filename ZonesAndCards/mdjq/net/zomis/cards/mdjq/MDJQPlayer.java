@@ -11,13 +11,12 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 	private final MDJQZone library;
 	private final MDJQZone hand;
 	private final MDJQZone graveyard;
-	private final ResourceMap manaPool;
 	private int	life = 20;
 	private int	landsPlayed;
 //	private final MDJQZone battlefield;
 	
 	public ResourceMap getManaPool() {
-		return manaPool;
+		return getResources();
 	}
 	
 	public MDJQPlayer(String name) {
@@ -27,7 +26,6 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 		this.hand.setGloballyKnown(true);
 		this.hand.setKnown(this, true);
 		this.library = new MDJQZone("Library-" + name, ZoneType.LIBRARY, this);
-		this.manaPool = new ResourceMap();
 		this.setName(name);
 	}
 	

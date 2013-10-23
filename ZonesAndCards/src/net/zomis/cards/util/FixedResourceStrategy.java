@@ -10,7 +10,7 @@ public class FixedResourceStrategy implements ResourceStrategy {
 	}
 	
 	@Override
-	public int getResourceAmount(IResource type, ResourceMap map) {
+	public int getResourceAmount(ResourceData type, ResourceMap map) {
 		return value;
 	}
 

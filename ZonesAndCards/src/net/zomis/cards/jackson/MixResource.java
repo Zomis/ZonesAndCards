@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.zomis.cards.util.IResource;
+import net.zomis.cards.util.ResourceData;
 import net.zomis.cards.util.ResourceListener;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.cards.util.ResourceStrategy;
@@ -24,44 +25,42 @@ public abstract class MixResource {
 	
 	public static final class ResourceMapSave {
 		@JsonProperty
-		private final ArrayList<ResourceData> data;
-		private final Map<IResource, ResourceData> resources;
+		private final ArrayList<ResourceSaveData> data;
+		private final Map<IResource, ResourceSaveData> resources;
 		public ResourceMapSave() {
 			this.data = null;
 			this.resources = null;
 		}
 		public ResourceMapSave(ResourceMap map) {
-			this.data = new ArrayList<ResourceData>();
-			this.resources = new HashMap<IResource, MixResource.ResourceData>();
+			this.data = new ArrayList<ResourceSaveData>();
+			this.resources = new HashMap<IResource, MixResource.ResourceSaveData>();
 			
-			for (Entry<IResource, Integer> ee : map.getValues()) {
-				dataFor(ee.getKey()).value = ee.getValue();
-			}
-			for (Entry<IResource, ResourceListener> ee : map.getListeners().entrySet()) {
-				dataFor(ee.getKey()).listener = ee.getValue();
-			}
-			for (Entry<IResource, ResourceStrategy> ee : map.getStrategies().entrySet()) {
-				dataFor(ee.getKey()).strategy = ee.getValue();
+			for (Entry<IResource, ResourceData> ee : map.getData().entrySet()) {
+				ResourceSaveData save = dataFor(ee.getKey());
+				save.listener = ee.getValue().getListener();
+				save.resource = ee.getValue().getResource();
+				save.value = ee.getValue().getRealValue();
+				save.strategy = ee.getValue().getStrategy();
 			}
 		}
-		private ResourceData dataFor(IResource key) {
-			ResourceData map = resources.get(key);
+		private ResourceSaveData dataFor(IResource key) {
+			ResourceSaveData map = resources.get(key);
 			if (map == null) {
-				map = new ResourceData(key);
+				map = new ResourceSaveData(key);
 				resources.put(key, map);
 				data.ensureCapacity(data.size() + 1);
 				data.add(map);
 			}
 			return map;
 		}
-		public List<ResourceData> getData() {
+		public List<ResourceSaveData> getData() {
 			return data;
 		}
 	}
 	
-	public static class ResourceData {
-		public ResourceData() {}
-		public ResourceData(IResource key) {
+	public static class ResourceSaveData {
+		public ResourceSaveData() {}
+		public ResourceSaveData(IResource key) {
 			this.resource = key;
 		}
 		public IResource resource;

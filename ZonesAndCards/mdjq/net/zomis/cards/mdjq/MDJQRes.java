@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.zomis.cards.util.IResource;
+import net.zomis.cards.util.ResourceData;
 import net.zomis.cards.util.ResourceMap;
 import net.zomis.cards.util.ResourceType;
 
@@ -66,9 +67,10 @@ public final class MDJQRes {
 	}
 	public static enum MColor implements IResource {
 		COLORLESS, WHITE, BLUE, BLACK, RED, GREEN;
+
 		@Override
-		public int getDefault() {
-			return 0;
+		public ResourceData createData(IResource resource) {
+			return ResourceData.forResource(resource);
 		}
 	}
 
@@ -99,9 +101,11 @@ public final class MDJQRes {
 		}
 		
 		for (Entry<IResource, Integer> ee : changes.getValues()) {
+			if (ee.getValue() == null)
+				continue;
 			if (ee.getValue() == 0)
 				continue;
-			if (ee.getKey() == getMana(MColor.COLORLESS)) {
+			if (ee.getKey() == MColor.COLORLESS) {
 				colorless = ee.getValue();
 			}
 			else {
@@ -118,16 +122,13 @@ public final class MDJQRes {
 			
 			int colorChange = Math.min(colorless, ee.getValue());
 			manaPool.changeResources(ee.getKey(), -colorChange);
-			changes.changeResources(colorlessMana(), -colorChange);
+			changes.changeResources(MColor.COLORLESS, -colorChange);
 			colorless -= colorChange;
 		}
 		
-		manaPool.changeResources(colorlessMana(), colorless * multiplier);
+		manaPool.changeResources(MColor.COLORLESS, colorless * multiplier);
 	}
 
-	private static IResource colorlessMana() {
-		return getMana(MColor.COLORLESS);
-	}
 	public static ResourceMap manaCost(MColor color, int value) {
 		return new ResourceMap().set(color, value);
 	}

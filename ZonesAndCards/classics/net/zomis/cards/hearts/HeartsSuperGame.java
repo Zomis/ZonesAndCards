@@ -1,7 +1,5 @@
 package net.zomis.cards.hearts;
 
-import java.util.Arrays;
-
 import net.zomis.IndexIterator;
 import net.zomis.IndexIteratorStatus;
 import net.zomis.cards.classics.CardPlayer;
@@ -10,14 +8,13 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.IResource;
 import net.zomis.cards.util.ResourceType;
-import net.zomis.custommap.CustomFacade;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
 
 public class HeartsSuperGame extends HeartsGame implements EventListener {
 
 	private HeartsGiveDirection currentGive;
-	private static final IResource score = new ResourceType("Points").setDefault(0).unmodifiable();
+	private static final IResource score = new ResourceType("Points", 0);
 	
 	public HeartsSuperGame(String[] names) {
 		super(HeartsGiveDirection.LEFT);
@@ -52,14 +49,14 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 	@Event
 	public void onGameEnd(GameOverEvent event) {
 		if (event.getGame() == this) {
-			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
+//			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
 			int distributedPoints = 0;
 			for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
 				int inc = this.calcRealPoints((CardPlayer) player.getValue());
 				distributedPoints += inc;
 				player.getValue().getResources().changeResources(score, inc);
 			}
-			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.getScores()));
+//			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.getScores()));
 			if (distributedPoints != 26 && distributedPoints != 26 * (this.getPlayers().size() - 1))
 				throw new AssertionError("Unexpected distributed points: " + distributedPoints);
 			

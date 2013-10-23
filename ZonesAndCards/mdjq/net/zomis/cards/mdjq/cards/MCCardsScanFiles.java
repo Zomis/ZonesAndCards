@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import net.zomis.custommap.CustomFacade;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -45,7 +43,7 @@ public class MCCardsScanFiles {
 					
 					str = scan.findWithinHorizon(searchName, (int) file.length());
 					if (str != null) {
-						CustomFacade.getLog().i("Scanning " + file.getName() + ": " + str);
+//						CustomFacade.getLog().i("Scanning " + file.getName() + ": " + str);
 						scan.close();
 						MDJQJackCards value = mapper().readValue(file, MDJQJackCards.class);
 						value.select(cardName);

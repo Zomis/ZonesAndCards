@@ -23,7 +23,7 @@ public class IdiotGame extends ClassicGame {
 	
 	public IdiotGame() {
 		super(AceValue.HIGH);
-		this.setAIHandler(new IdiotHandler());
+		this.setActionHandler(new IdiotHandler());
 		this.zones = new ClassicCardZone[Suite.suiteCount(false)];
 		this.deck = new ClassicCardZone("Deck");
 		addZone(deck);
@@ -50,7 +50,7 @@ public class IdiotGame extends ClassicGame {
 	@Override
 	public StackAction processStackAction() {
 		StackAction sup = super.processStackAction();
-		if (ZomisList.filter2(this.getAIHandler().getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
+		if (ZomisList.filter2(this.getActionHandler().getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
 			this.endGame();
 		return sup;
 	}

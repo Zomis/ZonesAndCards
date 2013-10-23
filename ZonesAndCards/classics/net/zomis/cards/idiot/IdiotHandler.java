@@ -7,7 +7,7 @@ import net.zomis.ZomisList;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.scorers.SubclassFixedScorer;
 import net.zomis.cards.classics.ClassicCardZone;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
@@ -15,7 +15,7 @@ import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
 
-public class IdiotHandler implements AIHandler {
+public class IdiotHandler implements ActionHandler {
 
 	public static class IdiotGameAI extends CardAI {
 		public IdiotGameAI(CardGame game) {
@@ -37,7 +37,7 @@ public class IdiotHandler implements AIHandler {
 		}
 		
 		if (card.getCurrentZone().cardList().peekLast() != card)
-			return new InvalidStackAction();
+			return new InvalidStackAction("Not last card");
 		
 		RemoveAction remove = new RemoveAction((ClassicCardZone) card.getCurrentZone());
 		if (remove.actionIsAllowed())
@@ -50,7 +50,7 @@ public class IdiotHandler implements AIHandler {
 			}
 		}
 		if (random.isEmpty())
-			return new InvalidStackAction();
+			return new InvalidStackAction("Nowhere to move");
 		return ZomisList.getRandom(random);
 	}
 

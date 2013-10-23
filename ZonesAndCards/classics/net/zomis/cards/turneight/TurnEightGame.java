@@ -6,7 +6,7 @@ import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.AIHandler;
+import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
@@ -63,7 +63,6 @@ public class TurnEightGame extends ClassicGame {
 		this.addZone(deck);
 		this.addZone(discard);
 		this.deck.addDeck(this, 0);
-		this.deck.shuffle();
 		
 		this.drawCard = new CardModel("Draw card");
 		this.nextTurn = new CardModel("Next turn");
@@ -83,6 +82,7 @@ public class TurnEightGame extends ClassicGame {
 	
 	@Override
 	public void onStart() {
+		this.deck.shuffle();
 		for (int i = 0; i < NUM_CARDS; i++) {
 			for (Player player : new CastedIterator<Player, CardPlayer>(this.getPlayers())) {
 				deck.getTopCard().zoneMoveOnBottom(((CardPlayer) player).getHand());
@@ -93,9 +93,7 @@ public class TurnEightGame extends ClassicGame {
 		do {
 			if (firstCardModel != null) {
 				CustomFacade.getLog().i("First card was " + firstCardModel + ", reshuffling.");
-				for (Card card : this.discard.cardList()) {
-					card.zoneMoveOnBottom(deck);
-				}
+				discard.moveToBottomOf(deck);
 				deck.shuffle();
 			}
 			Card firstCard = deck.cardList().peek();
@@ -120,7 +118,7 @@ public class TurnEightGame extends ClassicGame {
 	}
 	
 	@Override
-	public AIHandler getAIHandler() {
+	public ActionHandler getActionHandler() {
 		return new TurnEightController();
 	}
 	
@@ -177,19 +175,7 @@ public class TurnEightGame extends ClassicGame {
 			this.deck.shuffle();
 		}
 		if (this.deck.getTopCard() == null) {
-			if (this.discard.cardList().size() > 1)
-				throw new AssertionError("Discard not empty");
-			
-			int hands = 0;
-			for (Player pl : this.getPlayers()) {
-				CardPlayer pl2 = (CardPlayer) pl;
-				hands += pl2.getHand().size();
-			}
-			
-			if (hands + this.discard.cardList().size() != 52)
-				throw new AssertionError("Who is sitting on all the cards?");
-			
-			throw new AssertionError("How on earth can top card be null? " + this.getPlayers());
+			throw new AssertionError("How on earth can top card be null? Players: " + this.getPlayers() + " Discard pile is " + this.discard.cardList());
 		}
 		this.deck.getTopCard().zoneMoveOnBottom(player.getHand());
 	}
