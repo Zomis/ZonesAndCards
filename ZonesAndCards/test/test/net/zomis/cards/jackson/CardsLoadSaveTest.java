@@ -19,6 +19,7 @@ public class CardsLoadSaveTest extends CardsUntypedTest {
 	public void cw2game() {
 		CWars2Game game = new CWars2Game();
 		game.setRandomSeed(42);
+		game.addDefaultDecks();
 		game.startGame();
 		CWars2AI ai = new CWars2AI();
 		game.callPlayerAI(ai);

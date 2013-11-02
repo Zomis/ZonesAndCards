@@ -236,6 +236,32 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 		assertEquals(old - 5, getLife());
 	}
 	@Test
+	public void babylonEffect() {
+		CWars2Card cardModel = (CWars2Card) findCard("Babylon").getModel();
+		
+		for (Entry<IResource, Integer> ee : cardModel.getOpponentEffects().getValues()) {
+			assertEquals(null, ee.getValue());
+		}
+		
+		ResourceMap map = new ResourceMap();
+		map.change(cardModel.getOpponentEffects(), 1);
+		assertEquals(null, map.dataFor(CWars2Res.CASTLE).getRealValue());
+		assertEquals(30, cardModel.getEffects().getResources(CWars2Res.CASTLE));
+		map.change(cardModel.getEffects(), 1);
+		assertEquals((int) 30, (int) map.dataFor(CWars2Res.CASTLE).getRealValue());
+		
+		ResourceMap map2 = new ResourceMap(cardModel.getEffects());
+		map2.change(cardModel.getOpponentEffects(), 1);
+		
+		ResourceMap map3 = new ResourceMap(cardModel.getOpponentEffects());
+		map3.change(cardModel.getEffects(), 1);
+		assertResourcesEqual(map2, map3);
+		
+		assertEquals(cardModel.getEffects().getResources(CWars2Res.CASTLE), map2.getResources(CWars2Res.CASTLE));
+		
+		assertResourcesEqual(map2, map);
+	}
+	@Test
 	public void magicDefenseThenWeapons() {
 		int old = getLife();
 		cheat();
@@ -357,6 +383,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	protected void onBefore() {
 		game = new CWars2Game();
 		new CWars2CardFactory("Dummy").addTo(game);
+		game.addDefaultDecks();
 		game.startGame();
 		for (Player p : game.getPlayers()) {
 			CWars2Player player = (CWars2Player) p;

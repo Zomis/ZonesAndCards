@@ -31,13 +31,13 @@ public class CWarsTest extends CardsTest<CWars2Game> {
 	public void play() {
 		assertFalse(game.isGameOver());
 		assertZoneSize(game.getCurrentPlayer().getHandSize(), game.getCurrentPlayer().getHand());
-		assertTrue(game.getCurrentPlayer().getCards().size() >= CWars2Game.MIN_CARDS_IN_DECK);
-		assertTrue(game.getCurrentPlayer().getDeck().size() + " expected at least " + CWars2Game.MIN_CARDS_IN_DECK,
-				game.getCurrentPlayer().getDeck().size() + game.getCurrentPlayer().getHand().size() >= CWars2Game.MIN_CARDS_IN_DECK);
+		assertTrue(game.getCurrentPlayer().getCards().size() >= game.getMinCardsInDeck());
+		assertTrue(game.getCurrentPlayer().getDeck().size() + " expected at least " + game.getMinCardsInDeck(),
+				game.getCurrentPlayer().getDeck().size() + game.getCurrentPlayer().getHand().size() >= game.getMinCardsInDeck());
 		
 		while (!game.isGameOver()) {
 			CWars2Player player = game.getCurrentPlayer();
-			List<StackAction> available = game.getActionHandler().getAvailableActions(game.getCurrentPlayer());
+			List<StackAction> available = game.getAvailableActions(game.getCurrentPlayer());
 			ResourceMap beforeMe = new ResourceMap(game.getCurrentPlayer().getResources());
 			ResourceMap beforeOther = new ResourceMap(game.getCurrentPlayer().getNextPlayer().getResources());
 			ZomisList.filter(available, new StackActionAllowedFilter(true));
@@ -110,6 +110,7 @@ public class CWarsTest extends CardsTest<CWars2Game> {
 //			pl.setAI(new RandomAI(game.getRandom()));
 			pl.setAI(new CWars2AI());
 		}
+		game.addDefaultDecks();
 		game.startGame();
 	}
 	

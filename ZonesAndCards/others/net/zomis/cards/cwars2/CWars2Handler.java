@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
@@ -25,7 +26,7 @@ public class CWars2Handler implements ActionHandler {
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(Player player) {
+	public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
 		List<StackAction> list = new LinkedList<StackAction>();
 		CWars2Player pl = (CWars2Player) player;
 		for (Card card : pl.getHand().cardList()) {

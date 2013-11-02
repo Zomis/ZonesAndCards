@@ -11,6 +11,7 @@ import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
@@ -21,7 +22,7 @@ public class TurnEightController implements ActionHandler {
 	static final int EIGHT = 8;
 
 	@Override
-	public List<StackAction> getAvailableActions(Player player) {
+	public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
 		List<StackAction> result = new LinkedList<StackAction>();
 		for (Card card : ((CardPlayer)player).getHand().cardList()) {
 			TurnEightPlayAction action = new TurnEightPlayAction(card);

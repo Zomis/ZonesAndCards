@@ -7,10 +7,12 @@ import net.zomis.cards.mdjq.phases.MDJQMainPhase;
 import net.zomis.cards.mdjq.phases.MDJQUntapPhase;
 import net.zomis.cards.model.StackAction;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MDJQ extends MDJQTest {
 	@Test
+	@Ignore
 	public void playPredefined() {
 		// Play a land
 		assertPhase(MDJQMainPhase.class);

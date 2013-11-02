@@ -39,7 +39,6 @@ public class HeartsGivePhase extends GamePhase {
 			CardPlayer pl = (CardPlayer) player;
 			CardPlayer dest = this.giveDirection.getGiveToPlayer(pl);
 			pl.getBoard().moveToBottomOf(dest.getHand());
-			dest.getHand();
 		}
 		
 		// Find 2 of clubs, set active phase to that player.

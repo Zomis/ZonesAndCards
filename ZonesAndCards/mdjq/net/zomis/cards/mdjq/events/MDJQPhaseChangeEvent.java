@@ -1,6 +1,6 @@
 package net.zomis.cards.mdjq.events;
 
-import net.zomis.cards.events.PhaseChangeEvent;
+import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.mdjq.MDJQGame;
 
 public class MDJQPhaseChangeEvent extends MDJQEvent {

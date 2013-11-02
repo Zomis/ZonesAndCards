@@ -178,8 +178,8 @@ public class CWars2CardSet {
 				this.protectedPlayer = protectedPlayer;
 			}
 			@Override
-			public boolean onResourceChange(ResourceMap map, ResourceData type, int value) {
-				if (value > 0) return true;
+			public boolean onResourceChange(ResourceMap map, ResourceData type, int newValue) {
+				if (newValue > 0) return true;
 				if (protectedPlayer.getGame().getCurrentPlayer() == protectedPlayer) return true;
 				return false;
 			}
@@ -224,14 +224,14 @@ public class CWars2CardSet {
 				this.multiplier = multiplier;
 			}
 			@Override
-			public boolean onResourceChange(ResourceMap map, ResourceData type, int value) {
+			public boolean onResourceChange(ResourceMap map, ResourceData type, int newValue) {
 				if (this.player == player.getGame().getCurrentPlayer()) {
 					// Self-inflicted damage should be performed.
 					return true;
 				}
 				map.setListener(CWars2Res.CASTLE, null);
 				map.setListener(CWars2Res.WALL, null);
-				int change = (int)(value * multiplier);
+				int change = (int)(newValue * multiplier);
 				map.changeResources(type.getResource(), change);
 				return false;
 			}

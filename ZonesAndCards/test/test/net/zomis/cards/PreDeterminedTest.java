@@ -27,6 +27,7 @@ public class PreDeterminedTest extends CardsTest<CWars2Game> {
 		for (int i = 0; i < 10; i++) {
 			game = new CWars2Game();
 			game.setRandomSeed(42);
+			game.addDefaultDecks();
 			game.getPlayers().get(0).setAI(new CWars2AI());
 			game.getPlayers().get(1).setAI(new CWars2AI_InstantWin());
 			Assert.assertEquals(30, game.getRandom().nextInt(100));

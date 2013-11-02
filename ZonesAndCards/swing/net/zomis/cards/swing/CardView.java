@@ -43,6 +43,11 @@ public class CardView implements ActionListener {
 	public void cardUpdate() {
 		
 //		CustomFacade.getLog().i("Phase is " + phase + " and card is " + card + " in " + card.getCurrentZone());
+		if (card.getGame() == null) {
+			button.setText("NO-GAME");
+			button.setEnabled(true);
+			return;
+		}
 		Player currentPlayer = card.getGame().getCurrentPlayer();
 		boolean known = card.getCurrentZone().isKnown(currentPlayer) || allKnown;
 		String html = known ? text.textFor(card) : "???";

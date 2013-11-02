@@ -10,10 +10,12 @@ import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
+import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.util.StackActionAllowedFilter;
+import net.zomis.events.Event;
 
 public class IdiotGame extends ClassicGame {
 
@@ -47,14 +49,12 @@ public class IdiotGame extends ClassicGame {
 		return zones;
 	}
 	
-	@Override
-	public StackAction processStackAction() {
-		StackAction sup = super.processStackAction();
-		if (ZomisList.filter2(this.getActionHandler().getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
+	@Event
+	public void afterAction(AfterActionEvent event) {
+		if (ZomisList.filter2(this.getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
 			this.endGame();
-		return sup;
 	}
-
+	
 	public int getCardsLeft() {
 		int i = 0;
 		if (!this.deck.cardList().isEmpty())

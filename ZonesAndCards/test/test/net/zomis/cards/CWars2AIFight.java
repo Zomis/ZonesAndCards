@@ -18,6 +18,7 @@ public class CWars2AIFight extends CardsTest<CWars2Game> {
 	@Override
 	protected void onBefore() {
 		game = new CWars2Game();
+		game.addDefaultDecks();
 		game.startGame();
 	}
 	

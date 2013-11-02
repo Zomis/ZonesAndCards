@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import net.zomis.cards.events.ZoneChangeEvent;
+import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 
@@ -98,6 +98,12 @@ public class CardZoneView implements CardViewClickListener {
 	public void setViewLimit(int i) {
 		this.viewLimit = i;
 		this.updateTexts();
+	}
+
+	public void recreateFromScratch() {
+		cards.removeAll();
+		for (Card card : this.zone.cardList())
+			this.addCard(card);
 	}
 
 }

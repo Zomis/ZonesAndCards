@@ -26,26 +26,21 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	public boolean actionIsAllowed() {
 		CardPlayer player = getGame().findPlayerWithHand(getCard().getCurrentZone());
 		if (player == null && getGame().getCurrentPlayer() != null) {
-			CustomFacade.getLog().e("Horrible error " + this + getGame().getCurrentPlayer());
-			return false;
+			return setErrorMessage("Card is not in a hand. Current player is " + getGame().getCurrentPlayer());
 		}
 		
 		if (player != getGame().getCurrentPlayer()) {
-			CustomFacade.getLog().e("Mini error " + this + player + getGame().getCurrentPlayer());
-			return false;
+			return setErrorMessage("Player is not current player " + this);
 		}
 		
 		if (getGame().getPile().isEmpty()) {
 			if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
-				return true; // Have only HEARTS left, then it doesn't matter.
+				return setOKMessage("Only hearts left");
 			}
 			if (player.getHand().size() == HeartsGame.MAGIC_NUMBER) {
-				// First hand, must play 2 of clubs.
-//				CustomFacade.getLog().i("First hand, looking for 2 of clubs on " + cardModel);
-				return cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2;
+				return setMixedMessage(cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2, "First hand, must be 2 of clubs");
 			}
 			// Can only play hearts if hearts has been broken (played before)
-//			CustomFacade.getLog().i("Checking if card is hearts and if hearts is broken " + cardModel + getGame().isHeartsBroken());
 			return cardModel.getSuite() != Suite.HEARTS || getGame().isHeartsBroken();
 		}
 		

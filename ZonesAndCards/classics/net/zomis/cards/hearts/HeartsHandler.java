@@ -7,6 +7,7 @@ import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
@@ -35,9 +36,14 @@ public class HeartsHandler implements ActionHandler {
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(Player pl) {
+	public List<StackAction> getAvailableActions(CardGame cardGame, Player pl) {
 		CardPlayer player = (CardPlayer) pl;
 		List<StackAction> list = new LinkedList<StackAction>();
+		if (pl == null) {
+			for (Player cplayer : cardGame.getPlayers())
+				list.addAll(getAvailableActions(cardGame, cplayer));
+			return list;
+		}
 		CardPlayer currentPlayer = player.getGame().getCurrentPlayer();
 		if (currentPlayer == null) {
 			for (Card card : player.getHand().cardList()) {

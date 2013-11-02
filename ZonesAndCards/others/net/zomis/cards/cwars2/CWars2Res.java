@@ -14,8 +14,6 @@ public enum CWars2Res implements IResource {
 	
 	public static enum Resources implements IResource {
 		BRICKS, WEAPONS, CRYSTALS;
-		
-		public static final int MIN = 0;
 		public Producers getProducer() {
 			return Producers.values()[this.ordinal()];
 		}

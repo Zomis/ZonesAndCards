@@ -4,9 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.aiscores.ScoreConfigFactory;
-import net.zomis.cards.events.AfterActionEvent;
-import net.zomis.cards.events.PhaseChangeEvent;
-import net.zomis.cards.events.ZoneChangeEvent;
+import net.zomis.cards.events.card.ZoneChangeEvent;
+import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.MDJQZone.ZoneType;
 import net.zomis.cards.mdjq.actions.MDJQTargetAction;
@@ -107,13 +106,14 @@ public class MDJQGame extends CardGame {
 			}
 		}
 
-		MDJQStackAction action = (MDJQStackAction) this.getStack().pollFirst();
-		if (action == null) 
-			action = new MDJQStackAction(null);
-		
-		action.onPerform(); // Once it is on stack it should be performed. If it fizzles, then it fizzles inside perform().
-		executeEvent(new AfterActionEvent(this, action));
-		return action;
+		return super.processStackAction();
+//		MDJQStackAction action = (MDJQStackAction) this.getStack().pollFirst();
+//		if (action == null) 
+//			action = new MDJQStackAction(null);
+//		
+//		action.onPerform(); // Once it is on stack it should be performed. If it fizzles, then it fizzles inside perform().
+//		executeEvent(new AfterActionEvent(this, action));
+//		return action;
 	}
 	@Override
 	public void executeEvent(IEvent ev) {
@@ -125,7 +125,7 @@ public class MDJQGame extends CardGame {
 		if (ev instanceof PhaseChangeEvent) {
 			ev = new MDJQPhaseChangeEvent((PhaseChangeEvent) ev);
 		}
-		if (ev instanceof AfterActionEvent) {
+		if (!(ev instanceof MDJQEvent)) {
 			super.executeEvent(ev);
 			return;
 		}
@@ -166,20 +166,18 @@ public class MDJQGame extends CardGame {
 	@Override
 	public void addStackAction(StackAction a) {
 //		CustomFacade.getLog().d("Add to Stack: " + a);
-		
-		if (a instanceof InvalidStackAction)
-			return;
-		
-		if (!(a instanceof MDJQStackAction))
-			throw new IllegalArgumentException("Action is not an MDJQ Action: " + a);
-		
-		MDJQStackAction action = (MDJQStackAction) a;
-		action.onAddToStack();
-		
-		if (!action.isUseStack()) {
-			action.onPerform();
+		if (!(a instanceof MDJQStackAction)) {
+			CustomFacade.getLog().w("Action is not an MDJQ Action: " + a);
+			super.addStackAction(a);
 		}
-		else super.addStackAction(action);
+		else {
+			MDJQStackAction action = (MDJQStackAction) a;
+			action.onAddToStack();
+			if (!action.isUseStack()) {
+				action.onPerform();
+			}
+			else super.addStackAction(action);
+		}
 	}
 	
 	@Override

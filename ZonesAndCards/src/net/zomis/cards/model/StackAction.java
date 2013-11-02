@@ -28,6 +28,10 @@ public class StackAction {
 		this.message = string;
 		return true;
 	}
+	protected boolean setMixedMessage(boolean returnCondition, String string) {
+		this.message = string;
+		return returnCondition;
+	}
 	public String getMessage() {
 		return message;
 	}

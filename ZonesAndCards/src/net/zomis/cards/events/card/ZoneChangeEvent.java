@@ -1,35 +1,32 @@
-package net.zomis.cards.events;
+package net.zomis.cards.events.card;
 
+import net.zomis.cards.events.CardEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.events.IEvent;
 
-public class ZoneChangeEvent implements IEvent {
+public class ZoneChangeEvent extends CardEvent implements IEvent {
 	
 	private final CardZone fromCardZone;
 	private CardZone toCardZone;
-	private final Card card;
 
 	public ZoneChangeEvent(CardZone fromCardZone, CardZone toCardZone, Card card) {
+		super(card);
 		this.fromCardZone = fromCardZone;
 		this.toCardZone = toCardZone;
-		this.card = card;
 	}
 	
-	public Card getCard() {
-		return card;
-	}
-	public CardZone getFromCardZone() {
+	public final CardZone getFromCardZone() {
 		return fromCardZone;
 	}
-	public CardZone getToCardZone() {
+	public final CardZone getToCardZone() {
 		return toCardZone;
 	}
-	public void setToCardZone(CardZone toCardZone) {
+	public final void setToCardZone(CardZone toCardZone) {
 		this.toCardZone = toCardZone;
 	}
 	@Override
 	public String toString() {
-		return String.format("ZoneChange{%s: %s-->%s}", this.card, this.getFromCardZone(), this.getToCardZone());
+		return String.format("ZoneChange{%s: %s-->%s}", this.getCard(), this.getFromCardZone(), this.getToCardZone());
 	}
 }

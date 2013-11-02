@@ -49,10 +49,10 @@ public class CWars2AI_InstantWin extends CardAI {
 			CWars2Card card = (CWars2Card) cast.getCard().getModel();
 			if (card.effects.getResources(CWars2Res.CASTLE) + player.getResources().getResources(CWars2Res.CASTLE) >= 100)
 				return 1;
-			if (opponent.getResources().getResources(CWars2Res.CASTLE) - card.castleDamage <= 0)
+			if (opponent.getResources().getResources(CWars2Res.CASTLE) - card.castleDamage() <= 0)
 				return 1;
 			if (opponent.getResources().getResources(CWars2Res.CASTLE) +
-					opponent.getResources().getResources(CWars2Res.WALL) - card.damage - card.castleDamage <= 0)
+					opponent.getResources().getResources(CWars2Res.WALL) - card.damage() - card.castleDamage() <= 0)
 				return 1;
 			
 			return 0;

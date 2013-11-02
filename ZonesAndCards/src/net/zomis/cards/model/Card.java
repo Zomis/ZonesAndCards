@@ -1,6 +1,6 @@
 package net.zomis.cards.model;
 
-import net.zomis.cards.events.ZoneChangeEvent;
+import net.zomis.cards.events.card.ZoneChangeEvent;
 
 public class Card {
 	private final CardModel model;
@@ -20,6 +20,9 @@ public class Card {
 		this.model = model;
 	}
 	
+	public StackAction clickAction() {
+		return this.getGame().getActionHandler().click(this);
+	}
 	public CardModel getModel() {
 		return model;
 	}
@@ -50,10 +53,6 @@ public class Card {
 		if (dest != null) {
 			if (top) dest.cardList().addFirst(this);
 			else dest.cardList().addLast(this);
-		}
-		else {
-//			dest = game.nullZone; // new CardZone("/dev/null");
-//			dest.game = game;
 		}
 		this.currentZone = dest;
 	}

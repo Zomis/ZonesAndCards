@@ -12,7 +12,7 @@ public class Player implements Comparable<Player> {
 	
 	private String name;
 	private CardAI ai;
-	private final ResourceMap resources = new ResourceMap();
+	private final ResourceMap resources = new ResourceMap(true);
 	
 	public CardGame getGame() {
 		if (game == null)

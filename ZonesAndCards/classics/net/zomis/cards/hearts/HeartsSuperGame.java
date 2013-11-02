@@ -3,7 +3,7 @@ package net.zomis.cards.hearts;
 import net.zomis.IndexIterator;
 import net.zomis.IndexIteratorStatus;
 import net.zomis.cards.classics.CardPlayer;
-import net.zomis.cards.events.GameOverEvent;
+import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.util.IResource;
@@ -40,32 +40,31 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 			CardPlayer cp = (CardPlayer) player;
 			cp.getHand().moveToBottomOf(null);
 			cp.getBoard().moveToBottomOf(null);
+			cp.getBoard().setGloballyKnown(false);
 		}
 		super.onStart();
 		int index = (currentGive.ordinal() + 1) % HeartsGiveDirection.values().length;
 		currentGive = HeartsGiveDirection.values()[index];
 	}
 	
-	@Event
+	@Event(priority=1)
 	public void onGameEnd(GameOverEvent event) {
-		if (event.getGame() == this) {
 //			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
-			int distributedPoints = 0;
-			for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
-				int inc = this.calcRealPoints((CardPlayer) player.getValue());
-				distributedPoints += inc;
-				player.getValue().getResources().changeResources(score, inc);
-			}
-//			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.getScores()));
-			if (distributedPoints != 26 && distributedPoints != 26 * (this.getPlayers().size() - 1))
-				throw new AssertionError("Unexpected distributed points: " + distributedPoints);
-			
-			for (Player player : getPlayers()) {
-				if (player.getResources().getResources(score) >= 100) return;
-			}
-			event.setCancelled(true);
-			this.newGame();
+		int distributedPoints = 0;
+		for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
+			int inc = this.calcRealPoints((CardPlayer) player.getValue());
+			distributedPoints += inc;
+			player.getValue().getResources().changeResources(score, inc);
 		}
+//			CustomFacade.getLog().i("Hearts round is over, current points " + Arrays.toString(this.getScores()));
+		if (distributedPoints != 26 && distributedPoints != 26 * (this.getPlayers().size() - 1))
+			throw new AssertionError("Unexpected distributed points: " + distributedPoints);
+			
+		for (Player player : getPlayers()) {
+			if (player.getResources().getResources(score) >= 100) return;
+		}
+		event.setCancelled(true);
+		this.newGame();
 	}
 
 	public int[] getScores() {

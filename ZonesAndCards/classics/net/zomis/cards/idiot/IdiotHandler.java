@@ -55,7 +55,7 @@ public class IdiotHandler implements ActionHandler {
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(Player player) {
+	public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
 		IdiotGame game = (IdiotGame) player.getGame();
 		LinkedList<StackAction> result = new LinkedList<StackAction>();
 		result.add(new DealAction(game));

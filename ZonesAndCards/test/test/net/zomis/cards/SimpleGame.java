@@ -28,4 +28,5 @@ public class SimpleGame extends CardGame {
 		}
 		this.addPhase(new GamePhase());
 	}
+
 }

@@ -1,5 +1,10 @@
 package net.zomis.cards.util;
 
+/**
+ * Data for storing Resource information associated with a {@link ResourceMap}<br>
+ * All modifications to this object is done through {@link ResourceMap}.
+ * @author Zomis
+ */
 public class ResourceData {
 	private final IResource resource;
 	
@@ -10,11 +15,19 @@ public class ResourceData {
 	int max = Integer.MAX_VALUE;
 	int defaultValue = 0;
 	
-	ResourceData() { this(null); }
+	ResourceData() { this((IResource) null); }
 	ResourceData(IResource res) {
 		this.resource = res;
 	}
-
+	public ResourceData(ResourceData copy) {
+		this.value = copy.value;
+		this.resource = copy.resource;
+		this.listener = copy.listener;
+		this.strategy = copy.strategy;
+		this.min = copy.min;
+		this.max = copy.max;
+		this.defaultValue = copy.defaultValue;
+	}
 	public static ResourceData forResource(IResource res) {
 		ResourceData data = new ResourceData(res);
 		return data;
@@ -71,6 +84,6 @@ public class ResourceData {
 			return strat.getResourceAmount(this, map); // Strategies can ignore max and min values
 		}
 		Integer i = this.getRealValue();
-		return i == null ? this.getDefaultValue() : i;
+		return (i == null ? (map.isUseDefaults() ? this.getDefaultValue() : 0) : i);
 	}
 }

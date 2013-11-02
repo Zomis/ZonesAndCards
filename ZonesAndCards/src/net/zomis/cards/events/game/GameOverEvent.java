@@ -1,4 +1,4 @@
-package net.zomis.cards.events;
+package net.zomis.cards.events.game;
 
 import net.zomis.cards.model.CardGame;
 import net.zomis.events.CancellableEvent;

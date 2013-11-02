@@ -45,17 +45,20 @@ public class CWars2PlayAction extends ZoneMoveAction {
 		
 		CWars2Player opp = (CWars2Player) player.getOpponents().get(0);
 		opp.getResources().change(model.opponentEffects, 1);
-		if (model.damage > 0) {
-			opp.getResources().changeResources(CWars2Res.WALL, -model.damage);
-			int overflow = -opp.getResources().getResources(CWars2Res.WALL);
-			if (overflow > 0) {
-				opp.getResources().changeResources(CWars2Res.WALL, overflow);
-				opp.getResources().changeResources(CWars2Res.CASTLE, -overflow);
-			}
+		
+//		if (model.damage > 0) {
+//			opp.getResources().changeResources(CWars2Res.WALL, -model.damage);
+//		}
+		
+		int overflow = -opp.getResources().getResources(CWars2Res.WALL);
+		if (overflow > 0) {
+			opp.getResources().changeResources(CWars2Res.WALL, overflow); // TODO: This should NOT be animated. And it should not be handled with a pre & post event
+			opp.getResources().changeResources(CWars2Res.CASTLE, -overflow);
 		}
-		if (model.castleDamage > 0) {
-			opp.getResources().changeResources(CWars2Res.CASTLE, -model.castleDamage);
-		}
+		
+//		if (model.castleDamage > 0) {
+//			opp.getResources().changeResources(CWars2Res.CASTLE, -model.castleDamage);
+//		}
 		
 		player.getResources().clamp();
 		opp.getResources().clamp();

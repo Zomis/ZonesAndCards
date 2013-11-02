@@ -19,19 +19,59 @@ public final class ResourceMap {
 		}
 	}
 	
+	private ResourceListener listener;
+	private final boolean	useDefaults;
+	
+	public boolean isUseDefaults() {
+		return useDefaults;
+	}
+	
+	public void setGlobalListener(ResourceListener listener) {
+		this.listener = listener;
+	}
+	
 	public Map<IResource, ResourceData> getData() {
 		return new HashMap<IResource, ResourceData>(data);
 	}
-	
-	public ResourceMap() {}
+	/**
+	 * Creates a new, empty, ResourceMap without using default values for the resources.
+	 */
+	public ResourceMap() { this(false); }
+	public ResourceMap(boolean useDefaults) {
+		this.useDefaults = useDefaults;
+	}
+	/**
+	 * Creates a new map with <b>values</b> copied from the specified map. No strategies or listeners are copied this way.
+	 * This is the same as <code>ResourceMap(copyOf, false)</code>
+	 * @param copyOf The {@link ResourceMap} to create a copy of.
+	 */
 	public ResourceMap(ResourceMap copyOf) {
+		this(copyOf, false);
+	}
+	/**
+	 * Creates a map without using defaults that is a copy of another map, with the option to also copy the exact {@link ResourceData} structure for each resource. 
+	 * @param copyOf The map to create a copy of.
+	 * @param copyDetailedInfo If true, also listeners and strategies etc. for all ResourceDatas will be copied.
+	 */
+	public ResourceMap(ResourceMap copyOf, boolean copyDetailedInfo) {
+		this(false);
+		if (copyOf != null)
 		for (Entry<IResource, ResourceData> ee : copyOf.data.entrySet()) {
-			if (ee.getValue() == null)
-				throw new NullPointerException("ee value null");
-			this.set(ee.getKey(), ee.getValue().getRealValue());
+			if (copyDetailedInfo)
+				this.data.put(ee.getKey(), new ResourceData(ee.getValue()));
+			else {
+				if (ee.getValue() == null)
+					throw new NullPointerException("ee value null");
+				this.set(ee.getKey(), ee.getValue().getRealValue());
+			}
 		}
 	}
 	
+	/**
+	 * Get the {@link ResourceData} object associated with the specified type for this map, or creates a new one if no previous data was found.
+	 * @param type {@link IResource} to check for.
+	 * @return {@link ResourceData} object for the specified type.
+	 */
 	public ResourceData dataFor(IResource type) {
 		ResourceData data = this.data.get(type);
 		if (data == null) {
@@ -50,16 +90,14 @@ public final class ResourceMap {
 	public boolean hasResources(IResource type, int amount) {
 		return getResources(type) >= amount;
 	}
-	public void changeResources(IResource type, Integer value) {
-		if (value == null) return;
-		
+	public void changeResources(IResource type, int value) {
 		ResourceListener listener = getListener(type);
 		if (listener != null && !listener.onResourceChange(this, dataFor(type), value)) {
 			return;
 		}
 		ResourceData dat = dataFor(type);
 		Integer val = dat.getRealValue();
-		if (val == null) val = dat.getDefaultValue();
+		if (val == null) val = this.isUseDefaults() ? dat.getDefaultValue() : 0;
 		set(type, val + value);
 	}
 	public ResourceListener getListener(IResource type) {
@@ -72,7 +110,11 @@ public final class ResourceMap {
 		return this;
 	}
 	public ResourceMap set(IResource type, Integer value) {
-		dataFor(type).value = value;
+		ResourceData resdata = dataFor(type);
+		if (this.listener != null) {
+			this.listener.onResourceChange(this, resdata, value);
+		}
+		resdata.value = value;
 		return this;
 	}
 	public Set<IResource> getKeys() {
@@ -101,7 +143,8 @@ public final class ResourceMap {
 	
 	public void change(ResourceMap modifications, int multiplier) {
 		for (Entry<IResource, Integer> ee : modifications.getValues()) {
-			if (ee.getValue() == null) continue;
+			if (ee.getValue() == null)
+				continue;
 			this.changeResources(ee.getKey(), ee.getValue() * multiplier);
 		}
 	}

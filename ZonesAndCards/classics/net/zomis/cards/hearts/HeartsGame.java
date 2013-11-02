@@ -1,6 +1,5 @@
 package net.zomis.cards.hearts;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,16 +20,16 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.PlayerPhase;
-import net.zomis.custommap.model.CastedIterator;
 
 public class HeartsGame extends ClassicGame {
 	public static final int MAGIC_NUMBER = 52 / 4;
 	
+	private final Comparator<Card> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
 	private final ClassicCardZone pile;
 	private final ActionHandler handler = new HeartsHandler();
 	
 	protected HeartsGiveDirection	giveDirection;
-	protected boolean heartsBroken;
+	private boolean heartsBroken;
 	
 	public HeartsGame(HeartsGiveDirection giveDirection) {
 		super(AceValue.HIGH);
@@ -72,6 +71,7 @@ public class HeartsGame extends ClassicGame {
 	
 	@Override
 	protected void onStart() {
+		this.heartsBroken = false;
 		this.pile.moveToBottomOf(null);
 		ClassicCardZone deck = new ClassicCardZone("Deck");
 		deck.addDeck(this, 0);
@@ -81,13 +81,7 @@ public class HeartsGame extends ClassicGame {
 			throw new IllegalStateException("Hearts must currently be played with 4 players.");
 		
 		deck.shuffle(this.getRandom());
-		
-		while (!deck.isEmpty()) {
-			for (CardPlayer player : new CastedIterator<Player, CardPlayer>(this.getPlayers())) {
-				Card card = deck.getTopCard();
-				card.zoneMoveOnBottom(player.getHand());
-			}
-		}
+		deck.dealUntilLeft(0, this.getPlayers(), new CardPlayer.GetHand());
 		
 		GamePhase phase = new HeartsGivePhase(this.giveDirection);
 		this.setActivePhase(phase);
@@ -103,15 +97,15 @@ public class HeartsGame extends ClassicGame {
 
 	public void sort(ClassicCardZone zone) {
 //		CustomFacade.getLog().d("Sorting: " + zone);
-		Collections.sort(zone.cardList(), compare);
+		zone.sort(compare);
 	}
 	
-	private final Comparator<Card> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
 	
 	public void scanForStartingCard() {
 		for (Player player : this.getPlayers()) {
 			CardPlayer pl = (CardPlayer) player;
 			pl.getBoard().setGloballyKnown(true);
+			sort(pl.getHand());
 			if (!ZomisList.filter2(pl.getHand().cardList(), new ClassicCardFilter(Suite.CLUBS, 2)).isEmpty()) {
 				setActivePlayer(pl);
 			}
@@ -119,7 +113,7 @@ public class HeartsGame extends ClassicGame {
 	}
 	
 	
-	private Map<Card, CardPlayer> lastPlayed = new HashMap<Card, CardPlayer>();
+	private final Map<Card, CardPlayer> lastPlayed = new HashMap<Card, CardPlayer>();
 	
 	@Override
 	public boolean isNextPhaseAllowed() {

@@ -8,6 +8,8 @@ import junit.framework.Assert;
 import net.zomis.ZomisList;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
+import net.zomis.cards.events.card.ZoneChangeEvent;
+import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.hearts.HeartsGame;
 import net.zomis.cards.hearts.HeartsSuperGame;
 import net.zomis.cards.hearts.SimpleHeartsAI;
@@ -15,10 +17,13 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.custommap.CustomFacade;
+import net.zomis.events.Event;
+import net.zomis.events.EventListener;
 
 import org.junit.Test;
 
-public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
+public class HeartsSuperTest extends CardsTest<HeartsSuperGame> implements EventListener {
 
 	@Override
 	protected void onBefore() {
@@ -26,6 +31,23 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 		game.setRandomSeed(42);
 	}
 	
+	@Event(priority = 1000)
+	public void onGameOver(GameOverEvent event) {
+//		Assert.assertEquals(52, counter);
+		CustomFacade.getLog().i(counter + event.toString());
+		counter = 0;
+	}
+	private int counter;
+	@Event(priority=1000)
+	public void onZoneChange(ZoneChangeEvent event) {
+		if (event.getFromCardZone().getGame() == null) {
+			counter--;
+			CustomFacade.getLog().i(event.toString());
+		}
+		if (event.getToCardZone() == null) {
+			counter++;
+		}
+	}
 	@Test
 	public void playHeartsSuperGame() {
 		Assert.assertEquals(ClassicCard.RANK_2, game.getAceConfig().getMinRank());
@@ -35,6 +57,7 @@ public class HeartsSuperTest extends CardsTest<HeartsSuperGame> {
 		for (Player pl : game.getPlayers()) {
 			pl.setAI(ai);
 		}
+		game.registerListener(this);
 		game.startGame();
 		for (Player pl : game.getPlayers()) {
 			CardPlayer player = (CardPlayer) pl;

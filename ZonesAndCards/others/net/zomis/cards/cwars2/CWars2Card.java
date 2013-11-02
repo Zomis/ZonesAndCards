@@ -21,12 +21,16 @@ public class CWars2Card extends CardModel {
 	final ResourceMap effects = new ResourceMap();
 	final ResourceMap opponentEffects = new ResourceMap();
 	
-	int	damage;
-	int	castleDamage;
 	private final List<PublicAction> extras;
 	
 	public ResourceMap getCosts() {
-		return costs;
+		return new ResourceMap(costs, true);
+	}
+	public ResourceMap getEffects() {
+		return new ResourceMap(effects, true);
+	}
+	public ResourceMap getOpponentEffects() {
+		return new ResourceMap(opponentEffects, true);
 	}
 	
 	@Override
@@ -45,10 +49,10 @@ public class CWars2Card extends CardModel {
 			if (type.getValue() != null)
 				str.append("\nOpp " + type.getValue() + " " + type.getKey());
 		}
-		if (damage != 0)
-			str.append("\nAttack " + damage);
-		if (castleDamage != 0)
-			str.append("\nAttack Castle " + castleDamage);
+//		if (damage != 0)
+//			str.append("\nAttack " + getDamage());
+//		if (castleDamage != 0)
+//			str.append("\nAttack Castle " + getCastleDamage());
 		return str.toString();
 	}
 
@@ -68,5 +72,11 @@ public class CWars2Card extends CardModel {
 			act.onPerform(); // for replay reasons, do not use game Stack here
 //			game.addAndProcessStackAction(act);
 		}
+	}
+	public int castleDamage() {
+		return -this.opponentEffects.getResources(CWars2Res.CASTLE);
+	}
+	public int damage() {
+		return -this.opponentEffects.getResources(CWars2Res.WALL);
 	}
 }

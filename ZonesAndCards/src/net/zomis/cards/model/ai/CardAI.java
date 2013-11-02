@@ -58,7 +58,7 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 	
 	@Override
 	public Collection<StackAction> getFieldsToScore(Player params) {
-		return params.getGame().getActionHandler().getAvailableActions(params);
+		return params.getGame().getAvailableActions(params);
 	}
 
 	@Override

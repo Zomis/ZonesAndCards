@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.zomis.ZomisList;
 import net.zomis.ZomisList.FilterInterface;
-import net.zomis.cards.events.ZoneChangeEvent;
+import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;

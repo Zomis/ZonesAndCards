@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.zomis.aiscores.ParamAndField;
-import net.zomis.cards.events.AfterActionEvent;
-import net.zomis.cards.events.GameOverEvent;
-import net.zomis.cards.events.PhaseChangeEvent;
+import net.zomis.cards.events.game.AfterActionEvent;
+import net.zomis.cards.events.game.GameOverEvent;
+import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.GamePhase;
@@ -31,7 +31,7 @@ public class CardGame implements EventListener {
 		}
 		
 		@Override
-		public List<StackAction> getAvailableActions(Player player) {
+		public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
 			return new ArrayList<StackAction>(0);
 		}
 	}
@@ -137,6 +137,9 @@ public class CardGame implements EventListener {
 
 	protected void executeEvent(IEvent event) {
 		getEvents().executeEvent(event);
+	}
+	protected void executeEvent(IEvent event, int i) {
+		getEvents().executeEvent(event, i);
 	}
 
 	public ActionHandler getActionHandler() {
@@ -271,10 +274,11 @@ public class CardGame implements EventListener {
 	}
 	protected void setActivePhaseDirectly(GamePhase phase) {
 		GamePhase oldPhase = getActivePhase();
+		this.executeEvent(new PhaseChangeEvent(this, oldPhase, phase), EventExecutor.PRE);
 		this.currentPhase = phase;
 		GamePhase newPhase = getActivePhase();
 		newPhase.onStart(this);
-		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase));
+		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase), EventExecutor.POST);
 	}
 	public final void setRandomSeed(long seed) {
 //		CustomFacade.getLog().i("Set seed to " + seed);
@@ -288,5 +292,8 @@ public class CardGame implements EventListener {
 		if (this.getActivePhase() == null) {
 			this.setActivePhase(this.phases.get(0));
 		}
+	}
+	public List<StackAction> getAvailableActions(Player player) {
+		return this.getActionHandler().getAvailableActions(this, player);
 	}
 }

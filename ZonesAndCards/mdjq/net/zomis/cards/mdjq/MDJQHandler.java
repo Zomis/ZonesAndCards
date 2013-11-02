@@ -6,6 +6,7 @@ import java.util.List;
 import net.zomis.cards.mdjq.activated.ActivatedAbility;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
@@ -30,7 +31,7 @@ public class MDJQHandler implements ActionHandler {
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(Player pl) {
+	public List<StackAction> getAvailableActions(CardGame cardGame, Player pl) {
 		MDJQPlayer player = (MDJQPlayer) pl;
 		List<StackAction> actions = new LinkedList<StackAction>();
 		for (MDJQPermanent card : new CastedIterator<Card, MDJQPermanent>(player.getHand().cardList())) {

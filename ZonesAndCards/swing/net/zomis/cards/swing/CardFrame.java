@@ -31,13 +31,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.zomis.cards.cwars2.CWars2AI_InstantWin;
 import net.zomis.cards.cwars2.CWars2Game;
-import net.zomis.cards.events.AfterActionEvent;
-import net.zomis.cards.events.CardCreatedEvent;
-import net.zomis.cards.events.GameOverEvent;
-import net.zomis.cards.events.PhaseChangeEvent;
-import net.zomis.cards.events.ZoneChangeEvent;
+import net.zomis.cards.events.card.CardCreatedEvent;
+import net.zomis.cards.events.card.ZoneChangeEvent;
+import net.zomis.cards.events.game.AfterActionEvent;
+import net.zomis.cards.events.game.GameOverEvent;
+import net.zomis.cards.events.game.PhaseChangeEvent;
+import net.zomis.cards.events.zone.ZoneReverseEvent;
+import net.zomis.cards.events.zone.ZoneShuffleEvent;
+import net.zomis.cards.events.zone.ZoneSortEvent;
+import net.zomis.cards.hearts.HeartsSuperGame;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
@@ -57,7 +60,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	private final CardGame game;
 
 	private static final long	serialVersionUID	= 4987846986712417351L;
-	private static final int	VIEW_LIMIT	= 10;
+	private static final int	VIEW_LIMIT	= 13;
 	private final JPanel	contentPane;
 	private final JTextArea text = new JTextArea();
 	private final List<CardZoneView> zoneViews = new LinkedList<CardZoneView>();
@@ -69,20 +72,23 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	private final PlayerSummaryPanel playerSummary;
 
 	public CardFrame() {
-		ZomisSwingLog4j.addConsoleAppender(null);
+		ZomisSwingLog4j.addConsoleAppender(Log4jLog.DETAILED_LAYOUT);
 		new CustomFacade(new Log4jLog("Cards"));
 		
 		CustomFacade.getLog().i("Creating game");
 //		this.game = new TurnEightGame().addPlayer("BUBU").addPlayer("Zomis").addPlayer("Minken");
 //		this.game = new IdiotGame();
-//		this.game = new HeartsSuperGame(new String[]{ "BUBU", "Minken", "Tejpbit", "Zomis");
+		this.game = new HeartsSuperGame(new String[]{ "BUBU", "Minken", "Tejpbit", "Zomis"});
 //		this.game = new HeartsGame(HeartsGiveDirection.NONE).addPlayer("BUBU").addPlayer("Minken").addPlayer("Tejpbit").addPlayer("Zomis");
 
 //		this.game = new MDJQGame();
-		this.game = new CWars2Game();
+//		this.game = new CWars2Game();
 		this.game.setRandomSeed(42);
+		if (this.game instanceof CWars2Game) {
+			((CWars2Game) this.game).addDefaultDecks();
+		}
 		
-		this.game.getPlayers().get(1).setAI(new CWars2AI_InstantWin());
+//		this.game.getPlayers().get(1).setAI(new CWars2AI_InstantWin());
 		CustomFacade.getLog().i("Game created");
 		
 		this.game.startGame();
@@ -121,7 +127,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 			public void actionPerformed(ActionEvent arg0) {
 				StackAction action = getGame().processStackAction();
 				CustomFacade.getLog().i("Processed Action: " + action);
-				updateViews();
+//				updateViews();
 			}
 		}).setShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK)).getItem());
 		menuA.add(new MenuItemBuilder(new SimpleAction("Next Phase", new ActionListener() {
@@ -176,7 +182,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		panelSettings.add(showEverything);
 		
 		final JSpinner viewLimit = new JSpinner();
-		viewLimit.setValue(13);
+		viewLimit.setValue(VIEW_LIMIT);
 		viewLimit.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -242,18 +248,36 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		CustomFacade.getLog().i("Phase Change: " + event);
 		updateViews();
 	}
+	@Event(priority=1000)
+	public void evZoneShuffleEvent(ZoneShuffleEvent event) {
+		recreateViewFor(event.getZone());
+	}
+	private void recreateViewFor(CardZone zone) {
+		for (CardZoneView view : this.zoneViews) {
+			if (view.getZone() == zone)
+				view.recreateFromScratch();
+		}
+	}
+
+	@Event(priority=1000)
+	public void evZoneSortEvent(ZoneSortEvent event) {
+		recreateViewFor(event.getZone());
+	}
+	@Event(priority=1000)
+	public void evZoneShuffleEvent(ZoneReverseEvent event) {
+		recreateViewFor(event.getZone());
+	}
 
 	private void updateViews() {
 		DefaultListModel<StackAction> model = (DefaultListModel<StackAction>) this.actionList.getModel();
 		model.clear();
 		
-		this.playerSummary.updateStatus();
 		for (CardZoneView zv : zoneViews) {
 			zv.updateTexts();
 		}
 		updateGameStatus();
 		
-		for (StackAction element : game.getActionHandler().getAvailableActions(game.getCurrentPlayer())) {
+		for (StackAction element : game.getActionHandler().getAvailableActions(game, game.getCurrentPlayer())) {
 			if (element.actionIsAllowed())
 				model.addElement(element);
 		}
@@ -261,6 +285,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	@Event(priority=1000)
 	public void evAfterAction(AfterActionEvent event) {
 		updateViews();
+		this.playerSummary.updateStatus();
 		if (game.getCurrentPlayer() != null && game.getCurrentPlayer().getAI() != null) {
 			if (aiAutoplay && !game.isGameOver())
 				game.callPlayerAI();
@@ -313,7 +338,8 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 
 	@Event(priority = 1000)
 	public void gameOver(GameOverEvent event) {
-		JOptionPane.showMessageDialog(this, "Game Finished!");
+		if (!event.isCancelled())
+			JOptionPane.showMessageDialog(this, "Game Finished!");
 	}
 	
 }
