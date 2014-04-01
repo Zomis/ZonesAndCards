@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.ZomisList;
-import net.zomis.ZomisList.FilterInterface;
 import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -13,6 +11,8 @@ import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
+import net.zomis.utils.ZomisList;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class CardCounter implements EventListener {
 

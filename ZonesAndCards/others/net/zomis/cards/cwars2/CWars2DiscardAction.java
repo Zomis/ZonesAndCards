@@ -10,7 +10,7 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 	public CWars2DiscardAction(Card card) {
 		super(card);
 		this.game = (CWars2Game) card.getGame();
-		this.setDestination(game.getDiscard());
+		this.setDestination(game.getCurrentPlayer().getDiscard());
 	}
 
 	@Override
@@ -18,14 +18,14 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 		if (!game.getCurrentPlayer().getHand().cardList().contains(getCard()))
 			return false;
 		
-		return game.getDiscarded() < game.getDiscardsPerTurn();
+		return game.getDiscarded() < game.getDiscardsPerTurn(game.getCurrentPlayer());
 	}
 	
 	@Override
 	protected void onPerform() {
 		super.onPerform();
 		game.discarded();
-		if (game.getDiscarded() == game.getDiscardsPerTurn())
+		if (game.getDiscarded() == game.getDiscardsPerTurn(game.getCurrentPlayer()))
 			game.nextPhase();
 	}
 	

@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.zomis.ZomisList;
 import net.zomis.cards.classics.AceValue;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
@@ -20,6 +19,7 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.utils.ZomisList;
 
 public class HeartsGame extends ClassicGame {
 	public static final int MAGIC_NUMBER = 52 / 4;

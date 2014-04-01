@@ -15,7 +15,8 @@ public class CardModel implements Comparable<CardModel> {
 	public String getName() {
 		return name;
 	}
-	Card createCardInternal(CardZone initialZone) {
+	
+	protected Card createCardInternal(CardZone initialZone) {
 		Card card = new Card(this);
 		card.currentZone = initialZone;
 		return card;
@@ -23,6 +24,8 @@ public class CardModel implements Comparable<CardModel> {
 
 	@Override
 	public int compareTo(CardModel o) {
+		if (name == null || o.name == null)
+			throw new NullPointerException("Name cannot be null");
 		return name.compareTo(o.getName());
 	}
 	@Override

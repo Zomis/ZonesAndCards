@@ -1,10 +1,11 @@
 package net.zomis.cards.classics;
 
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.CardZone.GetZoneInterface;
 import net.zomis.cards.model.Player;
 
-public class CardPlayer extends Player {
+public class CardPlayer extends Player implements HandPlayer {
 
 	public static class GetHand implements GetZoneInterface<Player> {
 		@Override
@@ -12,6 +13,7 @@ public class CardPlayer extends Player {
 			return ((CardPlayer)object).getHand();
 		}
 	}
+	
 	public static class GetBoard implements GetZoneInterface<Player> {
 		@Override
 		public CardZone getZone(Player object) {
@@ -22,6 +24,7 @@ public class CardPlayer extends Player {
 	private ClassicCardZone hand;
 	private ClassicCardZone board;
 	
+	@Override
 	public ClassicCardZone getHand() {
 		return hand;
 	}

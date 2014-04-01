@@ -3,7 +3,7 @@ package net.zomis.cards.jackson;
 import java.io.IOException;
 
 import net.zomis.cards.jackson.MixResource.ResourceMapSave;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.ResourceMap;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;

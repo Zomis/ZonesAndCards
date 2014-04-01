@@ -27,6 +27,6 @@ public class ZoneChangeEvent extends CardEvent implements IEvent {
 	}
 	@Override
 	public String toString() {
-		return String.format("ZoneChange{%s: %s-->%s}", this.getCard(), this.getFromCardZone(), this.getToCardZone());
+		return "ZoneChange{" + getCard() + ": " + getFromCardZone() + "-->" + getToCardZone() + "}";
 	}
 }

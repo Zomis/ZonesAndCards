@@ -14,7 +14,7 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
-import net.zomis.custommap.model.CastedIterator;
+import net.zomis.iterate.CastedIterator;
 
 public class TurnEightGame extends ClassicGame {
 	private static final int NUM_CARDS = 6;
@@ -163,6 +163,8 @@ public class TurnEightGame extends ClassicGame {
 	
 	@Override
 	public boolean isNextPhaseAllowed() {
+		if (getCurrentPlayer() == null)
+			return false;
 		return hasPlayed() || this.drawnCards == DRAW_MAX || getCurrentPlayer().getHand().cardList().isEmpty();
 	}
 	public void playerForceDraw(CardPlayer player) {

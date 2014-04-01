@@ -1,7 +1,7 @@
 package net.zomis.cards.cwars2;
 
 import net.zomis.cards.model.actions.PublicAction;
-import net.zomis.cards.util.IResource;
+import net.zomis.cards.resources.IResource;
 
 public class RequiresTwo extends PublicAction {
 	private CWars2Game	game;

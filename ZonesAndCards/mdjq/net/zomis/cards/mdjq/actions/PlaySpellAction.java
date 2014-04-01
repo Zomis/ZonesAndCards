@@ -3,7 +3,7 @@ package net.zomis.cards.mdjq.actions;
 import net.zomis.cards.mdjq.MDJQPermanent;
 import net.zomis.cards.mdjq.MDJQRes;
 import net.zomis.cards.mdjq.MDJQStackAction;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.ResourceMap;
 
 public class PlaySpellAction extends MDJQStackAction {
 
@@ -23,9 +23,9 @@ public class PlaySpellAction extends MDJQStackAction {
 	
 	@Override
 	public void onAddToStack() {
-		ResourceMap manaPool = card.getController().getManaPool();
-		ResourceMap manaCost = card.getModel().getManaCost();
-		MDJQRes.changeResources(manaPool, manaCost, -1);
+//		ResourceMap manaPool = card.getController().getManaPool();
+//		ResourceMap manaCost = card.getModel().getManaCost();
+//		MDJQRes.changeResources(manaPool, manaCost, -1);
 	}
 	
 	@Override

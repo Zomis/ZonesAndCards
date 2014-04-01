@@ -229,9 +229,10 @@ public class MDJQGame extends CardGame {
 	
 	@Override
 	protected void setActivePhase(GamePhase phase) {
+		// There is another method in this package that calls this
 		super.setActivePhase(phase);
 	}
-
+	
 	public List<MDJQObject> getObjects() {
 		LinkedList<MDJQObject> objects = new LinkedList<MDJQObject>();
 		for (Player pl : this.getPlayers()) {

@@ -16,6 +16,7 @@ import net.zomis.cards.events.zone.ZoneReverseEvent;
 import net.zomis.cards.events.zone.ZoneShuffleEvent;
 import net.zomis.cards.events.zone.ZoneSortEvent;
 import net.zomis.events.IEvent;
+import net.zomis.utils.ZomisList;
 
 public class CardZone implements Comparable<CardZone> {
 
@@ -28,11 +29,16 @@ public class CardZone implements Comparable<CardZone> {
 	private final Map<Player, Boolean> known = new HashMap<Player, Boolean>();
 	private final LinkedList<Card> cards = new LinkedList<Card>();
 	private final String name;
+	private final Player owner;
 
 	private boolean	knownGlobal;
 
-	public CardZone(String zoneName) {
+	public CardZone(String zoneName, Player owner) {
 		this.name = zoneName;
+		this.owner = owner;
+	}
+	public CardZone(String zoneName) {
+		this(zoneName, null);
 	}
 	public void setGloballyKnown(boolean knowledge) {
 		this.knownGlobal = knowledge;
@@ -53,8 +59,7 @@ public class CardZone implements Comparable<CardZone> {
 	
 	@Override
 	public final String toString() {
-		return String.format("Zone{%s}", this.getName());
-//		return String.format("Zone{%s: %b, %s}", this.getName(), this.knownGlobal, this.cards);
+		return "Zone{" + getName() + "}";
 	}
 	
 	public String getName() {
@@ -70,10 +75,12 @@ public class CardZone implements Comparable<CardZone> {
 		return game;
 	}
 	public void shuffle() {
+		if (game == null)
+			throw new NullPointerException("CardZone doesn't have a game");
 		this.shuffle(game.getRandom());
 	}
 	public void shuffle(Random random) {
-		Collections.shuffle(this.cards, random);
+		ZomisList.shuffle(cards, random);
 		this.executeEvent(new ZoneShuffleEvent(this));
 	}
 	public void sort(Comparator<Card> comparator) {
@@ -95,10 +102,14 @@ public class CardZone implements Comparable<CardZone> {
 		this.executeEvent(new CardCreatedEvent(card));
 	}
 	public Card getTopCard() {
-		return this.cards.peekFirst();
+		if (cards.isEmpty())
+			return null;
+		return this.cards.getFirst();
 	}
 	public Card getBottomCard() {
-		return this.cards.peekLast();
+		if (cards.isEmpty())
+			return null;
+		return this.cards.getLast();
 	}
 	public CardZone extractTopCards(int number) {
 		CardZone copy = this.createEmptyCopy();
@@ -124,7 +135,7 @@ public class CardZone implements Comparable<CardZone> {
 		return this;
 	}
 	public void moveToTopOf(CardZone destination) {
-		ArrayList<Card> list = new ArrayList<Card>(cardList());
+		List<Card> list = new ArrayList<Card>(cardList());
 		Collections.reverse(list);
 		for (Card card : list) {
 			card.zoneMoveOnTop(destination);
@@ -180,4 +191,10 @@ public class CardZone implements Comparable<CardZone> {
 			}
 		}
 	}
+	
+	public Player getOwner() {
+		return owner;
+	}
+	
+	// TODO: move-card-to-and-replace-with -- replace at specific index
 }

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.aiscores.ScoreConfigFactory;
-import net.zomis.aiscores.scorers.SubclassFixedScorer;
+import net.zomis.aiscores.scorers.IsSubclassScorer;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicGame;
@@ -46,10 +46,10 @@ public class TurnEightController implements ActionHandler {
 			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
 			config.withScorer(new TurnEightScorers.NeedSuiteChange(), 10);
 			config.withScorer(new TurnEightScorers.IsAce(), 1);
-			config.withScorer(new SubclassFixedScorer<Player, StackAction, TurnEightPlayAction>(TurnEightPlayAction.class), 1);
-			config.withScorer(new TurnEightScorers.IsNextTurn(), 0.5);
+			config.withScorer(new IsSubclassScorer<Player, StackAction>(TurnEightPlayAction.class), 1);
+			config.withScorer(TurnEightScorers.IsNextTurn(), 0.5);
 			config.withScorer(new TurnEightScorers.IsEight(), -0.2); // eight also gets points from the SubclassFixedScorer
-			config.withScorer(new TurnEightScorers.IsDrawCard(), 0.1);
+			config.withScorer(TurnEightScorers.IsDrawCard(), 0.1);
 			this.setConfig(config.build());
 		}
 		

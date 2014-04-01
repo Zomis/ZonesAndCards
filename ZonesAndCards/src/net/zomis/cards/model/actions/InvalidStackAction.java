@@ -11,7 +11,7 @@ public class InvalidStackAction extends StackAction {
 	}
 	
 	public InvalidStackAction() {
-		this.description = "No description";
+		this("No description");
 	}
 	
 	@Override

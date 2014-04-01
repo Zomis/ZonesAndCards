@@ -6,7 +6,7 @@ import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.ai.CardAI;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.ResourceMap;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;

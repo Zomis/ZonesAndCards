@@ -32,7 +32,7 @@ public class StackAction {
 		this.message = string;
 		return returnCondition;
 	}
-	public String getMessage() {
+	public final String getMessage() {
 		return message;
 	}
 	
@@ -51,4 +51,5 @@ public class StackAction {
 	public boolean actionIsPerformed() {
 		return performCounter > 0;
 	}
+	protected void onFailedPerform() {	}
 }

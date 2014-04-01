@@ -3,10 +3,14 @@ package net.zomis.cards.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.zomis.cards.model.ai.CardAI;
-import net.zomis.cards.util.ResourceMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Player implements Comparable<Player> {
+import net.zomis.cards.model.ai.CardAI;
+import net.zomis.cards.resources.ResourceMap;
+import net.zomis.iterate.IndexIterator;
+import net.zomis.iterate.IndexIteratorStatus;
+
+public class Player implements Comparable<Player>, HasResources {
 
 	CardGame game;
 	
@@ -20,6 +24,7 @@ public class Player implements Comparable<Player> {
 		return game;
 	}
 	
+	@Override
 	public ResourceMap getResources() {
 		return resources;
 	}
@@ -33,6 +38,10 @@ public class Player implements Comparable<Player> {
 		result.addAll(after);
 		result.addAll(before);
 		return result;
+	}
+	
+	public Player getNextPlayer() {
+		return getOpponents().get(0);
 	}
 	
 	public String getName() {
@@ -59,6 +68,14 @@ public class Player implements Comparable<Player> {
 	
 	public void setAI(CardAI ai) {
 		this.ai = ai;
+	}
+	
+	@JsonIgnore
+	public int getIndex() {
+		for (IndexIteratorStatus<Player> pl : new IndexIterator<Player>(this.getGame().getPlayers()))
+			if (pl.getValue() == this)
+				return pl.getIndex();
+		return -1;
 	}
 	
 }

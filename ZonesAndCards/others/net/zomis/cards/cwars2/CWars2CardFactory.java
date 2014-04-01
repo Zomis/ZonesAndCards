@@ -1,7 +1,7 @@
 package net.zomis.cards.cwars2;
 
 import net.zomis.cards.model.actions.PublicAction;
-import net.zomis.cards.util.IResource;
+import net.zomis.cards.resources.IResource;
 
 public class CWars2CardFactory {
 	
@@ -11,7 +11,6 @@ public class CWars2CardFactory {
 		this.card = new CWars2Card(name);
 	}
 	public CWars2CardFactory setDamage(int i) {
-//		card.damage = i; // TODO: Depreciate card.damage and use effects.wall instead
 		this.setOppEffect(CWars2Res.WALL, -i);
 		return this;
 	}
@@ -24,7 +23,6 @@ public class CWars2CardFactory {
 		return this;
 	}
 	public CWars2CardFactory setCastleDamage(int i) {
-//		card.castleDamage = i;
 		this.setOppEffect(CWars2Res.CASTLE, -i);
 		return this;
 	}

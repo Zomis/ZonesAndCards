@@ -8,8 +8,8 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.ResourceType;
+import net.zomis.cards.resources.ResourceMap;
+import net.zomis.cards.resources.ResourceType;
 
 public class MDJQPermanent extends Card implements MDJQObject {
 

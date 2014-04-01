@@ -1,15 +1,15 @@
 package net.zomis.cards.hearts;
 
-import net.zomis.IndexIterator;
-import net.zomis.IndexIteratorStatus;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceType;
-import net.zomis.events.Event;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceType;
+import net.zomis.events.EventHandlerGWT;
 import net.zomis.events.EventListener;
+import net.zomis.iterate.IndexIterator;
+import net.zomis.iterate.IndexIteratorStatus;
 
 public class HeartsSuperGame extends HeartsGame implements EventListener {
 
@@ -26,7 +26,12 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 		for (String str : names) {
 			this.addPlayer(str);
 		}
-		this.getEvents().registerListener(this);
+		this.getEvents().registerHandler(GameOverEvent.class, new EventHandlerGWT<GameOverEvent>() {
+			@Override
+			public void executeEvent(GameOverEvent event) {
+				onGameEnd(event); // TODO Event possibly needs to be registered with priority 1
+			}
+		});
 	}
 	
 	@Override
@@ -47,8 +52,7 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 		currentGive = HeartsGiveDirection.values()[index];
 	}
 	
-	@Event(priority=1)
-	public void onGameEnd(GameOverEvent event) {
+	private void onGameEnd(GameOverEvent event) {
 //			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
 		int distributedPoints = 0;
 		for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
@@ -83,5 +87,6 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 //		CustomFacade.getLog().d(curr + " - " + sup.toString());
 		return sup;
 	}
+
 	
 }

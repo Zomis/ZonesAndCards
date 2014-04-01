@@ -4,8 +4,8 @@ import java.util.List;
 
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.util.DeckPlayer;
-import net.zomis.cards.util.ResourceMap;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -26,7 +26,7 @@ public abstract class MixPlayer extends Player implements DeckPlayer<CardModel> 
 	public abstract List<Player> getOpponents();
 	
 	@JsonIgnore
-	public abstract Object getNextPlayer();
+	public abstract Player getNextPlayer();
 	
 	@Override
 	@JsonIgnore

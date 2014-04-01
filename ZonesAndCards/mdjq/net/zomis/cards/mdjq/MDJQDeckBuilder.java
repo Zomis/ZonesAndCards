@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import net.zomis.ZomisList;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.util.CardModelFilter;
 import net.zomis.cards.util.DeckBuilder;
+import net.zomis.utils.ZomisList;
 
 public class MDJQDeckBuilder extends DeckBuilder<MDJQPlayer, MDJQCardModel> {
 

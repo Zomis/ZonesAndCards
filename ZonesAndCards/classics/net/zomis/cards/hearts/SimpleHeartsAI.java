@@ -3,8 +3,8 @@ package net.zomis.cards.hearts;
 import java.util.Random;
 
 import net.zomis.aiscores.FieldScore;
-import net.zomis.aiscores.ParamAndField;
 import net.zomis.aiscores.ScoreConfigFactory;
+import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.aiscores.scorers.RandomScorer;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;

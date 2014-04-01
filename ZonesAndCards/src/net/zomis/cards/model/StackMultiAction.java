@@ -15,7 +15,7 @@ public class StackMultiAction extends StackAction {
 	public boolean actionIsAllowed() {
 		boolean allowed = true;
 		for (StackAction act : this.list)
-			allowed = act.actionIsAllowed() && allowed;
+			allowed = act.actionIsAllowed() && allowed; // TODO: Shouldn't StackMultiAction use || to determine if it is allowed? If playerA's action is allowed but not playerB's, then the action is OK.
 		return allowed;
 	}
 	@Override
@@ -25,6 +25,8 @@ public class StackMultiAction extends StackAction {
 	}
 
 	public void addAction(StackAction action) {
+		if (action == null)
+			return;
 		this.list.add(action);
 	}
 	

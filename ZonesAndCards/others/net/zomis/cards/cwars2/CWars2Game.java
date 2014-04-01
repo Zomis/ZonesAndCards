@@ -8,24 +8,21 @@ import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.CardModel;
-import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.util.FixedResourceStrategy;
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceMap;
-import net.zomis.events.Event;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceMap;
+import net.zomis.cards.resources.common.FixedResourceStrategy;
+import net.zomis.events.EventHandlerGWT;
 
 public class CWars2Game extends CardGame {
-
-	private static final int NUM_PLAYERS	= 2;
-	public static final int	MIN_CARDS_IN_DECK_DEFAULT	= 75;
+	private static final int NUM_PLAYERS = 2;
+	public static final int	MIN_CARDS_IN_DECK = 75;
+	
 	private int discarded = 0;
 	private final int discardsPerTurn = 3;
 
-	private int minCardsInDeck = MIN_CARDS_IN_DECK_DEFAULT;
+	private int minCardsInDeck = MIN_CARDS_IN_DECK;
 	
-	private CardZone discard;
 	private boolean discardMode;
 	private List<IResource> knownResources = new ArrayList<IResource>();
 	
@@ -33,55 +30,68 @@ public class CWars2Game extends CardGame {
 		return knownResources;
 	}
 	
-	public CWars2Game() {
+	CWars2Game() {
 		this.setActionHandler(new CWars2Handler());
 		
-		for (Producers prod : CWars2Res.Producers.values()) {
-			knownResources.add(prod);
-			knownResources.add(prod.getResource());
-		}
-		knownResources.add(CWars2Res.CASTLE);
-		knownResources.add(CWars2Res.WALL);
-		
-		new CWars2CardSet().addCards(this);
+		// Certain resources MUST exist. Wall is for damage and Castle is for castle damage and the target of the game.
+		for (CWars2Res res : CWars2Res.values())
+			this.addResource(res);
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			CWars2Player player = new CWars2Player("Player" + i);
 			this.addPlayer(player);
 			this.addPhase(new CWars2Phase(player));
-			for (IResource res : knownResources)
-				player.getResources().changeResources(res, 0);
 			addZone(player.getDeck());
 			addZone(player.getHand());
+			addZone(player.getDiscard());
 		}
-		discard = new CardZone("DiscardPile");
-		discard.setGloballyKnown(true);
-		addZone(discard);
-		discard.createCardOnTop(new CardModel("NULL"));
+		this.registerHandler(AfterActionEvent.class, new EventHandlerGWT<AfterActionEvent>() {
+			@Override
+			public void executeEvent(AfterActionEvent event) {
+				onAfterAction(event);
+			}
+		});
+		this.registerHandler(PhaseChangeEvent.class, new EventHandlerGWT<PhaseChangeEvent>() {
+			@Override
+			public void executeEvent(PhaseChangeEvent event) {
+				onPhaseChange(event);
+			}
+		});
 	}
-
-	@Event
-	public void onAfterAction(AfterActionEvent event) {
-//		if (event.getGame() != this) // never happens
-//			throw new AssertionError();
-//		if (this.isGameOver())
-//			return;//			throw new IllegalStateException("Game is already finished."); // always happens
-		
+	
+	public void addResource(IResource res) {
+		knownResources.add(res);
+	}
+	
+	void init() {
 		for (Player pl : this.getPlayers()) {
-			CWars2Player player = (CWars2Player) pl;
-			int castle = player.getResources().getResources(CWars2Res.CASTLE);
-			if (castle <= 0 || castle >= 100)
-				this.endGame();
+			for (IResource res : knownResources)
+				pl.getResources().changeResources(res, 0);
 		}
 	}
 	
-	@Event
-	public void onPhaseChange(PhaseChangeEvent event) {
+
+	private void onAfterAction(AfterActionEvent event) {
+//		if (this.isGameOver())
+//			return;//			throw new IllegalStateException("Game is already finished."); // always happens
+//		ZomisLog.info(event.getAction());
+		for (Player pl : this.getPlayers()) {
+			CWars2Player player = (CWars2Player) pl;
+			int castle = player.getResources().getResources(CWars2Res.CASTLE);
+			if (!this.isGameOver()) {
+				if (castle <= 0 || castle >= 100)
+					this.endGame();
+			}
+		}
+	}
+	
+	private void onPhaseChange(PhaseChangeEvent event) {
 		this.fillHands();
 		this.discarded = 0;
 		this.discardMode = false;
 	}
 	
-	public CWars2Game addDefaultDecks() {
+	@Deprecated
+	CWars2Game addRandomDecks() {
 		for (Player pl : this.getPlayers()) {
 			CWars2Player player = (CWars2Player) pl;
 			CWars2DeckBuilder deckBuilder = new CWars2DeckBuilder(new ScoreConfigFactory<CWars2Player, CWars2Card>());
@@ -94,17 +104,19 @@ public class CWars2Game extends CardGame {
 	protected void onStart() {
 		for (Player pl : this.getPlayers()) {
 			CWars2Player player = (CWars2Player) pl;
-			if (player.getCardCount() < getMinCardsInDeck())
-				throw new IllegalStateException("Not enough cards added for " + pl + ". Use addDefaultDecks() to add the default decks.");
+			int minCards = getMinCardsInDeck();
+			int playerCount = player.getCardCount();
+			if (playerCount < minCards)
+				throw new IllegalStateException("Not enough cards added for " + pl + ". Use addDefaultDecks() to add the default decks. Expected " + minCards + " but found " + playerCount);
 			player.saveDeck();
 			player.fillHand();
 		}
 		
 		ResourceMap res = this.getPlayers().get(0).getResources();
 		for (Producers prod : Producers.values()) {
+			// This is for preventing first player from getting resources on first turn.
 			res.setResourceStrategy(prod, new FixedResourceStrategy(0));
 		}
-//		new CWars2CardSet.MultiplyNextResourceIncome(this, 0, false);
 		this.setActivePhaseDirectly(this.getPhases().get(0));
 	}
 	
@@ -117,9 +129,6 @@ public class CWars2Game extends CardGame {
 
 	public int getDiscarded() {
 		return discarded;
-	}
-	public CardZone getDiscard() {
-		return discard;
 	}
 
 	void discarded() {
@@ -140,10 +149,10 @@ public class CWars2Game extends CardGame {
 	@Override
 	public boolean isNextPhaseAllowed() {
 		// this.discarded > 0 ||  // discarded is also increased directly before nextphase is called when you play
-		return this.discarded > 0 || getCurrentPlayer().getHand().size() < getCurrentPlayer().getHandSize(); 
+		return this.discarded > 0 || getCurrentPlayer().getHand().size() < getCurrentPlayer().handSize(); 
 	}
 
-	public int getDiscardsPerTurn() {
+	public int getDiscardsPerTurn(CWars2Player player) {
 		return this.discardsPerTurn;
 	}
 
@@ -151,4 +160,32 @@ public class CWars2Game extends CardGame {
 		return this.minCardsInDeck;
 	}
 
+	public Player determineWinner() {
+		int winner = -1;
+		for (int i = 0; i < getPlayers().size(); i++) {
+			ResourceMap res = getPlayers().get(i).getResources();
+			Boolean winStatus = winStatus(res);
+			if (winStatus != null) {
+				int newWin = -1;
+				if (winStatus == false)
+					newWin = getPlayers().size() - 1 - i; // winner is the other player
+				else newWin = i;
+				
+				if (winner >= 0 && winner != newWin)
+					throw new IllegalStateException("Two winners");
+				
+				winner = newWin;
+			}
+		}
+		if (winner < 0)
+			return null;
+		return getPlayers().get(winner);
+	}
+	private Boolean winStatus(ResourceMap res) {
+		if (res.getResources(CWars2Res.CASTLE) <= 0)
+			return false;
+		if (res.getResources(CWars2Res.CASTLE) >= 100)
+			return true;
+		return null;
+	}
 }

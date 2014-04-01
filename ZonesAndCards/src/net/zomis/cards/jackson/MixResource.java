@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceData;
-import net.zomis.cards.util.ResourceListener;
-import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.ResourceStrategy;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceData;
+import net.zomis.cards.resources.ResourceListener;
+import net.zomis.cards.resources.ResourceMap;
+import net.zomis.cards.resources.ResourceStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;

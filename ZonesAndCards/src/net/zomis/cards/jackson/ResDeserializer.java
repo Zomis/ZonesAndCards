@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.zomis.cards.jackson.MixResource.ResourceSaveData;
 import net.zomis.cards.jackson.MixResource.ResourceMapSave;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.ResourceMap;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

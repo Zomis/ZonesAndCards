@@ -3,9 +3,10 @@ package net.zomis.cards.idiot;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.ZomisList;
 import net.zomis.aiscores.ScoreConfigFactory;
-import net.zomis.aiscores.scorers.SubclassFixedScorer;
+import net.zomis.aiscores.ScoreParameters;
+import net.zomis.aiscores.scorers.IsSubclassScorer;
+import net.zomis.aiscores.scorers.SubclassScorer;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
@@ -14,6 +15,7 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
+import net.zomis.utils.ZomisList;
 
 public class IdiotHandler implements ActionHandler {
 
@@ -22,9 +24,15 @@ public class IdiotHandler implements ActionHandler {
 			super();
 			
 			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
-			config.withScorer(new SubclassFixedScorer<Player, StackAction, RemoveAction>(RemoveAction.class), 10);
-			config.withScorer(new SubclassFixedScorer<Player, StackAction, MoveAction>(MoveAction.class), 5);
-			config.withScorer(new SubclassFixedScorer<Player, StackAction, DealAction>(DealAction.class), 1);
+			config.withScorer(new IsSubclassScorer<Player, StackAction>(RemoveAction.class), 10);
+			config.withScorer(new IsSubclassScorer<Player, StackAction>(MoveAction.class), 5);
+			config.withScorer(new SubclassScorer<Player, StackAction, MoveAction>(MoveAction.class) {
+				@Override
+				public double scoreSubclass(MoveAction cast, ScoreParameters<Player> scores) {
+					return cast.getSource().size() > 1 ? 0 : 1; // only move if it makes some sense in moving
+				}
+			}, -5);
+			config.withScorer(new IsSubclassScorer<Player, StackAction>(DealAction.class), 1);
 			this.setConfig(config.build());
 		}
 	}

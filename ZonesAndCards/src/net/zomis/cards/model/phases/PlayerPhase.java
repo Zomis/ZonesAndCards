@@ -18,7 +18,9 @@ public class PlayerPhase extends GamePhase implements IPlayerPhase {
 	
 	@Override
 	public String toString() {
-		return "Phase-" + player;
+		if (player == null)
+			return "Phase-null";
+		return "Phase-" + player.getName();
 	}
 
 }

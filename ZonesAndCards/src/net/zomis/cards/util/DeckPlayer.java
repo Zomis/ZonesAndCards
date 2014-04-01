@@ -9,4 +9,5 @@ public interface DeckPlayer<ECardModel extends CardModel> {
 	CardGame getGame();
 	CardZone getDeck();
 	void addCard(ECardModel card);
+	void clearCards();
 }

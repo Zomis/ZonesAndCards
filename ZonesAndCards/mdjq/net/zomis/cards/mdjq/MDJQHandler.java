@@ -10,7 +10,7 @@ import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.custommap.model.CastedIterator;
+import net.zomis.iterate.CastedIterator;
 
 public class MDJQHandler implements ActionHandler {
 

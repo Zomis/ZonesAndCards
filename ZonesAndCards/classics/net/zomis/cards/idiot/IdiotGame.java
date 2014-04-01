@@ -1,10 +1,5 @@
 package net.zomis.cards.idiot;
 
-import net.zomis.ArrayIterator;
-import net.zomis.IndexIterator;
-import net.zomis.IndexIteratorStatus;
-import net.zomis.ZomisList;
-import net.zomis.ZomisList.FilterInterface;
 import net.zomis.cards.classics.AceValue;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCardZone;
@@ -15,7 +10,12 @@ import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.util.StackActionAllowedFilter;
-import net.zomis.events.Event;
+import net.zomis.events.EventHandlerGWT;
+import net.zomis.iterate.ArrayIterator;
+import net.zomis.iterate.IndexIterator;
+import net.zomis.iterate.IndexIteratorStatus;
+import net.zomis.utils.ZomisList;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class IdiotGame extends ClassicGame {
 
@@ -40,6 +40,12 @@ public class IdiotGame extends ClassicGame {
 		CardPlayer player = new CardPlayer();
 		this.addPlayer(player);
 		this.addPhase(new PlayerPhase(player));
+		this.registerHandler(AfterActionEvent.class, new EventHandlerGWT<AfterActionEvent>() {
+			@Override
+			public void executeEvent(AfterActionEvent event) {
+				onAfterAction(event);
+			}
+		});
 	}
 	
 	public ClassicCardZone getDeck() {
@@ -49,8 +55,7 @@ public class IdiotGame extends ClassicGame {
 		return zones;
 	}
 	
-	@Event
-	public void afterAction(AfterActionEvent event) {
+	private void onAfterAction(AfterActionEvent event) {
 		if (ZomisList.filter2(this.getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
 			this.endGame();
 	}

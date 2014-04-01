@@ -1,11 +1,12 @@
 package net.zomis.cards.cwars2;
 
-import net.zomis.ZomisUtils;
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceData;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceData;
+import net.zomis.utils.ZomisUtils;
 
 public enum CWars2Res implements IResource {
-	CASTLE(25), WALL(15);
+	CASTLE(25), WALL(15),
+	HANDSIZE(8), DISCARDS(3);
 	
 	private final int	defaultValue;
 	private CWars2Res(int mdefault) {

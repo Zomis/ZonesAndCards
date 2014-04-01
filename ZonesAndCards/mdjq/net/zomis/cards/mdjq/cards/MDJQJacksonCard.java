@@ -2,14 +2,13 @@ package net.zomis.cards.mdjq.cards;
 
 import java.util.Scanner;
 
-import net.zomis.ZomisUtils;
-import net.zomis.cards.mdjq.MDJQCardModel;
 import net.zomis.cards.mdjq.MDJQRes;
 import net.zomis.cards.mdjq.MDJQRes.CardType;
 import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.MDJQRes.TribalType;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.ResourceMap;
 import net.zomis.custommap.CustomFacade;
+import net.zomis.utils.ZomisUtils;
 
 public class MDJQJacksonCard {
 	public int id;
@@ -86,7 +85,7 @@ public class MDJQJacksonCard {
 		this.type = string;
 	}
 	public String createCode() {
-		MDJQCardModel card = new MDJQCardModel(name);
+//		MDJQCardModel card = new MDJQCardModel(name);
 //		card.setTypes(this.getTypes());
 		
 		return null;

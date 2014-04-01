@@ -27,7 +27,7 @@ public class PhaseChangeEvent implements IEvent {
 	}
 	@Override
 	public String toString() {
-		return String.format("%s phase %s --> %s", this.game, this.getFrom(), this.getTo());
+		return game + " phase " + getFrom() + " --> " + getTo();
 	}
 	
 }

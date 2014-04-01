@@ -2,15 +2,15 @@ package net.zomis.cards.model.ai;
 
 import java.util.Collection;
 
-import net.zomis.aiscores.BufferedScoreProducer;
 import net.zomis.aiscores.FieldScore;
 import net.zomis.aiscores.FieldScoreProducer;
-import net.zomis.aiscores.ParamAndField;
 import net.zomis.aiscores.ScoreConfig;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.aiscores.ScoreStrategy;
-import net.zomis.aiscores.ScoreUtils;
+import net.zomis.aiscores.extra.BufferedScoreProducer;
+import net.zomis.aiscores.extra.ParamAndField;
+import net.zomis.aiscores.extra.ScoreUtils;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
@@ -47,6 +47,8 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 	}
 
 	public ParamAndField<Player, StackAction> play(Player player) {
+		if (this.mConfig == null)
+			throw new IllegalStateException("Config not initialized for AI " + this);
 		ParamAndField<Player, StackAction> best = ScoreUtils.pickBest(this.createScoreProvider(), 
 				player, player.getGame().getRandom());
 		if (best == null || best.getFieldScore().getScore() < this.minScore) {
@@ -72,5 +74,5 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 	protected FieldScore<StackAction> nullAction(Player player) {
 		return new FieldScore<StackAction>(new InvalidStackAction("AI Null Action"));
 	}
-
+	
 }

@@ -5,7 +5,7 @@ import net.zomis.cards.mdjq.MDJQPhase;
 import net.zomis.cards.mdjq.MDJQPlayer;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
-import net.zomis.custommap.model.CastedIterator;
+import net.zomis.iterate.CastedIterator;
 
 public class MDJQUntapPhase extends MDJQPhase {
 

@@ -1,7 +1,7 @@
 package net.zomis.cards.classics;
 
-import net.zomis.ZomisList.FilterInterface;
 import net.zomis.cards.model.Card;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class ClassicCardFilter implements FilterInterface<Card> {
 	private Suite	suite;

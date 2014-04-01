@@ -3,8 +3,8 @@ package net.zomis.cards.mdjq;
 import net.zomis.cards.mdjq.MDJQZone.ZoneType;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.util.DeckPlayer;
-import net.zomis.cards.util.ResourceMap;
 
 public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCardModel> {
 
@@ -108,6 +108,11 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 		int idx = getGame().getPlayers().indexOf(this);
 		idx = (idx + 1) % getGame().getPlayers().size();
 		return (MDJQPlayer) getGame().getPlayers().get(idx);
+	}
+
+	@Override
+	public void clearCards() {
+		this.library.moveToBottomOf(null);
 	}
 	
 }

@@ -1,8 +1,8 @@
 package net.zomis.cards.util;
 
-import net.zomis.ZomisList.FilterInterface;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class CardModelFilter implements FilterInterface<Card> {
 	private CardModel	model;

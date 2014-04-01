@@ -6,6 +6,7 @@ public class ToggleDiscardAction extends StackAction {
 
 	private CWars2Game	game;
 
+	@Deprecated
 	public ToggleDiscardAction(CWars2Game game) {
 		this.game = game;
 	}

@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.actions.PublicAction;
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceMap;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceMap;
 
 public class CWars2Card extends CardModel {
 

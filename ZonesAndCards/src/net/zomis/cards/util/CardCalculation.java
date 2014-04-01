@@ -1,6 +1,6 @@
 package net.zomis.cards.util;
 
-import net.zomis.ZomisUtils;
+import net.zomis.utils.ZomisUtils;
 
 public class CardCalculation {
 

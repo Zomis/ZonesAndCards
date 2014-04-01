@@ -9,13 +9,15 @@ import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
+import net.zomis.iterate.CastedIterator;
 
 public class CWars2Handler implements ActionHandler {
 
 	@Override
 	public StackAction click(Card card) {
 		CWars2Game game = (CWars2Game) card.getGame();
-		if (card.getCurrentZone() == game.getDiscard()) {
+		for (CWars2Player pl : new CastedIterator<Player, CWars2Player>(game.getPlayers()))
+		if (card.getCurrentZone() == pl.getDiscard()) {
 			return new ToggleDiscardAction(game);
 		}
 		if (game.isDiscardMode()) {

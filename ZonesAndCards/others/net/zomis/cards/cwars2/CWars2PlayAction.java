@@ -13,7 +13,7 @@ public class CWars2PlayAction extends ZoneMoveAction {
 		this.model = model;
 		CWars2Game game = (CWars2Game) card.getGame();
 		player = game.getCurrentPlayer();
-		this.setDestination(game.getDiscard());
+		this.setDestination(player.getDiscard());
 	}
 	
 	public CWars2Player getPlayer() {

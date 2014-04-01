@@ -1,7 +1,7 @@
 package net.zomis.cards.util;
 
-import net.zomis.ZomisList.FilterInterface;
 import net.zomis.cards.model.StackAction;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class StackActionAllowedFilter implements FilterInterface<StackAction> {
 

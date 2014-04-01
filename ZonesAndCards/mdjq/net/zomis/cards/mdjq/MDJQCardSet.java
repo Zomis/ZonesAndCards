@@ -1,5 +1,6 @@
 package net.zomis.cards.mdjq;
 
-public interface MDJQCardSet {
-	void addCards(MDJQGame game);
+import net.zomis.cards.util.CardSet;
+
+public interface MDJQCardSet extends CardSet<MDJQGame> {
 }

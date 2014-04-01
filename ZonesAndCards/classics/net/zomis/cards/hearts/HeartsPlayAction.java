@@ -2,7 +2,6 @@ package net.zomis.cards.hearts;
 
 import java.util.LinkedList;
 
-import net.zomis.ZomisList;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardFilter;
@@ -10,6 +9,7 @@ import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
 import net.zomis.custommap.CustomFacade;
+import net.zomis.utils.ZomisList;
 
 public class HeartsPlayAction extends ZoneMoveAction {
 
@@ -34,36 +34,44 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		}
 		
 		if (getGame().getPile().isEmpty()) {
-			if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
-				return setOKMessage("Only hearts left");
-			}
-			if (player.getHand().size() == HeartsGame.MAGIC_NUMBER) {
-				return setMixedMessage(cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2, "First hand, must be 2 of clubs");
-			}
-			// Can only play hearts if hearts has been broken (played before)
-			return cardModel.getSuite() != Suite.HEARTS || getGame().isHeartsBroken();
+			return pileEmptyAllowed(player);
 		}
 		
 		ClassicCard bottom = (ClassicCard) getGame().getPile().getBottomCard().getModel();
 		LinkedList<Card> list = ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(bottom.getSuite()));
 		
 		if (list.isEmpty()) {
-			// Don't have a card of the requested suite, can play any card.
-			if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
-				return true; // Have only HEARTS left, then it doesn't matter.
-			}
-			if (player.getHand().size() == 13) {
-				// Not allowed to play point cards on the first round
-				CustomFacade.getLog().i("First hand, is point card? " + cardModel + isPoints());
-				return !isPoints();
-			}
-			return true;
+			return noMatchingSuiteAllowed(player);
 		}
 		else {
 			return cardModel.getSuite().equals(bottom.getSuite());
 		}
 	}
 	
+	private boolean noMatchingSuiteAllowed(CardPlayer player) {
+		// Don't have a card of the requested suite, can play any card.
+		if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+			return true; // Have only HEARTS left, then it doesn't matter.
+		}
+		if (player.getHand().size() == 13) {
+			// Not allowed to play point cards on the first round
+			CustomFacade.getLog().i("First hand, is point card? " + cardModel + isPoints());
+			return !isPoints();
+		}
+		return true;
+	}
+
+	private boolean pileEmptyAllowed(CardPlayer player) {
+		if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+			return setOKMessage("Only hearts left");
+		}
+		if (player.getHand().size() == HeartsGame.MAGIC_NUMBER) {
+			return setMixedMessage(cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2, "First hand, must be 2 of clubs");
+		}
+		// Can only play hearts if hearts has been broken (played before)
+		return cardModel.getSuite() != Suite.HEARTS || getGame().isHeartsBroken();
+	}
+
 	private boolean isPoints() {
 		return this.cardModel.getSuite() == Suite.HEARTS || isQueenOfSpades();
 	}

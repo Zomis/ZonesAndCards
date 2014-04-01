@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.zomis.aiscores.ParamAndField;
+import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
@@ -21,6 +21,8 @@ import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventExecutor;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
+import net.zomis.events.IEventExecutor;
+import net.zomis.events.IEventHandler;
 
 public class CardGame implements EventListener {
 	
@@ -40,7 +42,7 @@ public class CardGame implements EventListener {
 	private final Set<CardModel> availableCards = new HashSet<CardModel>();
 	private boolean callingOnEnd;
 	private GamePhase currentPhase;
-	private EventExecutor events = new EventExecutor();
+	private IEventExecutor events = CustomFacade.getInst().createEvents();
 	private Exception exc;
 	private boolean gameOver = false;
 	private final List<GamePhase> phases = new ArrayList<GamePhase>();
@@ -54,12 +56,15 @@ public class CardGame implements EventListener {
 	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();;
 
 	
-	private boolean	started;
+	private boolean started;
+	protected void resetStarted() {
+		this.started = false;
+	}
 	
 	private final Set<CardZone> zones = new HashSet<CardZone>();
 	
 	public CardGame() {
-		this.events.registerListener(this);
+//		this.events.registerListener(this); // This breaks GWT
 	}
 	/**
 	 * A combination of {@link #addStackAction(StackAction)} and {@link #processStackAction()}
@@ -71,6 +76,8 @@ public class CardGame implements EventListener {
 	}
 
 	public void addCard(CardModel card) {
+		if (card == null)
+			throw new IllegalArgumentException("Card cannot be null");
 		this.availableCards.add(card);
 	}
 	
@@ -88,10 +95,12 @@ public class CardGame implements EventListener {
 	 * @param action Action to add to stack
 	 */
 	protected void addStackAction(StackAction action) {
-		this.stack.push(action);
+		this.stack.addFirst(action);
 	}
 	
 	protected CardZone addZone(CardZone zone) {
+		if (zone == null)
+			throw new IllegalArgumentException("Zone cannot be null");
 		this.zones.add(zone);
 		zone.game = this;
 		return zone;
@@ -104,6 +113,7 @@ public class CardGame implements EventListener {
 	}
 	public StackAction callPlayerAI(Player player) {
 		if (player == null) {
+			// TODO: Codecrap for callPlayerAI when there is no current player. The returned stackaction here is used to determine if something has happened in CardGame.autoplay.
 			StackMultiAction action = new StackMultiAction();
 			for (Player pl : this.getPlayers()) {
 				action.addAction(this.callPlayerAI(pl));
@@ -163,7 +173,7 @@ public class CardGame implements EventListener {
 		return null;
 	}
 
-	protected EventExecutor getEvents() {
+	protected IEventExecutor getEvents() {
 		return events;
 	}
 	protected List<GamePhase> getPhases() {
@@ -201,14 +211,19 @@ public class CardGame implements EventListener {
 		if (!this.isNextPhaseAllowed())
 			return false;
 		GamePhase previousPhase = getActivePhase();
-		if (previousPhase == null)
+		if (previousPhase == null) {
 			this.setActivePhase(this.phases.get(0));
-		else previousPhase.onEnd(this);
+		}
+		else {
+			callingOnEnd = true;
+			previousPhase.onEnd(this);
+			callingOnEnd = false;
+		}
 		
 		if (previousPhase == this.getActivePhase()) {
 			int activePhase = this.phases.indexOf(getActivePhase());
 			if (activePhase < 0) {
-				throw new IllegalStateException("Phase does not appear in list of phases and did not change phase from onEnd: " + previousPhase);
+				throw new IllegalStateException("Phase does not appear in list of phases and did not change phase from GamePhase.onEnd: " + previousPhase);
 			}
 			int nextPhase = (activePhase + 1) % this.phases.size();
 			GamePhase next = this.phases.get(nextPhase);
@@ -232,9 +247,10 @@ public class CardGame implements EventListener {
 		if (this.isGameOver())
 			return new InvalidStackAction("Game has already ended.");
 		if (!this.started)
-			return new InvalidStackAction("Game is not started. Did you forget to call startGame() ?");
+			throw new IllegalStateException("Game is not started. Did you forget to call startGame() ?");
+//			return new InvalidStackAction("Game is not started. Did you forget to call startGame() ?");
 		
-		StackAction action = this.stack.pollFirst();
+		StackAction action = stack.isEmpty() ? null : stack.removeFirst();
 		if (action == null) 
 			action = new StackAction();
 		
@@ -243,8 +259,15 @@ public class CardGame implements EventListener {
 			action.internalPerform();
 			executeEvent(new AfterActionEvent(this, action));
 		}
-		else CustomFacade.getLog().d("StackAction was not allowed: " + action);
+		else {
+			action.onFailedPerform();
+			CustomFacade.getLog().d("StackAction was not allowed: " + action);
+		}
 		return action;
+	}
+	
+	public void registerHandler(Class<? extends IEvent> eventType, IEventHandler handler) {
+		getEvents().registerHandler(eventType, handler);
 	}
 	
 	public void registerListener(EventListener listener) {
@@ -296,4 +319,21 @@ public class CardGame implements EventListener {
 	public List<StackAction> getAvailableActions(Player player) {
 		return this.getActionHandler().getAvailableActions(this, player);
 	}
+	public void setAI(int playerIndex, CardAI ai) {
+		this.getPlayers().get(playerIndex).setAI(ai);
+	}
+	public void autoplay() {
+		
+		while (!this.isGameOver()) {
+			StackAction action = this.callPlayerAI();
+			if (!action.actionIsPerformed())
+				return;
+		}
+		
+	}
+	
+	public int stackSize() {
+		return this.stack.size();
+	}
+	
 }

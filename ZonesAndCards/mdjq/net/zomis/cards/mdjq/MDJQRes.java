@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.zomis.cards.util.IResource;
-import net.zomis.cards.util.ResourceData;
-import net.zomis.cards.util.ResourceMap;
-import net.zomis.cards.util.ResourceType;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceData;
+import net.zomis.cards.resources.ResourceMap;
+import net.zomis.cards.resources.ResourceType;
 
 
 public final class MDJQRes {

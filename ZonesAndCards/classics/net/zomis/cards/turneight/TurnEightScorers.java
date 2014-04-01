@@ -1,7 +1,7 @@
 package net.zomis.cards.turneight;
 
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.SubclassFixedScorer;
+import net.zomis.aiscores.scorers.IsSubclassScorer;
 import net.zomis.aiscores.scorers.SubclassScorer;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
@@ -12,11 +12,10 @@ import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
 
 public enum TurnEightScorers {
-;
-	public static class IsDrawCard extends SubclassFixedScorer<Player, StackAction, DrawCardAction> {
-		public IsDrawCard() {
-			super(DrawCardAction.class);
-		}
+	; // it's an ENUM!
+	
+	public static IsSubclassScorer<Player, StackAction> IsDrawCard() {
+		return new IsSubclassScorer<Player, StackAction>(DrawCardAction.class);
 	}
 	public static abstract class PlayCardScorer extends SubclassScorer<Player, StackAction, TurnEightPlayAction> {
 		public PlayCardScorer() {
@@ -24,10 +23,8 @@ public enum TurnEightScorers {
 		}
 	}
 	
-	public static class IsNextTurn extends SubclassFixedScorer<Player, StackAction, NextTurnAction> {
-		public IsNextTurn() {
-			super(NextTurnAction.class);
-		}
+	public static IsSubclassScorer<Player, StackAction> IsNextTurn() {
+		return new IsSubclassScorer<Player, StackAction>(NextTurnAction.class);
 	}
 	public static class IsEight extends PlayCardScorer {
 		@Override

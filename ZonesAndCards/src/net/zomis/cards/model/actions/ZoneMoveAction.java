@@ -56,7 +56,7 @@ public class ZoneMoveAction extends StackAction {
 
 	@Override
 	public String toString() {
-		return String.format("ZoneMove-%s-->%s", this.getCard(), this.getDestination());
+		return "ZoneMove-" + getCard() + "-->" + getDestination();
 	}
 	
 }
