@@ -94,7 +94,7 @@ public class CardGame implements EventListener {
 	 * Adds a {@link StackAction} to the Stack and records it in history. <b>Should not be used for actions that trigger through other actions than an order by a player.</b>
 	 * @param action Action to add to stack
 	 */
-	protected void addStackAction(StackAction action) {
+	public void addStackAction(StackAction action) {
 		this.stack.addFirst(action);
 	}
 	
@@ -304,8 +304,10 @@ public class CardGame implements EventListener {
 		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase), EventExecutor.POST);
 	}
 	public final void setRandomSeed(long seed) {
-//		CustomFacade.getLog().i("Set seed to " + seed);
 		this.random = new Random(seed);
+	}
+	public final void setRandom(Random random) {
+		this.random = random;
 	}
 	public final void startGame() {
 		if (this.started)

@@ -3,6 +3,7 @@ package net.zomis.cards.hstone;
 import net.zomis.cards.hstone.actions.AttackAction;
 import net.zomis.cards.hstone.factory.Battlecry;
 import net.zomis.cards.hstone.factory.HStoneCardFactory;
+import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.factory.HStoneRarity;
@@ -101,6 +102,8 @@ public class HStoneGame extends CardGame {
 	}
 
 	public void selectOrPerform(HStoneEffect effect, HStoneCard card) {
+		if (effect == null)
+			throw new IllegalArgumentException("Effect is null. Card is " + card);
 		setTargetFilter(effect.needsTarget() ? effect : null, card);
 		if (effect != null && !isTargetSelectionMode()) {
 			effect.performEffect(card, null);
@@ -119,6 +122,14 @@ public class HStoneGame extends CardGame {
 				hsc.cleanup();
 			}
 		}
+	}
+
+	public HStoneCardModel getCardModel(String minion) {
+		for (CardModel model : getAvailableCards()) {
+			if (model.getName().equals(minion))
+				return (HStoneCardModel) model;
+		}
+		return null;
 	}
 	
 }

@@ -17,9 +17,12 @@ public class HStoneDecks {
 			.add(2, "Worgen Infiltrator")
 			.add(2, "Young Dragonhawk")
 			.add(2, "Acidic Swamp Ooze")
-			.add(2, "Ancient Watcher")
-			.add(2, "Bloodfen Raptor")
-			.add(2, "Bluegill Warrior")
+			.add(1, "Ancient Watcher")
+			.add(1, "Novice Engineer")
+			.add(1, "Murloc Tidehunter")
+			.add(1, "Bloodfen Raptor")
+			.add(1, "Bluegill Warrior")
+			.add(1, "Arcane Golem")
 			.add(1, "Frostwolf Grunt")
 			.add(1, "Ice Lance");
 	}

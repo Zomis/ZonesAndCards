@@ -8,15 +8,19 @@ import net.zomis.utils.ZomisList.FilterInterface;
 
 public class AttackSelection implements FilterInterface<HStoneTarget> {
 
-//	private HStoneTarget source;
+	private final HStoneTarget source;
 
 	public AttackSelection(HStoneTarget source) {
-//		this.source = source;
+		this.source = source;
 	}
 
 	@Override
 	public boolean shouldKeep(HStoneTarget target) {
+		if (source.getPlayer() == target.getPlayer())
+			return false;
+		
 		if (target instanceof HStoneCard) {
+			
 			HStoneCard card = (HStoneCard) target;
 			HStonePlayer cardOwner = (HStonePlayer) card.getCurrentZone().getOwner();
 			if (!card.hasAbility(HSAbility.TAUNT) && cardOwner.hasTauntMinions())

@@ -160,7 +160,7 @@ public class CWars2Game extends CardGame {
 		return this.minCardsInDeck;
 	}
 
-	public Player determineWinner() {
+	public CWars2Player determineWinner() {
 		int winner = -1;
 		for (int i = 0; i < getPlayers().size(); i++) {
 			ResourceMap res = getPlayers().get(i).getResources();
@@ -179,7 +179,7 @@ public class CWars2Game extends CardGame {
 		}
 		if (winner < 0)
 			return null;
-		return getPlayers().get(winner);
+		return (CWars2Player) getPlayers().get(winner);
 	}
 	private Boolean winStatus(ResourceMap res) {
 		if (res.getResources(CWars2Res.CASTLE) <= 0)

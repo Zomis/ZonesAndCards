@@ -5,6 +5,7 @@ import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.HStoneTarget;
+import net.zomis.cards.model.StackAction;
 
 public class Battlecry {
 
@@ -75,6 +76,58 @@ public class Battlecry {
 
 	public static HStoneEffect damage(int damage) {
 		return damage(damage, HSTargetType.MINION, HSTargetType.PLAYER);
+	}
+
+	public static HStoneEffect tempBoost(int i, int j) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneTarget source, HStoneTarget target) {
+			}
+		};
+	}
+
+	public static Object selfPT(int i, int j) {
+		return null;
+	}
+
+	public static HStoneEffect removeDurabilityOppWeapon(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Object typePTBonus(HStoneMinionType murloc, int i, int j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static HStoneEffect silencer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static HStoneEffect summon(final String minion) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(final HStoneTarget source, HStoneTarget target) {
+				final HStoneCardModel model = source.getGame().getCardModel(minion);
+				StackAction sa = new StackAction() {
+					@Override
+					protected void onPerform() {
+						source.getPlayer().getBattlefield().createCardOnBottom(model);
+					}
+				};
+				source.getGame().addStackAction(sa);
+			}
+		};
+	}
+
+	public static HStoneEffect drawCard() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneTarget source, HStoneTarget target) {
+				source.getPlayer().drawCard();
+			}
+		};
 	}
 
 }

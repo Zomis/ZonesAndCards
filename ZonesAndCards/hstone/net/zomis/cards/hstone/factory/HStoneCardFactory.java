@@ -1,8 +1,6 @@
 package net.zomis.cards.hstone.factory;
 
-import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.model.CardModel;
-import net.zomis.events.EventHandlerGWT;
 
 public class HStoneCardFactory {
 
@@ -72,6 +70,20 @@ public class HStoneCardFactory {
 
 	public HStoneCardFactory defense() {
 		card.addAbility(HSAbility.NO_ATTACK);
+		return this;
+	}
+
+	public HStoneCardFactory enrage(Object selfPT) {
+		return this;
+	}
+
+	public HStoneCardFactory staticEffect(Object typePTBonus) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	public HStoneCardFactory spellDamage(int i) {
+		// TODO Auto-generated method stub
 		return this;
 	}
 
