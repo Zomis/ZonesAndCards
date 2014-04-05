@@ -10,7 +10,7 @@ import net.zomis.aiscores.ScoreStrategy;
 import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.aiscores.extra.ScoreUtils;
 import net.zomis.cards.model.CardModel;
-import net.zomis.oldstuff.IntegerMap;
+import net.zomis.oldstuff.CountingMap;
 
 public abstract class DeckBuilder<PlayerType extends DeckPlayer<CardModelType>, CardModelType extends CardModel> implements ScoreStrategy<PlayerType, CardModelType> {
 	private ScoreConfig<PlayerType, CardModelType> config;
@@ -32,7 +32,7 @@ public abstract class DeckBuilder<PlayerType extends DeckPlayer<CardModelType>, 
 	}
 	
 	public Map<CardModelType, Integer> createDeckMap(PlayerType player, int cards) {
-		IntegerMap<CardModelType> map = new IntegerMap<CardModelType>();
+		CountingMap<CardModelType> map = new CountingMap<CardModelType>();
 		
 		FieldScoreProducer<PlayerType, CardModelType> scorer = new FieldScoreProducer<PlayerType, CardModelType>(config, this);
 		int count = 0;
