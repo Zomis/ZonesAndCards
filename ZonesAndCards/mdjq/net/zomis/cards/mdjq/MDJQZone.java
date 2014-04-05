@@ -2,10 +2,9 @@ package net.zomis.cards.mdjq;
 
 import net.zomis.cards.mdjq.cards.TriggeredAbility;
 import net.zomis.cards.mdjq.events.MDJQEvent;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 
-public class MDJQZone extends CardZone {
+public class MDJQZone extends CardZone<MDJQPermanent> {
 
 	public static enum ZoneType {
 		LIBRARY, HAND, BATTLEFIELD, GRAVEYARD, EXILE, TEMPORARY;
@@ -34,7 +33,7 @@ public class MDJQZone extends CardZone {
 	}
 
 	public MDJQPermanent findCardWithName(String string) {
-		for (Card card : this.cardList()) {
+		for (MDJQPermanent card : this.cardList()) {
 			if (card.getModel().getName().equals(string))
 				return (MDJQPermanent) card;
 		}
@@ -42,7 +41,7 @@ public class MDJQZone extends CardZone {
 	}
 
 	void trigger(MDJQEvent event) {
-		for (Card perm : this.cardList()) {
+		for (MDJQPermanent perm : this.cardList()) {
 			MDJQPermanent permanent = (MDJQPermanent) perm;
 			for (TriggeredAbility ability : permanent.getModel().getTriggeredAbilities()) {
 				ability.trigger(permanent, event);

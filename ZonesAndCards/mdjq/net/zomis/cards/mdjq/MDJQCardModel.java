@@ -13,10 +13,7 @@ import net.zomis.cards.mdjq.MDJQRes.TribalType;
 import net.zomis.cards.mdjq.activated.ActivatedAbility;
 import net.zomis.cards.mdjq.cards.TriggeredAbility;
 import net.zomis.cards.model.CardModel;
-import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.Player;
 import net.zomis.cards.resources.ResourceMap;
-import net.zomis.iterate.CastedIterator;
 
 public class MDJQCardModel extends CardModel {
 
@@ -87,8 +84,8 @@ public class MDJQCardModel extends CardModel {
 		return this;
 	}
 	
-	public MDJQPermanent createCard(CardZone initialZone) {
-		for (MDJQPlayer player : new CastedIterator<Player, MDJQPlayer>(initialZone.getGame().getPlayers())) {
+	public MDJQPermanent createCard(MDJQZone initialZone) {
+		for (MDJQPlayer player : initialZone.getGame().getPlayers()) {
 			if (player.getLibrary() == initialZone)
 				return new MDJQPermanent(this, initialZone, player); 
 		}

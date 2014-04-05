@@ -24,29 +24,44 @@ import net.zomis.events.IEvent;
 import net.zomis.events.IEventExecutor;
 import net.zomis.events.IEventHandler;
 
-public class CardGame implements EventListener {
+public class CardGame<P extends Player, M extends CardModel> implements EventListener {
 	
 	private static class UselessAIHandler implements ActionHandler {
 		@Override
-		public StackAction click(Card card) {
+		public StackAction click(Card<?> card) {
 			return new InvalidStackAction("Useless Handler");
 		}
 		
 		@Override
-		public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
+		public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 			return new ArrayList<StackAction>(0);
 		}
+
 	}
 	
 	private ActionHandler actionHandler = new UselessAIHandler();
-	private final Set<CardModel> availableCards = new HashSet<CardModel>();
+	
+	protected void setActionHandler(ActionHandler aiHandler) {
+		this.actionHandler = aiHandler;
+	}
+	
+	public ActionHandler getActionHandler() {
+		return this.actionHandler;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(Player player) {
+		return this.getActionHandler().getAvailableActions((E) this, player);
+	}
+	
+	private final Set<M> availableCards = new HashSet<M>();
 	private boolean callingOnEnd;
 	private GamePhase currentPhase;
 	private IEventExecutor events = CustomFacade.getInst().createEvents();
 	private Exception exc;
 	private boolean gameOver = false;
 	private final List<GamePhase> phases = new ArrayList<GamePhase>();
-	private final List<Player> players = new LinkedList<Player>();
+	private final List<P> players = new LinkedList<P>();
 	private Random random = new Random();
 
 	/**
@@ -61,7 +76,7 @@ public class CardGame implements EventListener {
 		this.started = false;
 	}
 	
-	private final Set<CardZone> zones = new HashSet<CardZone>();
+	private final Set<CardZone<?>> zones = new HashSet<CardZone<?>>();
 	
 	public CardGame() {
 //		this.events.registerListener(this); // This breaks GWT
@@ -75,7 +90,7 @@ public class CardGame implements EventListener {
 		this.processStackAction();
 	}
 
-	public void addCard(CardModel card) {
+	public void addCard(M card) {
 		if (card == null)
 			throw new IllegalArgumentException("Card cannot be null");
 		this.availableCards.add(card);
@@ -85,7 +100,7 @@ public class CardGame implements EventListener {
 		this.phases.add(phase);
 	}
 
-	protected void addPlayer(Player player) {
+	protected void addPlayer(P player) {
 		this.players.add(player);
 		player.game = this;
 	}
@@ -98,7 +113,7 @@ public class CardGame implements EventListener {
 		this.stack.addFirst(action);
 	}
 	
-	protected CardZone addZone(CardZone zone) {
+	protected CardZone<?> addZone(CardZone<?> zone) {
 		if (zone == null)
 			throw new IllegalArgumentException("Zone cannot be null");
 		this.zones.add(zone);
@@ -152,10 +167,6 @@ public class CardGame implements EventListener {
 		getEvents().executeEvent(event, i);
 	}
 
-	public ActionHandler getActionHandler() {
-		return this.actionHandler;
-	}
-	
 	public GamePhase getActivePhase() {
 		return this.currentPhase;
 	}
@@ -180,14 +191,13 @@ public class CardGame implements EventListener {
 		return phases;
 	}
 
-	public List<Player> getPlayers() {
+	public List<P> getPlayers() {
 		return Collections.unmodifiableList(players);
 	}
 
-	public Set<CardZone> getPublicZones() {
-		return new TreeSet<CardZone>(zones);
+	public Set<CardZone<?>> getPublicZones() {
+		return new TreeSet<CardZone<?>>(zones);
 	}
-	
 	
 	public final Random getRandom() {
 //		CustomFacade.getLog().i("Using random! " + new Exception().getStackTrace()[1]);
@@ -280,9 +290,6 @@ public class CardGame implements EventListener {
 //	protected boolean removeZone(CardZone zone) {
 //		return this.zones.remove(zone);
 //	}
-	protected void setActionHandler(ActionHandler aiHandler) {
-		this.actionHandler = aiHandler;
-	}
 	
 	protected void setActivePhase(GamePhase phase) {
 		if (!callingOnEnd) {
@@ -317,9 +324,6 @@ public class CardGame implements EventListener {
 		if (this.getActivePhase() == null) {
 			this.setActivePhase(this.phases.get(0));
 		}
-	}
-	public List<StackAction> getAvailableActions(Player player) {
-		return this.getActionHandler().getAvailableActions(this, player);
 	}
 	public void setAI(int playerIndex, CardAI ai) {
 		this.getPlayers().get(playerIndex).setAI(ai);

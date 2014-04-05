@@ -13,6 +13,8 @@ import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardModel;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.ZoneMoveAction;
@@ -45,18 +47,19 @@ public class PokerGame extends ClassicGame implements ActionHandler {
 	protected void onStart() {
 		deck.shuffle(this.getRandom());
 	}
+	
 	@Override
-	public StackAction click(Card card) {
+	public StackAction click(Card<?> card) {
 		return null;
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(CardGame game,	Player player) {
+	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 		List<StackAction> list = new ArrayList<StackAction>();
 		CardPlayer pl = (CardPlayer) player;
 		list.add(new RedrawAction(pl, 7));
 		list.add(new DrawCardAction(pl));
-		for (Card card : pl.getHand().cardList()) {
+		for (Card<ClassicCard> card : pl.getHand().cardList()) {
 //			card.getModel();
 			list.add(new DiscardCardAction(card));
 		}
@@ -86,7 +89,7 @@ public class PokerGame extends ClassicGame implements ActionHandler {
 	}
 	
 	public static class DiscardCardAction extends ZoneMoveAction {
-		public DiscardCardAction(Card card) {
+		public DiscardCardAction(Card<ClassicCard> card) {
 			super(card);
 			this.setDestination(((PokerGame) card.getGame()).deck);
 			this.setSendToBottom();
@@ -109,10 +112,11 @@ public class PokerGame extends ClassicGame implements ActionHandler {
 		protected void onPerform() {
 			super.onPerform();
 			// Calculate Hand
-			
-			LinkedList<Card> list = getDestination().cardList();
+			@SuppressWarnings("unchecked")
+			CardZone<Card<ClassicCard>> dest = (CardZone<Card<ClassicCard>>) getDestination();
+			LinkedList<Card<ClassicCard>> list = dest.cardList();
 			ClassicCard[] cards = new ClassicCard[list.size()];
-			ListIterator<Card> it = list.listIterator();
+			ListIterator<Card<ClassicCard>> it = list.listIterator();
 			while (it.hasNext()) {
 				int index = it.nextIndex();
 				cards[index] = (ClassicCard) it.next().getModel();

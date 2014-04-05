@@ -12,6 +12,7 @@ import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
@@ -21,26 +22,6 @@ import net.zomis.cards.model.ai.CardAI;
 public class TurnEightController implements ActionHandler {
 	static final int EIGHT = 8;
 
-	@Override
-	public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
-		List<StackAction> result = new LinkedList<StackAction>();
-		for (Card card : ((CardPlayer)player).getHand().cardList()) {
-			TurnEightPlayAction action = new TurnEightPlayAction(card);
-			if (action.actionIsAllowed()) {
-				result.add(action);
-			}
-		}
-		TurnEightGame game = (TurnEightGame) player.getGame();
-		result.add(new NextTurnAction(game));
-		result.add(new DrawCardAction(game));
-		
-		for (Suite suite : Suite.values()) {
-			if (!suite.isWildcard())
-				result.add(new SetColorAction(game, suite));
-		}
-		return result;
-	}
-	
 	public static class TurnEightAISkilled extends CardAI {
 		public TurnEightAISkilled() {
 			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
@@ -65,7 +46,7 @@ public class TurnEightController implements ActionHandler {
 			return true;
 		}
 		
-		LinkedList<Card> list = player.getHand().cardList();
+		LinkedList<Card<ClassicCard>> list = player.getHand().cardList();
 		if (list.isEmpty())
 			return true;
 		ClassicCard card1 = (ClassicCard) list.getFirst().getModel();
@@ -84,9 +65,22 @@ public class TurnEightController implements ActionHandler {
 		return true;
 	}
 
+	private static boolean isDrawCard(Card<?> card) {
+		return getGame(card).drawCard == card.getModel();
+	}
+
+	private static boolean isNextTurn(Card<?> card) {
+		return getGame(card).nextTurn == card.getModel();
+	}
+	private static TurnEightGame getGame(Card<?> card) {
+		return (TurnEightGame) card.getGame();
+	}
+
 	@Override
-	public StackAction click(Card card) {
+	public StackAction click(Card<?> card) {
 		TurnEightGame game = (TurnEightGame) card.getGame();
+		@SuppressWarnings("unchecked")
+		Card<ClassicCard> realCard = (Card<ClassicCard>) card;
 		if (card.getModel() instanceof SuiteModel) {
 			return new SetColorAction(game, ((SuiteModel)card.getModel()).getSuite());
 		}
@@ -98,19 +92,29 @@ public class TurnEightController implements ActionHandler {
 		}
 		else {
 			// It's ok if the action is not allowed, because that is checked when processing stack.
-			return new TurnEightPlayAction(card);
+			return new TurnEightPlayAction(realCard);
 		}
 	}
 
-	private static boolean isDrawCard(Card card) {
-		return getGame(card).drawCard == card.getModel();
-	}
-
-	private static boolean isNextTurn(Card card) {
-		return getGame(card).nextTurn == card.getModel();
-	}
-	private static TurnEightGame getGame(Card card) {
-		return (TurnEightGame) card.getGame();
+	@Override
+	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
+		List<StackAction> result = new LinkedList<StackAction>();
+		CardPlayer cplayer = (CardPlayer) player;
+		for (Card<ClassicCard> card : cplayer.getHand().cardList()) {
+			TurnEightPlayAction action = new TurnEightPlayAction(card);
+			if (action.actionIsAllowed()) {
+				result.add(action);
+			}
+		}
+		TurnEightGame game = (TurnEightGame) player.getGame();
+		result.add(new NextTurnAction(game));
+		result.add(new DrawCardAction(game));
+		
+		for (Suite suite : Suite.values()) {
+			if (!suite.isWildcard())
+				result.add(new SetColorAction(game, suite));
+		}
+		return result;
 	}
 	
 }

@@ -1,6 +1,5 @@
 package net.zomis.cards.hstone;
 
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.resources.ResourceMap;
@@ -17,7 +16,7 @@ public class HStonePhase extends PlayerPhase {
 	}
 
 	@Override
-	public void onStart(CardGame game) {
+	public void onStart(CardGame<?, ?> game) {
 		ResourceMap res = getPlayer().getResources();
 		
 		if (!res.hasResources(HStoneRes.MANA_TOTAL, 10))
@@ -30,12 +29,11 @@ public class HStonePhase extends PlayerPhase {
 	}
 	
 	@Override
-	public void onEnd(CardGame game) {
+	public void onEnd(CardGame<?, ?> game) {
 //		for (Player player : game.getPlayers()) {
 			HStonePlayer pl = (HStonePlayer) getPlayer();
-			for (Card card : pl.getBattlefield().cardList()) {
-				HStoneCard cc = (HStoneCard) card;
-				cc.onEndTurn();
+			for (HStoneCard card : pl.getBattlefield().cardList()) {
+				card.onEndTurn();
 			}
 //		}
 		

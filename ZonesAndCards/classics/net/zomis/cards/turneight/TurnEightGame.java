@@ -14,7 +14,6 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
-import net.zomis.iterate.CastedIterator;
 
 public class TurnEightGame extends ClassicGame {
 	private static final int NUM_CARDS = 6;
@@ -67,12 +66,14 @@ public class TurnEightGame extends ClassicGame {
 		this.drawCard = new CardModel("Draw card");
 		this.nextTurn = new CardModel("Next turn");
 		
-		CardZone actions = this.addZone(new CardZone("Actions"));
+		CardZone<Card<ClassicCard>> actions = new CardZone<Card<ClassicCard>>("Actions");
+		this.addZone(actions);
 		actions.createCardOnBottom(drawCard);
 		actions.createCardOnBottom(nextTurn);
 		actions.setGloballyKnown(true);
 		
-		CardZone colorPickZone = this.addZone(new CardZone("ChosenSuite"));
+		CardZone<Card<SuiteModel>> colorPickZone = new CardZone<Card<SuiteModel>>("ChosenSuite");
+		this.addZone(colorPickZone);
 		for (Suite suite : Suite.values()) {
 			if (!suite.isWildcard())
 				colorPickZone.createCardOnBottom(new SuiteModel(suite));
@@ -84,7 +85,7 @@ public class TurnEightGame extends ClassicGame {
 	public void onStart() {
 		this.deck.shuffle();
 		for (int i = 0; i < NUM_CARDS; i++) {
-			for (Player player : new CastedIterator<Player, CardPlayer>(this.getPlayers())) {
+			for (Player player : this.getPlayers()) {
 				deck.getTopCard().zoneMoveOnBottom(((CardPlayer) player).getHand());
 			}
 		}
@@ -96,7 +97,7 @@ public class TurnEightGame extends ClassicGame {
 				discard.moveToBottomOf(deck);
 				deck.shuffle();
 			}
-			Card firstCard = deck.cardList().peek();
+			Card<ClassicCard> firstCard = deck.cardList().peek();
 			firstCard.zoneMoveOnTop(this.discard);
 			firstCardModel = (ClassicCard) firstCard.getModel();
 			setCurrentSuite(firstCardModel.getSuite());
@@ -110,10 +111,10 @@ public class TurnEightGame extends ClassicGame {
 	public void setCurrentSuite(Suite currentSuite) {
 		this.currentSuite = currentSuite;
 	}
-	public CardZone getDeck() {
+	public ClassicCardZone getDeck() {
 		return deck;
 	}
-	public CardZone getDiscard() {
+	public ClassicCardZone getDiscard() {
 		return discard;
 	}
 	
@@ -171,7 +172,7 @@ public class TurnEightGame extends ClassicGame {
 		if (player == null)
 			throw new NullPointerException("Null player cannot draw a card.");
 		if (this.deck.cardList().isEmpty()) {
-			Card last = this.discard.cardList().getLast();
+			Card<ClassicCard> last = this.discard.cardList().getLast();
 			this.discard.moveToBottomOf(this.deck);
 			last.zoneMoveOnTop(this.discard);
 			this.deck.shuffle();

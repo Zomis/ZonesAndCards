@@ -40,7 +40,7 @@ public class DeckList {
 		}
 		return this;
 	}
-	public List<CardCount> getCount(CardGame game) {
+	public List<CardCount> getCount(CardGame<?, ?> game) {
 		Map<String, Integer> cardCopy = new HashMap<String, Integer>(this.cards);
 		List<CardCount> count = new ArrayList<CardCount>(cardCopy.size());
 		Set<CardModel> cards = game.getAvailableCards();

@@ -6,11 +6,11 @@ import net.zomis.events.IEvent;
 
 public class PhaseChangeEvent implements IEvent {
 
-	private final CardGame	game;
+	private final CardGame<?, ?> game;
 	private final GamePhase	from;
 	private final GamePhase	to;
 
-	public PhaseChangeEvent(CardGame game, GamePhase from, GamePhase to) {
+	public PhaseChangeEvent(CardGame<?, ?> game, GamePhase from, GamePhase to) {
 		this.game = game;
 		this.from = from;
 		this.to = to;
@@ -19,7 +19,7 @@ public class PhaseChangeEvent implements IEvent {
 	public GamePhase getFrom() {
 		return from;
 	}
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 	public GamePhase getTo() {

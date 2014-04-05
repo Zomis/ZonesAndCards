@@ -24,7 +24,7 @@ import net.zomis.utils.ZomisList;
 public class HeartsGame extends ClassicGame {
 	public static final int MAGIC_NUMBER = 52 / 4;
 	
-	private final Comparator<Card> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
+	private final Comparator<Card<ClassicCard>> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
 	private final ClassicCardZone pile;
 	private final ActionHandler handler = new HeartsHandler();
 	
@@ -113,7 +113,7 @@ public class HeartsGame extends ClassicGame {
 	}
 	
 	
-	private final Map<Card, CardPlayer> lastPlayed = new HashMap<Card, CardPlayer>();
+	private final Map<Card<ClassicCard>, CardPlayer> lastPlayed = new HashMap<Card<ClassicCard>, CardPlayer>();
 	
 	@Override
 	public boolean isNextPhaseAllowed() {
@@ -146,12 +146,12 @@ public class HeartsGame extends ClassicGame {
 	private void givePileAndSelectNewPhase() {
 		Suite suite = null;
 		int maxRank = 0;
-		Card maxCard = null;
+		Card<ClassicCard> maxCard = null;
 		
 		// Find out who will get the current stick
-		ListIterator<Card> it = this.pile.cardList().listIterator();
+		ListIterator<Card<ClassicCard>> it = this.pile.cardList().listIterator();
 		while (it.hasNext()) {
-			Card card = it.next();
+			Card<ClassicCard> card = it.next();
 			ClassicCard model = (ClassicCard) card.getModel();
 			if (suite == null || model.getSuite() == suite) {
 				suite = model.getSuite();
@@ -164,10 +164,10 @@ public class HeartsGame extends ClassicGame {
 		CardPlayer nextPlayer = this.lastPlayed.get(maxCard);
 		
 		// Find all the cards that give points
-		LinkedList<Card> hearts = ZomisList.filter2(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
-		LinkedList<Card> queen = ZomisList.filter2(this.pile.cardList(),  new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
+		LinkedList<Card<ClassicCard>> hearts = ZomisList.filter2(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
+		LinkedList<Card<ClassicCard>> queen = ZomisList.filter2(this.pile.cardList(),  new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
 		hearts.addAll(queen);
-		for (Card card : hearts) {
+		for (Card<ClassicCard> card : hearts) {
 			// give the point cards to the player who won the stick
 			card.zoneMoveOnBottom(nextPlayer.getBoard());
 		}

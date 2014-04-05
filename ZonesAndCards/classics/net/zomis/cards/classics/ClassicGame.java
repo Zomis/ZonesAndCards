@@ -4,10 +4,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 
-public class ClassicGame extends CardGame {
+public class ClassicGame extends CardGame<CardPlayer, ClassicCard> {
 
 	private final SortedMap<Suite, SortedMap<Integer, ClassicCard>> cardModels = new TreeMap<Suite, SortedMap<Integer, ClassicCard>>();
 	private final AceValue aceConfig;
@@ -46,7 +45,7 @@ public class ClassicGame extends CardGame {
 	public CardPlayer getCurrentPlayer() {
 		return (CardPlayer) super.getCurrentPlayer();
 	}
-	public CardPlayer findPlayerWithBoard(CardZone zone) {
+	public CardPlayer findPlayerWithBoard(ClassicCardZone zone) {
 		for (Player player : this.getPlayers()) {
 			CardPlayer pl = (CardPlayer) player;
 			if (pl.getBoard() == zone)
@@ -54,7 +53,7 @@ public class ClassicGame extends CardGame {
 		}
 		return null;
 	}
-	public CardPlayer findPlayerWithHand(CardZone zone) {
+	public CardPlayer findPlayerWithHand(ClassicCardZone zone) {
 		for (Player player : this.getPlayers()) {
 			CardPlayer pl = (CardPlayer) player;
 			if (pl.getHand() == zone)
@@ -62,7 +61,7 @@ public class ClassicGame extends CardGame {
 		}
 		return null;
 	}
-	public CardPlayer findPlayerWithZone(CardZone zone) {
+	public CardPlayer findPlayerWithZone(ClassicCardZone zone) {
 		CardPlayer pl = findPlayerWithHand(zone);
 		if (pl == null) 
 			pl = findPlayerWithBoard(zone);

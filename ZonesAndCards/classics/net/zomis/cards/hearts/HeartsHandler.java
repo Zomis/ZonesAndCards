@@ -4,10 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.cards.classics.CardPlayer;
+import net.zomis.cards.classics.ClassicCard;
+import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
@@ -18,25 +21,29 @@ public class HeartsHandler implements ActionHandler {
 	private final StackAction illegal = new InvalidStackAction();
 
 	@Override
-	public StackAction click(Card card) {
+	public StackAction click(Card<?> card) {
 		ClassicGame game = (ClassicGame) card.getGame();
-		Player player = game.findPlayerWithHand(card.getCurrentZone());
+		ClassicCardZone zone = (ClassicCardZone) card.getCurrentZone();
+		@SuppressWarnings("unchecked")
+		Card<ClassicCard> cardM = (Card<ClassicCard>) card;
+		Player player = game.findPlayerWithHand(zone);
 		if (player == null)
-			player = game.findPlayerWithBoard(card.getCurrentZone());
+			player = game.findPlayerWithBoard(zone);
 		
 		if (card.getGame().getCurrentPlayer() == null) {
 			// give phase
-			return new HeartsGiveAction(card);
+			return new HeartsGiveAction(cardM);
 		}
 		else {
 			if (player != card.getGame().getCurrentPlayer())
 				return illegal;
-			return new HeartsPlayAction(card);
+			return new HeartsPlayAction(cardM);
 		}
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(CardGame cardGame, Player pl) {
+	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player pl) {
+//		HeartsGame game = (HeartsGame) cardGame;
 		CardPlayer player = (CardPlayer) pl;
 		List<StackAction> list = new LinkedList<StackAction>();
 		if (pl == null) {
@@ -46,15 +53,15 @@ public class HeartsHandler implements ActionHandler {
 		}
 		CardPlayer currentPlayer = player.getGame().getCurrentPlayer();
 		if (currentPlayer == null) {
-			for (Card card : player.getHand().cardList()) {
+			for (Card<ClassicCard> card : player.getHand().cardList()) {
 				list.add(new HeartsGiveAction(card));
 			}
-			for (Card card : player.getBoard().cardList()) {
+			for (Card<ClassicCard> card : player.getBoard().cardList()) {
 				list.add(new HeartsGiveAction(card));
 			}
 		}
 		else if (player.getGame().getCurrentPlayer() == player) {
-			for (Card card : player.getHand().cardList()) {
+			for (Card<ClassicCard> card : player.getHand().cardList()) {
 				list.add(new HeartsPlayAction(card));
 			}
 		}

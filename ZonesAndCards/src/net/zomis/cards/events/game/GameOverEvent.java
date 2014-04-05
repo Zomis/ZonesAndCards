@@ -6,14 +6,14 @@ import net.zomis.events.IEvent;
 
 public class GameOverEvent implements IEvent, CancellableEvent {
 
-	private CardGame	game;
+	private CardGame<?, ?> game;
 	private boolean	cancelled;
 
-	public GameOverEvent(CardGame cardGame) {
+	public GameOverEvent(CardGame<?, ?> cardGame) {
 		this.game = cardGame;
 	}
 	
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 

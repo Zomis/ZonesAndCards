@@ -1,7 +1,6 @@
 package net.zomis.cards.mdjq;
 
 import net.zomis.cards.mdjq.MDJQZone.ZoneType;
-import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.util.DeckPlayer;
@@ -71,7 +70,7 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 	}
 
 	@Override
-	public CardZone getDeck() {
+	public MDJQZone getDeck() {
 		return this.library;
 	}
 

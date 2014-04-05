@@ -7,7 +7,7 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 
 	private CWars2Game	game;
 
-	public CWars2DiscardAction(Card card) {
+	public CWars2DiscardAction(Card<CWars2Card> card) {
 		super(card);
 		this.game = (CWars2Game) card.getGame();
 		this.setDestination(game.getCurrentPlayer().getDiscard());

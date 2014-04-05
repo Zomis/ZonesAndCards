@@ -6,10 +6,10 @@ import net.zomis.events.IEvent;
 
 public class AfterActionEvent implements IEvent {
 
-	private final CardGame game;
+	private final CardGame<?, ?> game;
 	private final StackAction action;
 
-	public AfterActionEvent(CardGame game, StackAction action) {
+	public AfterActionEvent(CardGame<?, ?> game, StackAction action) {
 		this.game = game;
 		this.action = action;
 	}
@@ -17,7 +17,7 @@ public class AfterActionEvent implements IEvent {
 	public StackAction getAction() {
 		return action;
 	}
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 }

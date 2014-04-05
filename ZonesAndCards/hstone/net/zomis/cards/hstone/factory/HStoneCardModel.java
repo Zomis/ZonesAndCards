@@ -40,10 +40,11 @@ public class HStoneCardModel extends CardModel {
 		this.rarity = rarity;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Card createCardInternal(CardZone initialZone) {
-		HStoneCard card = new HStoneCard(this, initialZone);
-		return card;
+	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
+		Card<HStoneCardModel> card = new HStoneCard(this, initialZone);
+		return (Card<E>) card;
 	}
 
 	void setPT(int attack, int health) {

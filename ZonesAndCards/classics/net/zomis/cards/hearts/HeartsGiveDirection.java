@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicGame;
-import net.zomis.cards.model.Player;
 
 public enum HeartsGiveDirection {
 	LEFT(1), RIGHT(-1), AHEAD(2), NONE(null);
@@ -20,7 +19,7 @@ public enum HeartsGiveDirection {
 			return player; // To avoid a null check, return self.
 		
 		ClassicGame game = player.getGame();
-		List<Player> players = game.getPlayers();
+		List<CardPlayer> players = game.getPlayers();
 		int index = players.indexOf(player);
 		if (index == -1)
 			throw new IllegalArgumentException("Player is not in list");

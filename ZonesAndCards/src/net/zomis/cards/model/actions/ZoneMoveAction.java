@@ -6,12 +6,12 @@ import net.zomis.cards.model.StackAction;
 
 public class ZoneMoveAction extends StackAction {
 
-	private final Card card;
-	private final CardZone source;
-	private CardZone destination;
+	private final Card<?> card;
+	private final CardZone<?> source;
+	private CardZone<?> destination;
 	private boolean sendToTop;
 	
-	public ZoneMoveAction(Card card) {
+	public ZoneMoveAction(Card<?> card) {
 		this.card = card;
 		this.source = card.getCurrentZone();
 	}
@@ -28,16 +28,16 @@ public class ZoneMoveAction extends StackAction {
 		return result;
 	}
 
-	public Card getCard() {
+	public Card<?> getCard() {
 		return card;
 	}
-	public CardZone getDestination() {
+	public CardZone<?> getDestination() {
 		return destination;
 	}
-	public CardZone getSource() {
+	public CardZone<?> getSource() {
 		return source;
 	}
-	public void setDestination(CardZone destination) {
+	public void setDestination(CardZone<?> destination) {
 		this.destination = destination;
 	}
 	public void setSendToTop() {

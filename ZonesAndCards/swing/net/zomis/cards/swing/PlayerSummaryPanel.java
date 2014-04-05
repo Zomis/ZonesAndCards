@@ -17,11 +17,11 @@ import net.zomis.cards.resources.ResourceMap;
 public class PlayerSummaryPanel extends JPanel {
 	private static final long	serialVersionUID	= 5433351678830501566L;
 	
-	private final CardGame game;
+	private final CardGame<?, ?> game;
 
 	private final ResourceMap[]	previous;
 
-	public PlayerSummaryPanel(CardGame game) {
+	public PlayerSummaryPanel(CardGame<?, ?> game) {
 		this.game = game;
 		this.previous = new ResourceMap[game.getPlayers().size()];
 		this.updateStatus();

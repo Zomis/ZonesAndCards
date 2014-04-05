@@ -5,7 +5,7 @@ import net.zomis.cards.model.CardZone;
 
 public class ZoneReverseEvent extends ZoneEvent {
 
-	public ZoneReverseEvent(CardZone zone) {
+	public ZoneReverseEvent(CardZone<?> zone) {
 		super(zone);
 	}
 

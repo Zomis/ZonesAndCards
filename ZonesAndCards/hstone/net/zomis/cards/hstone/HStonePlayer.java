@@ -7,7 +7,6 @@ import net.zomis.cards.hstone.actions.BattlefieldAction;
 import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.Player;
@@ -21,33 +20,33 @@ import net.zomis.cards.util.DeckPlayer;
 public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HStoneCardModel>, HStoneTarget, ResourceListener {
 
 	private static final int	MAX_CARDS_IN_HAND	= 10;
-	private final CardZone library;
-	private final CardZone hand;
-	private final CardZone battlefield;
+	private final CardZone<HStoneCard> library;
+	private final CardZone<HStoneCard> hand;
+	private final CardZone<HStoneCard> battlefield;
 	private List<HStoneCardModel> cards;
 	private HStoneCard weapon;
 	private boolean frozen;
 	
 	public HStonePlayer(HStoneGame game, HStoneChar character) {
 		this.setName(character.getName());
-		this.hand = new CardZone(getName() + "-Hand", this);
-		this.library = new CardZone(getName() + "-Deck", this);
-		this.battlefield = new CardZone(getName() + "-Battlefield", this);
+		this.hand = new CardZone<HStoneCard>(getName() + "-Hand", this);
+		this.library = new CardZone<HStoneCard>(getName() + "-Deck", this);
+		this.battlefield = new CardZone<HStoneCard>(getName() + "-Battlefield", this);
 		this.cards = new ArrayList<HStoneCardModel>();
 		DeckBuilder.createExact(this, character.getDeck().getCount(game));
 		this.getResources().setGlobalListener(this);
 	}
 	
 	@Override
-	public CardZone getHand() {
+	public CardZone<HStoneCard> getHand() {
 		return hand;
 	}
 	
-	public CardZone getLibrary() {
+	public CardZone<HStoneCard> getLibrary() {
 		return library;
 	}
 	
-	public CardZone getBattlefield() {
+	public CardZone<HStoneCard> getBattlefield() {
 		return battlefield;
 	}
 
@@ -57,7 +56,7 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	}
 
 	@Override
-	public CardZone getDeck() {
+	public CardZone<HStoneCard> getDeck() {
 		return this.library;
 	}
 
@@ -131,9 +130,8 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	}
 
 	public boolean hasTauntMinions() {
-		for (Card battleCard : getBattlefield().cardList()) {
-			HStoneCard minion = (HStoneCard) battleCard;
-			if (minion.hasAbility(HSAbility.TAUNT))
+		for (HStoneCard battleCard : getBattlefield().cardList()) {
+			if (battleCard.hasAbility(HSAbility.TAUNT))
 				return true;
 		}
 		return false;

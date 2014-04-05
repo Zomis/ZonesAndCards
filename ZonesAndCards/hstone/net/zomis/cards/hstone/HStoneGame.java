@@ -7,14 +7,13 @@ import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.factory.HStoneRarity;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.utils.ZomisList.FilterInterface;
 
-public class HStoneGame extends CardGame {
+public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 
 	private FilterInterface<HStoneTarget> targets;
 	private HStoneTarget targetsFor;
@@ -66,9 +65,9 @@ public class HStoneGame extends CardGame {
 		getFirstPlayer().getNextPlayer().drawCards(4);
 		
 		GamePhase phase = new GamePhase() { // Empty phase for exchanging some starting cards
-			public void onEnd(CardGame game) {
+			public void onEnd(CardGame<?, ?> game) {
 				setActivePhaseDirectly(getPhases().get(0));
-				CardModel ring = HStoneCardFactory.spell(0, HStoneRarity.COMMON, "The Coin").effect(Battlecry.tempMana(1)).card();
+				HStoneCardModel ring = HStoneCardFactory.spell(0, HStoneRarity.COMMON, "The Coin").effect(Battlecry.tempMana(1)).card();
 				addCard(ring);
 				getFirstPlayer().getNextPlayer().getHand().createCardOnBottom(ring);
 			}
@@ -117,9 +116,8 @@ public class HStoneGame extends CardGame {
 				endGame();
 			}
 			
-			for (Card card : player.getBattlefield().cardList()) {
-				HStoneCard hsc = (HStoneCard) card;
-				hsc.cleanup();
+			for (HStoneCard card : player.getBattlefield().cardList()) {
+				card.cleanup();
 			}
 		}
 	}

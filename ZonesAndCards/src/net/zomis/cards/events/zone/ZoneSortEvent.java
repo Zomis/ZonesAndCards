@@ -5,7 +5,7 @@ import net.zomis.cards.model.CardZone;
 
 public class ZoneSortEvent extends ZoneEvent {
 
-	public ZoneSortEvent(CardZone zone) {
+	public ZoneSortEvent(CardZone<?> zone) {
 		super(zone);
 	}
 

@@ -1,6 +1,5 @@
 package net.zomis.cards.hstone.factory;
 
-import net.zomis.cards.model.CardModel;
 
 public class HStoneCardFactory {
 
@@ -23,7 +22,7 @@ public class HStoneCardFactory {
 		return factory;
 	}
 
-	public CardModel card() {
+	public HStoneCardModel card() {
 		return card;
 	}
 

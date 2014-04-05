@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.Player;
@@ -12,29 +13,29 @@ import net.zomis.cards.util.DeckPlayer;
 
 public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, HandPlayer {
 
-	private final CardZone deck;
-	private final CardZone hand;
+	private final CardZone<Card<CWars2Card>> deck;
+	private final CardZone<Card<CWars2Card>> hand;
 	
 	private List<CWars2Card> cards;
-	private CardZone discard;
+	private CardZone<Card<CWars2Card>> discard;
 	
 	CWars2Player() { this(null); }
 	public CWars2Player(String name) {
 		this.setName(name);
-		this.deck = new CardZone("Deck-" + getName());
-		this.hand = new CardZone("Hand-" + getName());
+		this.deck = new CardZone<Card<CWars2Card>>("Deck-" + getName());
+		this.hand = new CardZone<Card<CWars2Card>>("Hand-" + getName());
 		this.hand.setKnown(this, true);
 		this.cards = new ArrayList<CWars2Card>();
-		this.discard = new CardZone("Discard-" + getName());
+		this.discard = new CardZone<Card<CWars2Card>>("Discard-" + getName());
 		this.discard.setGloballyKnown(true);
 	}
 	
 	@Override
-	public CardZone getDeck() {
+	public CardZone<Card<CWars2Card>> getDeck() {
 		return deck;
 	}
 	
-	public CardZone getHand() {
+	public CardZone<Card<CWars2Card>> getHand() {
 		return hand;
 	}
 	
@@ -93,7 +94,7 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 		this.cards = new ArrayList<CWars2Card>();
 		// Need to create new list here because it can be unmodifiable already.
 	}
-	public CardZone getDiscard() {
+	public CardZone<Card<CWars2Card>> getDiscard() {
 		return this.discard;
 	}
 	

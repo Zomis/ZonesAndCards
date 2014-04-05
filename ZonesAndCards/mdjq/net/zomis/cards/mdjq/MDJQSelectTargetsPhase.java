@@ -18,7 +18,7 @@ public class MDJQSelectTargetsPhase extends MDJQPhase {
 	}
 	
 	@Override
-	public void onEnd(CardGame game) {
+	public void onEnd(CardGame<?, ?> game) {
 		CustomFacade.getLog().i("Ending temporary phase: " + this);
 		MDJQGame g = (MDJQGame) game;
 		g.setActivePhase(nextPhase);

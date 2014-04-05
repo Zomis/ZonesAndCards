@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardFilter;
+import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
@@ -15,7 +16,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 
 	private ClassicCard cardModel;
 
-	public HeartsPlayAction(Card card) {
+	public HeartsPlayAction(Card<ClassicCard> card) {
 		super(card);
 		this.cardModel = (ClassicCard) card.getModel();
 		this.setSendToTop();
@@ -24,7 +25,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	
 	@Override
 	public boolean actionIsAllowed() {
-		CardPlayer player = getGame().findPlayerWithHand(getCard().getCurrentZone());
+		CardPlayer player = getGame().findPlayerWithHand((ClassicCardZone) getCard().getCurrentZone());
 		if (player == null && getGame().getCurrentPlayer() != null) {
 			return setErrorMessage("Card is not in a hand. Current player is " + getGame().getCurrentPlayer());
 		}
@@ -38,7 +39,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		}
 		
 		ClassicCard bottom = (ClassicCard) getGame().getPile().getBottomCard().getModel();
-		LinkedList<Card> list = ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(bottom.getSuite()));
+		LinkedList<Card<ClassicCard>> list = ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(bottom.getSuite()));
 		
 		if (list.isEmpty()) {
 			return noMatchingSuiteAllowed(player);

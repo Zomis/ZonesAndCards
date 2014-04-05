@@ -2,13 +2,13 @@ package net.zomis.cards.turneight;
 
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
+import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.actions.ZoneMoveAction;
 
 public class TurnEightPlayAction extends ZoneMoveAction {
-	public TurnEightPlayAction(Card card) {
+	public TurnEightPlayAction(Card<ClassicCard> card) {
 		super(card);
 		TurnEightGame game = (TurnEightGame) card.getGame();
 		this.setDestination(game.getDiscard());
@@ -16,7 +16,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 	@Override
 	public boolean actionIsAllowed() {
 		TurnEightGame game = (TurnEightGame) getCard().getGame();
-		CardZone discard = game.getDiscard();
+		ClassicCardZone discard = game.getDiscard();
 		if (discard.cardList().isEmpty())
 			return false;
 		ClassicCard topCard = (ClassicCard) discard.cardList().peekLast().getModel();

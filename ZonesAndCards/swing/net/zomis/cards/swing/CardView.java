@@ -13,19 +13,19 @@ import net.zomis.custommap.CustomFacade;
 
 public class CardView implements ActionListener {
 
-	private final Card card;
+	private final Card<?> card;
 	private final JButton button;
 	
 	private CardViewClickListener onClick;
 	public static boolean	allKnown;
 	public static CardViewTextStrategy text = new CardViewTextStrategy() {
 		@Override
-		public String textFor(Card card) {
+		public String textFor(Card<?> card) {
 			return card.toString();
 		}
 	};
 	
-	public CardView(Card card, CardViewClickListener listener) {
+	public CardView(Card<?> card, CardViewClickListener listener) {
 		super();
 		this.card = card;
 		this.button = new JButton();
@@ -63,7 +63,7 @@ public class CardView implements ActionListener {
 		this.onClick.onCardClick(this);
 	}
 
-	public Card getCard() {
+	public Card<?> getCard() {
 		return card;
 	}
 

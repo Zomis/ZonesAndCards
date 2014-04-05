@@ -1,23 +1,24 @@
 package net.zomis.cards.classics;
 
-import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.CardZone.GetZoneInterface;
+import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.Player;
 
 public class CardPlayer extends Player implements HandPlayer {
 
-	public static class GetHand implements GetZoneInterface<Player> {
+	public static class GetHand implements GetZoneInterface<CardPlayer> {
+		@SuppressWarnings("unchecked")
 		@Override
-		public CardZone getZone(Player object) {
-			return ((CardPlayer)object).getHand();
+		public ClassicCardZone getZone(CardPlayer object) {
+			return object.getHand();
 		}
 	}
 	
-	public static class GetBoard implements GetZoneInterface<Player> {
+	public static class GetBoard implements GetZoneInterface<CardPlayer> {
+		@SuppressWarnings("unchecked")
 		@Override
-		public CardZone getZone(Player object) {
-			return ((CardPlayer)object).getBoard();
+		public ClassicCardZone getZone(CardPlayer object) {
+			return object.getBoard();
 		}
 	}
 

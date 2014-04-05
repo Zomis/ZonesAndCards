@@ -65,7 +65,7 @@ public class IdiotGame extends ClassicGame {
 		if (!this.deck.cardList().isEmpty())
 			return Integer.MAX_VALUE;
 		
-		for (CardZone zone : this.zones) {
+		for (CardZone<?> zone : this.zones) {
 			i += zone.cardList().size();
 		}
 		

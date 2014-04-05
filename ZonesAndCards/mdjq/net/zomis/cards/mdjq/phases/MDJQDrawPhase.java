@@ -11,7 +11,7 @@ public class MDJQDrawPhase extends MDJQPhase {
 	}
 
 	@Override
-	public void onEnd(CardGame game) {
+	public void onEnd(CardGame<?, ?> game) {
 		this.getPlayer().getLibrary().getTopCard().zoneMoveOnBottom(this.getPlayer().getHand());
 	}
 	

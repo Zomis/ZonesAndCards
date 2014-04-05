@@ -31,8 +31,8 @@ public class CWars2DeckBuilder extends DeckBuilder<CWars2Player, CWars2Card> {
 
 	@Override
 	public boolean canScoreField(ScoreParameters<CWars2Player> parameters, CWars2Card field) {
-		LinkedList<Card> list = parameters.getParameters().getDeck().cardList();
-		LinkedList<Card> list2 = ZomisList.filter2(list, new CardModelFilter(field));
+		LinkedList<Card<CWars2Card>> list = parameters.getParameters().getDeck().cardList();
+		LinkedList<Card<CWars2Card>> list2 = ZomisList.filter2(list, new CardModelFilter(field));
 		return list2.size() < CWars2DeckBuilder.MAX_PER_DECK;
 	}
 

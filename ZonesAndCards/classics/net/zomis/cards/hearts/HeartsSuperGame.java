@@ -55,7 +55,7 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 	private void onGameEnd(GameOverEvent event) {
 //			CustomFacade.getLog().i("Hearts round is over, previous points " + Arrays.toString(this.getScores()));
 		int distributedPoints = 0;
-		for (IndexIteratorStatus<Player> player : new IndexIterator<Player>(this.getPlayers())) {
+		for (IndexIteratorStatus<CardPlayer> player : new IndexIterator<CardPlayer>(this.getPlayers())) {
 			int inc = this.calcRealPoints((CardPlayer) player.getValue());
 			distributedPoints += inc;
 			player.getValue().getResources().changeResources(score, inc);

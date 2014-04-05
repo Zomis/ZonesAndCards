@@ -11,10 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public abstract class MixZone extends CardZone {
+public abstract class MixZone<E extends Card<?>> extends CardZone<E> {
 
 	@JsonProperty
-	private final LinkedList<Card> cards = new LinkedList<Card>();
+	private final LinkedList<Card<?>> cards = new LinkedList<Card<?>>();
 	
 	public MixZone(@JsonProperty(value="name") String name) {
 		super(name);
@@ -26,10 +26,10 @@ public abstract class MixZone extends CardZone {
 
 	@Override
 	@JsonIgnore
-	public abstract Card getBottomCard();
+	public abstract E getBottomCard();
 	
 	@Override
 	@JsonIgnore
-	public abstract Card getTopCard();
+	public abstract E getTopCard();
 	
 }

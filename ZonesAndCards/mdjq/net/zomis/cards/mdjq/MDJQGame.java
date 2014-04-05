@@ -22,7 +22,6 @@ import net.zomis.cards.mdjq.phases.MDJQUpkeepPhase;
 import net.zomis.cards.mdjq.scorers.CardNameScorer;
 import net.zomis.cards.mdjq.scorers.IsColorScorer;
 import net.zomis.cards.model.ActionHandler;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
@@ -32,7 +31,7 @@ import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.IEvent;
 
-public class MDJQGame extends CardGame {
+public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 	
 	
 	private MDJQZone battlefield;
@@ -120,7 +119,7 @@ public class MDJQGame extends CardGame {
 //		CustomFacade.getLog().d("Execute event: " + ev);
 		if (ev instanceof ZoneChangeEvent) {
 			ZoneChangeEvent eev = (ZoneChangeEvent) ev;
-			ev = new MDJQZoneChangeEvent(eev.getCard(), eev.getFromCardZone(), eev.getToCardZone());
+			ev = new MDJQZoneChangeEvent((MDJQPermanent) eev.getCard(), (MDJQZone) eev.getFromCardZone(), (MDJQZone) eev.getToCardZone());
 		}
 		if (ev instanceof PhaseChangeEvent) {
 			ev = new MDJQPhaseChangeEvent((PhaseChangeEvent) ev);
@@ -217,7 +216,7 @@ public class MDJQGame extends CardGame {
 		player.getDeck().shuffle();
 		
 		for (int c = 0; c < 7; c++) {
-			Card card = player.getLibrary().cardList().peekFirst();
+			MDJQPermanent card = player.getLibrary().cardList().peekFirst();
 			card.zoneMoveOnBottom(player.getHand());
 		}
 	}
@@ -238,8 +237,9 @@ public class MDJQGame extends CardGame {
 		for (Player pl : this.getPlayers()) {
 			objects.add((MDJQObject) pl);
 		}
-		for (CardZone z : this.getPublicZones()) {
-			for (Card card : z.cardList()) {
+		for (CardZone<?> z : this.getPublicZones()) {
+			MDJQZone zone = (MDJQZone) z;
+			for (MDJQPermanent card : zone.cardList()) {
 				objects.add((MDJQObject) card);
 			}
 		}

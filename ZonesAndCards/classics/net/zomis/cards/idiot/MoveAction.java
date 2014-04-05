@@ -6,7 +6,7 @@ import net.zomis.cards.model.actions.ZoneMoveAction;
 
 public class MoveAction extends ZoneMoveAction {
 
-	public MoveAction(Card from, ClassicCardZone to) {
+	public MoveAction(Card<?> from, ClassicCardZone to) {
 		super(from);
 		setDestination(to);
 		setSendToBottom();

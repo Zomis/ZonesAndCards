@@ -5,7 +5,7 @@ import net.zomis.cards.model.CardZone;
 
 public class ZoneShuffleEvent extends ZoneEvent {
 
-	public ZoneShuffleEvent(CardZone zone) {
+	public ZoneShuffleEvent(CardZone<?> zone) {
 		super(zone);
 	}
 

@@ -5,13 +5,13 @@ import net.zomis.events.IEvent;
 
 public class CardGameEvent implements IEvent {
 
-	private final CardGame game;
+	private final CardGame<?, ?> game;
 
-	public CardGameEvent(CardGame game) {
+	public CardGameEvent(CardGame<?, ?> game) {
 		this.game = game;
 	}
 	
-	public final CardGame getGame() {
+	public final CardGame<?, ?> getGame() {
 		return game;
 	}
 	

@@ -3,9 +3,7 @@ package net.zomis.cards.mdjq.phases;
 import net.zomis.cards.mdjq.MDJQPermanent;
 import net.zomis.cards.mdjq.MDJQPhase;
 import net.zomis.cards.mdjq.MDJQPlayer;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
-import net.zomis.iterate.CastedIterator;
 
 public class MDJQUntapPhase extends MDJQPhase {
 
@@ -14,13 +12,13 @@ public class MDJQUntapPhase extends MDJQPhase {
 	}
 	
 	@Override
-	public void onStart(CardGame game) {
+	public void onStart(CardGame<?, ?> game) {
 		this.getPlayer().newTurn();
 	}
 	
 	@Override
-	public void onEnd(CardGame game) {
-		for (MDJQPermanent perm : new CastedIterator<Card, MDJQPermanent>(this.getPlayer().getGame().getBattlefield().cardList())) {
+	public void onEnd(CardGame<?, ?> game) {
+		for (MDJQPermanent perm : this.getPlayer().getGame().getBattlefield().cardList()) {
 			if (perm.getController() == this.getPlayer())
 				perm.untap();
 		}

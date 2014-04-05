@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.zomis.cards.model.Card;
 
-public class ClassicCardComparator implements Comparator<Card> {
+public class ClassicCardComparator implements Comparator<Card<ClassicCard>> {
 
 	private List<Suite> suiteOrder;
 	private boolean	suiteFirst;
@@ -17,10 +17,8 @@ public class ClassicCardComparator implements Comparator<Card> {
 	}
 	
 	@Override
-	public int compare(Card o1, Card o2) {
-		ClassicCard o1m = (ClassicCard) o1.getModel();
-		ClassicCard o2m = (ClassicCard) o2.getModel();
-		return getValue(o1m) - getValue(o2m);
+	public int compare(Card<ClassicCard> o1, Card<ClassicCard> o2) {
+		return getValue(o1.getModel()) - getValue(o2.getModel());
 	}
 	
 	protected int getValue(ClassicCard card) {

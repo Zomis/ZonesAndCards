@@ -6,7 +6,6 @@ import java.util.LinkedList;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.util.CardModelFilter;
 import net.zomis.cards.util.DeckBuilder;
@@ -29,8 +28,8 @@ public class MDJQDeckBuilder extends DeckBuilder<MDJQPlayer, MDJQCardModel> {
 
 	@Override
 	public boolean canScoreField(ScoreParameters<MDJQPlayer> parameters, MDJQCardModel field) {
-		LinkedList<Card> list = parameters.getParameters().getDeck().cardList();
-		LinkedList<Card> list2 = ZomisList.filter2(list, new CardModelFilter(field));
+		LinkedList<MDJQPermanent> list = parameters.getParameters().getDeck().cardList();
+		LinkedList<MDJQPermanent> list2 = ZomisList.filter2(list, new CardModelFilter(field));
 		return list2.size() < field.getCardLimit();
 	}
 

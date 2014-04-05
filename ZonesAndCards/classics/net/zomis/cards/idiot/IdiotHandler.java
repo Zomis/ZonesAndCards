@@ -11,6 +11,7 @@ import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
@@ -20,7 +21,7 @@ import net.zomis.utils.ZomisList;
 public class IdiotHandler implements ActionHandler {
 
 	public static class IdiotGameAI extends CardAI {
-		public IdiotGameAI(CardGame game) {
+		public IdiotGameAI(IdiotGame game) {
 			super();
 			
 			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
@@ -38,7 +39,7 @@ public class IdiotHandler implements ActionHandler {
 	}
 	
 	@Override
-	public StackAction click(Card card) {
+	public StackAction click(Card<?> card) {
 		IdiotGame game = (IdiotGame) card.getGame();
 		if (card.getCurrentZone() == game.getDeck()) {
 			return new DealAction(game);
@@ -63,7 +64,7 @@ public class IdiotHandler implements ActionHandler {
 	}
 
 	@Override
-	public List<StackAction> getAvailableActions(CardGame cardGame, Player player) {
+	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 		IdiotGame game = (IdiotGame) player.getGame();
 		LinkedList<StackAction> result = new LinkedList<StackAction>();
 		result.add(new DealAction(game));

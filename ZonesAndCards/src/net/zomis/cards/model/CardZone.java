@@ -18,16 +18,16 @@ import net.zomis.cards.events.zone.ZoneSortEvent;
 import net.zomis.events.IEvent;
 import net.zomis.utils.ZomisList;
 
-public class CardZone implements Comparable<CardZone> {
+public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>> {
 
 	public static interface GetZoneInterface<E> {
-		CardZone getZone(E object);
+		<C extends Card<?>> CardZone<C> getZone(E object);
 	}
 	
-	CardGame game;
+	CardGame<?, ?> game;
 	
 	private final Map<Player, Boolean> known = new HashMap<Player, Boolean>();
-	private final LinkedList<Card> cards = new LinkedList<Card>();
+	private final LinkedList<E> cards = new LinkedList<E>();
 	private final String name;
 	private final Player owner;
 
@@ -43,7 +43,7 @@ public class CardZone implements Comparable<CardZone> {
 	public void setGloballyKnown(boolean knowledge) {
 		this.knownGlobal = knowledge;
 	}
-	public CardZone setKnown(Player player, boolean knowledge) {
+	public CardZone<E> setKnown(Player player, boolean knowledge) {
 		this.known.put(player, knowledge);
 		return this;
 	}
@@ -53,7 +53,7 @@ public class CardZone implements Comparable<CardZone> {
 		return (b == null ? knownGlobal : b);
 	}
 
-	public LinkedList<Card> cardList() {
+	public LinkedList<E> cardList() {
 		return cards;
 	}
 	
@@ -67,11 +67,11 @@ public class CardZone implements Comparable<CardZone> {
 	}
 
 	@Override
-	public int compareTo(CardZone arg0) {
+	public int compareTo(CardZone<E> arg0) {
 		return name.compareTo(arg0.name);
 	}
 	
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 	public void shuffle() {
@@ -83,13 +83,16 @@ public class CardZone implements Comparable<CardZone> {
 		ZomisList.shuffle(cards, random);
 		this.executeEvent(new ZoneShuffleEvent(this));
 	}
-	public void sort(Comparator<Card> comparator) {
+	
+	public void sort(Comparator<E> comparator) {
 		Collections.sort(this.cards, comparator);
 		this.executeEvent(new ZoneSortEvent(this));
 	}
+	
 	public void createCardOnTop(CardModel cardModel) {
-		Card card = cardModel.createCardInternal(this);
-		this.cards.addFirst(card);
+		@SuppressWarnings("unchecked")
+		E card = (E) cardModel.createCardInternal(this); // TODO: Possibly use a "CardFactory" somewhere...
+		this.cards.addFirst((E) card);
 		this.executeEvent(new CardCreatedEvent(card));
 	}
 	private void executeEvent(IEvent event) {
@@ -97,29 +100,30 @@ public class CardZone implements Comparable<CardZone> {
 			this.game.executeEvent(event);
 	}
 	public void createCardOnBottom(CardModel cardModel) {
-		Card card = cardModel.createCardInternal(this);
+		@SuppressWarnings("unchecked")
+		E card = (E) cardModel.createCardInternal(this);
 		this.cards.addLast(card);
 		this.executeEvent(new CardCreatedEvent(card));
 	}
-	public Card getTopCard() {
+	public E getTopCard() {
 		if (cards.isEmpty())
 			return null;
 		return this.cards.getFirst();
 	}
-	public Card getBottomCard() {
+	public E getBottomCard() {
 		if (cards.isEmpty())
 			return null;
 		return this.cards.getLast();
 	}
-	public CardZone extractTopCards(int number) {
-		CardZone copy = this.createEmptyCopy();
+	public CardZone<E> extractTopCards(int number) {
+		CardZone<E> copy = this.createEmptyCopy();
 		for (int i = 0; i < number; i++) {
 			this.getTopCard().zoneMoveOnBottom(copy);
 		}
 		return copy;
 	}
-	public CardZone extractBottomCards(int number) {
-		CardZone copy = this.createEmptyCopy();
+	public CardZone<?> extractBottomCards(int number) {
+		CardZone<?> copy = this.createEmptyCopy();
 		for (int i = 0; i < number; i++) {
 			this.getBottomCard().zoneMoveOnTop(copy);
 		}
@@ -129,20 +133,20 @@ public class CardZone implements Comparable<CardZone> {
 	 * Reverse the ordering of the cards in this zone
 	 * @return Returns self
 	 */
-	public CardZone reverse() {
+	public CardZone<E> reverse() {
 		Collections.reverse(cards);
 		this.executeEvent(new ZoneReverseEvent(this));
 		return this;
 	}
-	public void moveToTopOf(CardZone destination) {
-		List<Card> list = new ArrayList<Card>(cardList());
+	public void moveToTopOf(CardZone<E> destination) {
+		List<E> list = new ArrayList<E>(cardList());
 		Collections.reverse(list);
-		for (Card card : list) {
+		for (Card<?> card : list) {
 			card.zoneMoveOnTop(destination);
 		}
 	}
-	public void moveToBottomOf(CardZone destination) {
-		for (Card card : new ArrayList<Card>(cardList())) {
+	public void moveToBottomOf(CardZone<E> destination) {
+		for (E card : new ArrayList<E>(cardList())) {
 			card.zoneMoveOnBottom(destination);
 		}
 	}
@@ -155,8 +159,8 @@ public class CardZone implements Comparable<CardZone> {
 		return result;
 	}
 	private int timesCopied;
-	private CardZone createEmptyCopy() {
-		CardZone zone = new CardZone(this.getName() + "-Copy" + ++timesCopied);
+	private CardZone<E> createEmptyCopy() {
+		CardZone<E> zone = new CardZone<E>(this.getName() + "-Copy" + ++timesCopied);
 		zone.setGloballyKnown(this.knownGlobal);
 		for (Entry<Player, Boolean> ee : this.known.entrySet()) {
 			zone.setKnown(ee.getKey(), ee.getValue());
@@ -169,24 +173,25 @@ public class CardZone implements Comparable<CardZone> {
 	public int size() {
 		return this.cards.size();
 	}
-	public <E> void deal(int count, E[] objects, GetZoneInterface<E> zoneGetter) {
+	public <F> void deal(int count, F[] objects, GetZoneInterface<F> zoneGetter) {
 		this.deal(count, Arrays.asList(objects), zoneGetter);
 	}
-	public <E> void deal(int count, List<E> objects, GetZoneInterface<E> zoneGetter) {
-		for (E e : objects) {
+	public <F> void deal(int count, List<F> objects, GetZoneInterface<F> zoneGetter) {
+		for (F e : objects) {
 			if (count <= 0)
 				return;
-			CardZone zone = zoneGetter.getZone(e);
+			CardZone<?> zone = zoneGetter.getZone(e);
 			this.getTopCard().zoneMoveOnBottom(zone);
 			count--;
 		}
 	}
-	public <E> void dealUntilLeft(int cardsLeft, List<? extends E> players, GetZoneInterface<E> getHand) {
+	
+	public <F> void dealUntilLeft(int cardsLeft, List<? extends F> players, GetZoneInterface<F> getHand) {
 		while (true) {
-			for (E player : players) {
+			for (F player : players) {
 				if (this.size() <= cardsLeft)
 					return;
-				Card card = this.getTopCard();
+				Card<?> card = this.getTopCard();
 				card.zoneMoveOnBottom(getHand.getZone(player));
 			}
 		}

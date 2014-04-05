@@ -14,20 +14,20 @@ import net.zomis.events.EventListener;
 import net.zomis.utils.ZomisList;
 import net.zomis.utils.ZomisList.FilterInterface;
 
-public class CardCounter implements EventListener {
+public class CardCounter<C extends Card<?>> implements EventListener {
 
-	private final CardGame game;
+	private final CardGame<?, ?> game;
 	private Player perspectivePlayer;
 	private int informationCounter;
-	private final List<Card> availableCards;
+	private final List<C> availableCards;
 	
-	public CardCounter(CardGame game) {
+	public CardCounter(CardGame<?, ?> game) {
 		this.game = game;
 		game.registerListener(this);
-		this.availableCards = new ArrayList<Card>();
+		this.availableCards = new ArrayList<C>();
 	}
 
-	public void addAvailableCards(CardZone zone) {
+	public void addAvailableCards(CardZone<C> zone) {
 		this.availableCards.addAll(zone.cardList());
 	}
 	
@@ -39,17 +39,21 @@ public class CardCounter implements EventListener {
 		return informationCounter;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Event
 	public void onZoneMove(ZoneChangeEvent event) {
+		C card = (C) event.getCard();
+		CardZone<C> source = (CardZone<C>) event.getFromCardZone();
+		CardZone<C> dest = (CardZone<C>) event.getToCardZone();
 		if (event.getFromCardZone().isKnown(perspectivePlayer)) {
-			this.informMove(event.getCard(), event.getFromCardZone(), event.getToCardZone());
+			this.informMove(card, source, dest);
 		}
-		if (event.getToCardZone() != null && event.getToCardZone().isKnown(perspectivePlayer)) {
-			this.informMove(event.getCard(), event.getFromCardZone(), event.getToCardZone());
+		if (source != null && dest.isKnown(perspectivePlayer)) {
+			this.informMove(card, source, dest);
 		}
 	}
 	
-	private void informMove(Card card, CardZone fromCardZone, CardZone toCardZone) {
+	private void informMove(C card, CardZone<C> fromCardZone, CardZone<C> toCardZone) {
 		++informationCounter;
 		
 	}
@@ -59,12 +63,12 @@ public class CardCounter implements EventListener {
 		perspectivePlayer = null;
 	}
 
-	public List<Card> getAvailable() {
-		return new ArrayList<Card>(this.availableCards);
+	public List<C> getAvailable() {
+		return new ArrayList<C>(this.availableCards);
 	}
 
-	public CardCalculation calculate(List<Card> available, FilterInterface<Card> filter) {
-		LinkedList<Card> filtered = ZomisList.filter2(available, filter);
+	public CardCalculation calculate(List<C> available, FilterInterface<C> filter) {
+		LinkedList<C> filtered = ZomisList.filter2(available, filter);
 		return new CardCalculation(available.size(), filtered.size());
 	}
 	

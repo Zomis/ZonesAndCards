@@ -17,7 +17,7 @@ import net.zomis.cards.model.CardZone;
 public class CardZoneView implements CardViewClickListener {
 	
 	private final JPanel thisPanel = new JPanel();
-	private final CardZone zone;
+	private final CardZone<?> zone;
 	private final JPanel cards;
 	private final List<CardView> cardViews;
 	private int	viewLimit;
@@ -27,7 +27,7 @@ public class CardZoneView implements CardViewClickListener {
 		public void onCardClick(CardView cardView) {} // Do nothing here on purpose -- Null Object pattern
 	};
 
-	public CardZoneView(CardZone zone) {
+	public CardZoneView(CardZone<?> zone) {
 		super();
 		this.cardViews = new LinkedList<CardView>();
 		this.zone = zone;
@@ -39,12 +39,12 @@ public class CardZoneView implements CardViewClickListener {
 		cards.setLayout(new FlowLayout());
 		thisPanel.add(cards);
 
-		for (Card card : zone.cardList()) {
+		for (Card<?> card : zone.cardList()) {
 			addCard(card);
 		}
 	}
 	
-	public void removeCard(Card card) {
+	public void removeCard(Card<?> card) {
 		Iterator<CardView> it = cardViews.iterator();
 		
 		while (it.hasNext()) {
@@ -56,7 +56,7 @@ public class CardZoneView implements CardViewClickListener {
 		}
 	}
 	
-	public CardZone getZone() {
+	public CardZone<?> getZone() {
 		return zone;
 	}
 	
@@ -64,7 +64,7 @@ public class CardZoneView implements CardViewClickListener {
 		return thisPanel;
 	}
 	
-	public void addCard(Card card) {
+	public void addCard(Card<?> card) {
 		CardView cv = new CardView(card, this);
 		cardViews.add(cv);
 		cards.add(cv.getComponent());
@@ -102,7 +102,7 @@ public class CardZoneView implements CardViewClickListener {
 
 	public void recreateFromScratch() {
 		cards.removeAll();
-		for (Card card : this.zone.cardList())
+		for (Card<?> card : this.zone.cardList())
 			this.addCard(card);
 	}
 

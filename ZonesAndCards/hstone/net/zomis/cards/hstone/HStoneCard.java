@@ -11,13 +11,13 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.resources.ResourceMap;
 
-public class HStoneCard extends Card implements HStoneTarget {
+public class HStoneCard extends Card<HStoneCardModel> implements HStoneTarget {
 	
 	private final ResourceMap res;
 	private final EnumSet<HSAbility> abilities;
 	private final List<HStoneTrigger> triggers;
 
-	public HStoneCard(HStoneCardModel model, CardZone initialZone) {
+	public HStoneCard(HStoneCardModel model, CardZone<?> initialZone) {
 		super(model);
 		this.currentZone = initialZone;
 		this.res = new ResourceMap();

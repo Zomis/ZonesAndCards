@@ -7,22 +7,22 @@ import net.zomis.events.IEvent;
 
 public class ZoneChangeEvent extends CardEvent implements IEvent {
 	
-	private final CardZone fromCardZone;
-	private CardZone toCardZone;
+	private final CardZone<?> fromCardZone;
+	private CardZone<?> toCardZone;
 
-	public ZoneChangeEvent(CardZone fromCardZone, CardZone toCardZone, Card card) {
+	public ZoneChangeEvent(CardZone<?> fromCardZone, CardZone<?> toCardZone, Card<?> card) {
 		super(card);
 		this.fromCardZone = fromCardZone;
 		this.toCardZone = toCardZone;
 	}
 	
-	public final CardZone getFromCardZone() {
+	public final CardZone<?> getFromCardZone() {
 		return fromCardZone;
 	}
-	public final CardZone getToCardZone() {
+	public final CardZone<?> getToCardZone() {
 		return toCardZone;
 	}
-	public final void setToCardZone(CardZone toCardZone) {
+	public final void setToCardZone(CardZone<?> toCardZone) {
 		this.toCardZone = toCardZone;
 	}
 	@Override

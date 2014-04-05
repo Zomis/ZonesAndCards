@@ -6,7 +6,7 @@ import net.zomis.events.IEvent;
 
 public class CardCreatedEvent extends CardInZoneEvent implements IEvent {
 
-	public CardCreatedEvent(final Card card) {
+	public CardCreatedEvent(final Card<?> card) {
 		super(card);
 	}
 }

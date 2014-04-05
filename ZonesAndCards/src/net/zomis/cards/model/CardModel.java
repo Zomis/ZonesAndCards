@@ -16,8 +16,9 @@ public class CardModel implements Comparable<CardModel> {
 		return name;
 	}
 	
-	protected Card createCardInternal(CardZone initialZone) {
-		Card card = new Card(this);
+	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
+		@SuppressWarnings("unchecked")
+		Card<E> card = new Card<E>((E) this); // TODO: Possibly create the cards themselves elsewhere...
 		card.currentZone = initialZone;
 		return card;
 	}

@@ -3,7 +3,9 @@ package net.zomis.cards.jackson;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
@@ -17,11 +19,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public abstract class MixGame extends CardGame {
+public abstract class MixGame extends CardGame<Player, CardModel> {
 
 	@JsonProperty("zones")
 	@JsonTypeInfo(use=Id.NONE)
-	private final Set<CardZone> zones = new HashSet<CardZone>();
+	private final Set<CardZone<Card<?>>> zones = new HashSet<CardZone<Card<?>>>();
 	
 	@JsonProperty
 	private GamePhase currentPhase;
@@ -39,7 +41,7 @@ public abstract class MixGame extends CardGame {
 	
 	@Override
 	@JsonIgnore
-	public abstract Set<CardZone> getPublicZones();
+	public abstract Set<CardZone<?>> getPublicZones();
 	
 	@Override
 	@JsonIgnore

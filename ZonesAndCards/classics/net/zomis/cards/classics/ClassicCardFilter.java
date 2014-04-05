@@ -3,7 +3,7 @@ package net.zomis.cards.classics;
 import net.zomis.cards.model.Card;
 import net.zomis.utils.ZomisList.FilterInterface;
 
-public class ClassicCardFilter implements FilterInterface<Card> {
+public class ClassicCardFilter implements FilterInterface<Card<ClassicCard>> {
 	private Suite	suite;
 	private Integer	rank;
 	private boolean	reversed;
@@ -22,8 +22,8 @@ public class ClassicCardFilter implements FilterInterface<Card> {
 		this(null, rank);
 	}
 	@Override
-	public boolean shouldKeep(Card obj) {
-		ClassicCard model = (ClassicCard) obj.getModel();
+	public boolean shouldKeep(Card<ClassicCard> obj) {
+		ClassicCard model = obj.getModel();
 		boolean keep = true;
 		if (this.suite != null)
 			keep = keep && this.suite.equals(model.getSuite());

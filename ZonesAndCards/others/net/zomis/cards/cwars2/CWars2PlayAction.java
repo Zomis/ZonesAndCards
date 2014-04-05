@@ -5,12 +5,12 @@ import net.zomis.cards.model.actions.ZoneMoveAction;
 
 public class CWars2PlayAction extends ZoneMoveAction {
 
-	private final CWars2Card	model;
 	private final CWars2Player player;
+	private final CWars2Card	model;
 	
-	public CWars2PlayAction(Card card, CWars2Card model) {
+	public CWars2PlayAction(Card<CWars2Card> card) {
 		super(card);
-		this.model = model;
+		this.model = card.getModel();
 		CWars2Game game = (CWars2Game) card.getGame();
 		player = game.getCurrentPlayer();
 		this.setDestination(player.getDiscard());

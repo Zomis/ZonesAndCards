@@ -5,15 +5,14 @@ import net.zomis.cards.mdjq.actions.PlayLandAction;
 import net.zomis.cards.mdjq.actions.PlaySpellAction;
 import net.zomis.cards.mdjq.phases.MDJQMainPhase;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.resources.ResourceType;
 
-public class MDJQPermanent extends Card implements MDJQObject {
+public class MDJQPermanent extends Card<MDJQCardModel> implements MDJQObject {
 
-	protected MDJQPermanent(MDJQCardModel model, CardZone initialZone, MDJQPlayer owner) {
+	protected MDJQPermanent(MDJQCardModel model, MDJQZone initialZone, MDJQPlayer owner) {
 		super(model);
 		this.currentZone = initialZone;
 		this.owner = owner;

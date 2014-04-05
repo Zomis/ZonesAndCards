@@ -3,22 +3,20 @@ package net.zomis.cards.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.resources.ResourceMap;
-import net.zomis.iterate.IndexIterator;
-import net.zomis.iterate.IndexIteratorStatus;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Player implements Comparable<Player>, HasResources {
 
-	CardGame game;
+	CardGame<? extends Player, ?> game;
 	
 	private String name;
 	private CardAI ai;
 	private final ResourceMap resources = new ResourceMap(true);
 	
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		if (game == null)
 			throw new IllegalStateException("Player was not added to game correctly.");
 		return game;
@@ -28,13 +26,14 @@ public class Player implements Comparable<Player>, HasResources {
 	public ResourceMap getResources() {
 		return resources;
 	}
-	public List<Player> getOpponents() {
-		List<Player> players = game.getPlayers();
+	public <E extends Player> List<E> getOpponents() {
+		@SuppressWarnings("unchecked")
+		List<E> players = (List<E>) game.getPlayers();
 		int index = players.indexOf(this);
-		List<Player> before = players.subList(0, index);
-		List<Player> after = players.subList(index + 1, players.size());
+		List<E> before = players.subList(0, index);
+		List<E> after = players.subList(index + 1, players.size());
 		
-		List<Player> result = new ArrayList<Player>(after.size() + before.size());
+		List<E> result = new ArrayList<E>(after.size() + before.size());
 		result.addAll(after);
 		result.addAll(before);
 		return result;
@@ -72,9 +71,11 @@ public class Player implements Comparable<Player>, HasResources {
 	
 	@JsonIgnore
 	public int getIndex() {
-		for (IndexIteratorStatus<Player> pl : new IndexIterator<Player>(this.getGame().getPlayers()))
-			if (pl.getValue() == this)
-				return pl.getIndex();
+		List<?> players = new ArrayList<Object>(this.getGame().getPlayers());
+		for (int i = 0; i < players.size(); i++) {
+			if (players.get(i) == this)
+				return i;
+		}
 		return -1;
 	}
 	

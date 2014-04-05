@@ -1,6 +1,7 @@
 package net.zomis.cards.hearts;
 
 import net.zomis.cards.classics.CardPlayer;
+import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
@@ -9,7 +10,7 @@ public class HeartsGiveAction extends ZoneMoveAction {
 
 	public static final int GIVE_COUNT = 3;
 
-	public HeartsGiveAction(Card card) {
+	public HeartsGiveAction(Card<ClassicCard> card) {
 		super(card);
 		setDestination(isGiven() ? getPlayer().getHand() : getPlayer().getBoard());
 	}
@@ -19,7 +20,7 @@ public class HeartsGiveAction extends ZoneMoveAction {
 		return isGiven() ? true : getPlayer().getBoard().size() < GIVE_COUNT;
 	}
 	private CardPlayer getPlayer() {
-		CardPlayer pl = this.getGame().findPlayerWithZone(getCard().getCurrentZone());
+		CardPlayer pl = this.getGame().findPlayerWithZone((ClassicCardZone) getCard().getCurrentZone());
 		return pl;
 	}
 	private HeartsGame getGame() {

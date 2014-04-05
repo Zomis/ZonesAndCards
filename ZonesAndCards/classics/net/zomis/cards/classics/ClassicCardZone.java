@@ -3,9 +3,10 @@ package net.zomis.cards.classics;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 
-public class ClassicCardZone extends CardZone {
+public class ClassicCardZone extends CardZone<Card<ClassicCard>> {
 
 	public ClassicCardZone(String zoneName) {
 		super(zoneName);

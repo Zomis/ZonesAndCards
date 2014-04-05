@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
@@ -14,12 +15,12 @@ import net.zomis.cards.model.phases.PlayerPhase;
  * @author Zomis
  *
  */
-public class GregerGame extends CardGame {
+public class GregerGame extends CardGame<Player, GregerCardModel> {
 	// TODO: GregerGame: http://service.mattel.com/instruction_sheets/42885-0920_Uno_30th_Instr.pdf
 	private List<GregerSuite> suites = new LinkedList<GregerSuite>();
-	private CardZone deck;
-	private CardZone discard;
-	private Map<Player, CardZone> playerHands = new TreeMap<Player, CardZone>();
+	private CardZone<Card<GregerCardModel>> deck;
+	private CardZone<Card<GregerCardModel>> discard;
+	private Map<Player, CardZone<Card<GregerCardModel>>> playerHands = new TreeMap<Player, CardZone<Card<GregerCardModel>>>();
 	
 	public GregerGame() {
 		suites.add(new GregerSuite("RED"));
@@ -27,7 +28,7 @@ public class GregerGame extends CardGame {
 		suites.add(new GregerSuite("BLUE"));
 		suites.add(new GregerSuite("YELLOW"));
 
-		this.deck = new CardZone("Deck");
+		this.deck = new CardZone<Card<GregerCardModel>>("Deck");
 		
 		for (GregerSuite gs : this.suites) {
 			for (int i = 0; i <= 9; i++) {
@@ -57,7 +58,7 @@ public class GregerGame extends CardGame {
 		for (int i = 0; i < 4; i++)
 			deck.createCardOnTop(gcm);
 		
-		this.discard = new CardZone("Discard");
+		this.discard = new CardZone<Card<GregerCardModel>>("Discard");
 		this.discard.setGloballyKnown(true);
 		
 		this.deck.shuffle();
@@ -66,7 +67,7 @@ public class GregerGame extends CardGame {
 	public void addPlayer(String name) {
 		Player pl = new Player().setName(name);
 		this.addPlayer(pl);
-		CardZone hand = new CardZone("Hand-" + pl);
+		CardZone<Card<GregerCardModel>> hand = new CardZone<Card<GregerCardModel>>("Hand-" + pl);
 		hand.setKnown(pl, true);
 		this.playerHands.put(pl, hand);
 		

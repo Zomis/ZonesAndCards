@@ -17,7 +17,7 @@ public class CWars2Phase extends PlayerPhase {
 	}
 
 	@Override
-	public void onStart(CardGame gam) {
+	public void onStart(CardGame<?, ?> gam) {
 		for (Producers producer : Producers.values()) {
 			IResource res = producer.getResource();
 			ResourceMap resources = this.getPlayer().getResources();

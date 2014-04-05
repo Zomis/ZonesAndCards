@@ -46,7 +46,6 @@ import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.events.zone.ZoneReverseEvent;
 import net.zomis.cards.events.zone.ZoneShuffleEvent;
 import net.zomis.cards.events.zone.ZoneSortEvent;
-import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
@@ -66,7 +65,8 @@ import net.zomis.events.EventListener;
 
 
 public class CardFrame extends JFrame implements EventListener, CardViewClickListener {
-	private final CardGame game;
+//	private final CardGame<? extends Player, ? extends CardModel> game;
+	private final CardGame<?, ?> game;
 
 	private static final long	serialVersionUID	= 4987846986712417351L;
 	private static final int	VIEW_LIMIT	= 13;
@@ -240,7 +240,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		getGame().registerListener(this);
 		
 		// Setup gameviews:
-		for (CardZone zone : this.getGame().getPublicZones()) {
+		for (CardZone<?> zone : this.getGame().getPublicZones()) {
 			CardZoneView zoneView = new CardZoneView(zone);
 			zoneView.setViewLimit(VIEW_LIMIT);
 			zoneViews.add(zoneView);
@@ -265,7 +265,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	public void evZoneShuffleEvent(ZoneShuffleEvent event) {
 		recreateViewFor(event.getZone());
 	}
-	private void recreateViewFor(CardZone zone) {
+	private void recreateViewFor(CardZone<?> zone) {
 		for (CardZoneView view : this.zoneViews) {
 			if (view.getZone() == zone)
 				view.recreateFromScratch();
@@ -290,8 +290,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		}
 		updateGameStatus();
 		
-		ActionHandler actionHandler = game.getActionHandler();
-		List<StackAction> actions = actionHandler.getAvailableActions(game, game.getCurrentPlayer());
+		List<StackAction> actions = game.getAvailableActions(game.getCurrentPlayer());
 		for (StackAction element : actions) {
 			if (element.actionIsAllowed())
 				model.addElement(element);
@@ -327,7 +326,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		text.append("Active Phase: " + getGame().getActivePhase() + "\n");
 	}
 
-	public CardGame getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 

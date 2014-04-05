@@ -4,6 +4,6 @@ import net.zomis.cards.model.Card;
 
 public interface CardViewTextStrategy {
 
-	String textFor(Card card);
+	String textFor(Card<?> card);
 	
 }

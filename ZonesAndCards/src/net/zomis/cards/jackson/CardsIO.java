@@ -29,7 +29,7 @@ public class CardsIO {
 			return null;
 		}
 	}
-	public static String save(CardGame game) {
+	public static String save(CardGame<?, ?> game) {
 		try {
 			return mapper().writer().writeValueAsString(game);
 		}

@@ -14,7 +14,7 @@ import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.resources.common.FixedResourceStrategy;
 import net.zomis.events.EventHandlerGWT;
 
-public class CWars2Game extends CardGame {
+public class CWars2Game extends CardGame<CWars2Player, CWars2Card> {
 	private static final int NUM_PLAYERS = 2;
 	public static final int	MIN_CARDS_IN_DECK = 75;
 	
