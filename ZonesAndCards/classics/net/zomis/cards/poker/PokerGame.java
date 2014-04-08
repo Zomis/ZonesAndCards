@@ -23,13 +23,31 @@ import net.zomis.cards.poker.validation.PokerHandEval;
 import net.zomis.cards.poker.validation.PokerHandResult;
 import net.zomis.custommap.CustomFacade;
 
-public class PokerGame extends ClassicGame implements ActionHandler {
+public class PokerGame extends ClassicGame {
 
 	private final ClassicCardZone	deck;
 
 	public PokerGame() {
 		super(AceValue.HIGH);
-		this.setActionHandler(this);
+		this.setActionHandler(new ActionHandler() {
+			@Override
+			public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
+				List<StackAction> list = new ArrayList<StackAction>();
+				CardPlayer pl = (CardPlayer) player;
+				list.add(new RedrawAction(pl, 7));
+				list.add(new DrawCardAction(pl));
+				for (Card<ClassicCard> card : pl.getHand().cardList()) {
+//					card.getModel();
+					list.add(new DiscardCardAction(card));
+				}
+				return list;
+			}
+			
+			@Override
+			public StackAction click(Card<?> card) {
+				return null;
+			}
+		});
 		
 		deck = new ClassicCardZone("Deck");
 		deck.addDeck(this, 2);
@@ -46,24 +64,6 @@ public class PokerGame extends ClassicGame implements ActionHandler {
 	@Override
 	protected void onStart() {
 		deck.shuffle(this.getRandom());
-	}
-	
-	@Override
-	public StackAction click(Card<?> card) {
-		return null;
-	}
-
-	@Override
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-		List<StackAction> list = new ArrayList<StackAction>();
-		CardPlayer pl = (CardPlayer) player;
-		list.add(new RedrawAction(pl, 7));
-		list.add(new DrawCardAction(pl));
-		for (Card<ClassicCard> card : pl.getHand().cardList()) {
-//			card.getModel();
-			list.add(new DiscardCardAction(card));
-		}
-		return list;
 	}
 	
 	private static class RedrawAction extends StackAction {

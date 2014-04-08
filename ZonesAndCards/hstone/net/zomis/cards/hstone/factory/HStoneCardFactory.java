@@ -38,7 +38,8 @@ public class HStoneCardFactory {
 		return this;
 	}
 
-	public HStoneCardFactory is(HStoneMinionType murloc) {
+	public HStoneCardFactory is(HStoneMinionType type) {
+		card.addType(type);
 		return this;
 	}
 

@@ -38,6 +38,7 @@ public class PlayAction extends StackAction {
 		if (!owner.getResources().hasResources(HStoneRes.MANA_AVAILABLE, model().getManaCost())) {
 			return setErrorMessage("Not enough resources, needs " + model().getManaCost() + " but has " + owner.getResources());
 		}
+		// TODO: Make sure that there is at least one available target for the action, if action requires a target
 		return true;
 	}
 	

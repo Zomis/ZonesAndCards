@@ -2,14 +2,14 @@ package net.zomis.cards.hstone.actions;
 
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
-import net.zomis.cards.hstone.HStoneTarget;
+import net.zomis.cards.hstone.factory.CardType;
 import net.zomis.cards.model.StackAction;
 
 public class BattlefieldAction extends StackAction {
 
-	private HStoneTarget	card;
+	private HStoneCard	card;
 
-	public BattlefieldAction(HStoneTarget card) {
+	public BattlefieldAction(HStoneCard card) {
 		this.card = card;
 	}
 	
@@ -31,8 +31,9 @@ public class BattlefieldAction extends StackAction {
 		if (card.getGame().isTargetSelectionMode()) {
 			if (card.getGame().getTargetsFor() instanceof HStoneCard) {
 				HStoneCard cardSource = (HStoneCard) card.getGame().getTargetsFor();
-				if (cardSource.getModel().isSpell()) {
+				if (cardSource.getModel().isSpell() || cardSource.getModel().isType(CardType.POWER)) {
 					cardSource.getModel().getEffect().performEffect(cardSource, card);
+					card.getGame().setTargetFilter(null, null);
 					return;
 				}
 			}

@@ -30,12 +30,13 @@ public class HStonePhase extends PlayerPhase {
 	
 	@Override
 	public void onEnd(CardGame<?, ?> game) {
-//		for (Player player : game.getPlayers()) {
-			HStonePlayer pl = (HStonePlayer) getPlayer();
-			for (HStoneCard card : pl.getBattlefield().cardList()) {
-				card.onEndTurn();
-			}
-//		}
+		HStonePlayer pl = (HStonePlayer) getPlayer();
+		for (HStoneCard card : pl.getBattlefield()) {
+			card.onEndTurn();
+		}
+		for (HStoneCard card : pl.getSpecialZone()) {
+			card.onEndTurn();
+		}
 		
 		super.onEnd(game);
 	}

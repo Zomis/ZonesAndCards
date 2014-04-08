@@ -3,21 +3,19 @@ package net.zomis.cards.hstone;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.zomis.cards.hstone.actions.BattlefieldAction;
 import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceListener;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckPlayer;
 
-public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HStoneCardModel>, HStoneTarget, ResourceListener {
+public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HStoneCardModel>, ResourceListener {
 
 	private static final int	MAX_CARDS_IN_HAND	= 10;
 	private final CardZone<HStoneCard> library;
@@ -25,16 +23,29 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	private final CardZone<HStoneCard> battlefield;
 	private List<HStoneCardModel> cards;
 	private HStoneCard weapon;
-	private boolean frozen;
+	private final HStoneCard heroPower;
+	private final HStoneCard playerCard;
+	private final CardZone<HStoneCard> specialZone;
 	
 	public HStonePlayer(HStoneGame game, HStoneChar character) {
 		this.setName(character.getName());
-		this.hand = new CardZone<HStoneCard>(getName() + "-Hand", this);
-		this.library = new CardZone<HStoneCard>(getName() + "-Deck", this);
+		this.hand        = new CardZone<HStoneCard>(getName() + "-Hand", this);
+		this.library     = new CardZone<HStoneCard>(getName() + "-Deck", this);
 		this.battlefield = new CardZone<HStoneCard>(getName() + "-Battlefield", this);
 		this.cards = new ArrayList<HStoneCardModel>();
+		this.specialZone = new CardZone<HStoneCard>(getName(), this);
+		this.heroPower = character.getCharClass().heroPowerCard(specialZone);
+		this.playerCard = character.playerCard(specialZone);
 		DeckBuilder.createExact(this, character.getDeck().getCount(game));
 		this.getResources().setGlobalListener(this);
+	}
+	
+	public HStoneCard getHeroPower() {
+		return heroPower;
+	}
+	
+	public HStoneCard getPlayerCard() {
+		return playerCard;
 	}
 	
 	@Override
@@ -97,6 +108,11 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	public int getHealth() {
 		return getResources().getResources(HStoneRes.HEALTH);
 	}
+	
+	@Override
+	public ResourceMap getResources() {
+		return getPlayerCard().getResources();
+	}
 
 	public void onStart() {
 		getResources().set(HStoneRes.HEALTH, 30);
@@ -119,38 +135,12 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		return true;
 	}
 
-	@Override
-	public StackAction clickAction() {
-		return new BattlefieldAction(this);
-	}
-
-	@Override
-	public boolean isAttackPossible() {
-		return getResources().hasResources(HStoneRes.ATTACK, 1) && getResources().hasResources(HStoneRes.ACTION_POINTS, 1);
-	}
-
 	public boolean hasTauntMinions() {
-		for (HStoneCard battleCard : getBattlefield().cardList()) {
+		for (HStoneCard battleCard : getBattlefield()) {
 			if (battleCard.hasAbility(HSAbility.TAUNT))
 				return true;
 		}
 		return false;
-	}
-
-	@Override
-	public boolean isFrozen() {
-		return frozen;
-	}
-
-	@Override
-	public void addAbility(HSAbility frozen) {
-		if (frozen == HSAbility.FROZEN)
-			this.frozen = true;
-	}
-
-	@Override
-	public void damage(int damage) {
-		FightModule.damage(this, damage);
 	}
 
 	public void removeWeapon() {
@@ -158,14 +148,12 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 			weapon.zoneMoveOnBottom(null);
 	}
 
-	@Override
-	public void heal(int healing) {
-		FightModule.heal(this, healing);
+	public HStoneCard getWeapon() {
+		return this.weapon;
 	}
 
-	@Override
-	public HStonePlayer getPlayer() {
-		return this;
+	CardZone<HStoneCard> getSpecialZone() {
+		return this.specialZone;
 	}
 	
 }

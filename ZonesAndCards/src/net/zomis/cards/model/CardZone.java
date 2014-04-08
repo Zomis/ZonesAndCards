@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import net.zomis.cards.events.zone.ZoneSortEvent;
 import net.zomis.events.IEvent;
 import net.zomis.utils.ZomisList;
 
-public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>> {
+public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Iterable<E> {
 
 	public static interface GetZoneInterface<E> {
 		<C extends Card<?>> CardZone<C> getZone(E object);
@@ -52,7 +53,12 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>> {
 		Boolean b = known.get(player);
 		return (b == null ? knownGlobal : b);
 	}
+	
+	public boolean contains(E card) {
+		return cards.contains(card);
+	}
 
+	@Deprecated
 	public LinkedList<E> cardList() {
 		return cards;
 	}
@@ -89,21 +95,23 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>> {
 		this.executeEvent(new ZoneSortEvent(this));
 	}
 	
-	public void createCardOnTop(CardModel cardModel) {
+	public E createCardOnTop(CardModel cardModel) {
 		@SuppressWarnings("unchecked")
 		E card = (E) cardModel.createCardInternal(this); // TODO: Possibly use a "CardFactory" somewhere...
 		this.cards.addFirst((E) card);
 		this.executeEvent(new CardCreatedEvent(card));
+		return card;
 	}
 	private void executeEvent(IEvent event) {
 		if (this.game != null)
 			this.game.executeEvent(event);
 	}
-	public void createCardOnBottom(CardModel cardModel) {
+	public E createCardOnBottom(CardModel cardModel) {
 		@SuppressWarnings("unchecked")
 		E card = (E) cardModel.createCardInternal(this);
 		this.cards.addLast(card);
 		this.executeEvent(new CardCreatedEvent(card));
+		return card;
 	}
 	public E getTopCard() {
 		if (cards.isEmpty())
@@ -199,6 +207,11 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>> {
 	
 	public Player getOwner() {
 		return owner;
+	}
+	
+	@Override
+	public Iterator<E> iterator() {
+		return cards.iterator();
 	}
 	
 	// TODO: move-card-to-and-replace-with -- replace at specific index

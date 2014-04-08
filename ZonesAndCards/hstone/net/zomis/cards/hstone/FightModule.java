@@ -1,35 +1,35 @@
 package net.zomis.cards.hstone;
 
-import net.zomis.cards.resources.ResourceMap;
-
 public class FightModule {
 
-	public static void attack(HStoneGame game, HStoneTarget source, HStoneTarget target) {
-		damage(target, source.getResources().getResources(HStoneRes.ATTACK));
-		damage(source, target.getResources().getResources(HStoneRes.ATTACK));
+	public static void attack(HStoneGame game, HStoneCard source, HStoneCard target) {
+		int attack = source.getResources().getResources(HStoneRes.ATTACK);
+		int counterAttack = target.getResources().getResources(HStoneRes.ATTACK);
+		
+		if (source instanceof HStoneCard) {
+			HStoneCard card = (HStoneCard) source;
+			attack += card.getAttackBonus();
+		}
+		if (target instanceof HStoneCard) {
+			HStoneCard card = (HStoneCard) target;
+			counterAttack += card.getAttackBonus();
+		}
+		
+		damage(target, attack);
+		damage(source, counterAttack);
 		source.getResources().changeResources(HStoneRes.ACTION_POINTS, -1);
 		
-		cleanup(game, source);
-		cleanup(game, target);
+		source.cleanup();
+		target.cleanup();
 		
 		game.cleanup();
 	}
 
-	private static void cleanup(HStoneGame game, HStoneTarget source) {
-		ResourceMap res = source.getResources();
-		int damage = res.getResources(HStoneRes.AWAITING_DAMAGE);
-		int heal = res.getResources(HStoneRes.AWAITING_HEAL);
-		
-		res.changeResources(HStoneRes.HEALTH, heal - damage);
-		res.set(HStoneRes.AWAITING_DAMAGE, 0);
-		res.set(HStoneRes.AWAITING_HEAL, 0);
-	}
-
-	public static void damage(HStoneTarget target, int damage) {
+	public static void damage(HStoneCard target, int damage) {
 		target.getResources().changeResources(HStoneRes.AWAITING_DAMAGE, damage);
 	}
 
-	public static void heal(HStoneTarget target, int healing) {
+	public static void heal(HStoneCard target, int healing) {
 		target.getResources().changeResources(HStoneRes.AWAITING_HEAL, healing);
 	}
 

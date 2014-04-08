@@ -13,7 +13,7 @@ public enum HStoneRes implements IResource {
 	/**
 	 * Number of times player has attempted to draw a card without having cards in library
 	 */
-	EMPTY_DRAWS, AWAITING_DAMAGE, AWAITING_HEAL,
+	EMPTY_DRAWS, AWAITING_DAMAGE, AWAITING_HEAL, ARMOR,
 	;
 
 	@Override

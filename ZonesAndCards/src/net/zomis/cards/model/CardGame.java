@@ -342,4 +342,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return this.stack.size();
 	}
 	
+	public boolean click(Card<?> card) {
+		StackAction action = card.clickAction();
+		// TODO: If action is allowed, add info about card zone and card index in zone to replay data
+		addAndProcessStackAction(action);
+		return action.actionIsPerformed();
+	}
 }

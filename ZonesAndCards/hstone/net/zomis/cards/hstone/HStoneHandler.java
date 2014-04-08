@@ -3,9 +3,11 @@ package net.zomis.cards.hstone;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.hstone.actions.AbilityAction;
 import net.zomis.cards.hstone.actions.BattlefieldAction;
 import net.zomis.cards.hstone.actions.HeroPowerAction;
 import net.zomis.cards.hstone.actions.PlayAction;
+import net.zomis.cards.hstone.factory.CardType;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -26,11 +28,17 @@ public class HStoneHandler implements ActionHandler {
 			return new BattlefieldAction((HStoneCard) card);
 		}
 		
-		if (card.getCurrentZone() == player.getHand()) {
-			return playFromHand(hscard);
+		if (hscard.getCurrentZone() == player.getHand()) {
+			return new PlayAction(hscard);
 		}
-		if (card.getCurrentZone() == player.getBattlefield()) {
+		if (hscard.getCurrentZone() == player.getBattlefield()) {
 			return useAtBattlefield(hscard);
+		}
+		if (hscard.getModel().isType(CardType.POWER)) {
+			return new AbilityAction(hscard);
+		}
+		if (hscard.getModel().isType(CardType.PLAYER)) {
+			return new BattlefieldAction(hscard);
 		}
 		return new InvalidStackAction("HSTONE_INVALID: " + card + " in zone " + card.getCurrentZone());
 	}
@@ -39,19 +47,18 @@ public class HStoneHandler implements ActionHandler {
 		return new BattlefieldAction(card);
 	}
 
-	private StackAction playFromHand(HStoneCard card) {
-		return new PlayAction(card);
-	}
-
 	@Override
 	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 		List<StackAction> actions = new ArrayList<StackAction>();
 		HStonePlayer currPlayer = (HStonePlayer) player;
 		actions.add(new HeroPowerAction(currPlayer));
-		for (HStoneCard card : currPlayer.getHand().cardList()) {
+		for (HStoneCard card : currPlayer.getHand()) {
 			actions.add(click(card));
 		}
-		for (HStoneCard card : currPlayer.getBattlefield().cardList()) {
+		for (HStoneCard card : currPlayer.getBattlefield()) {
+			actions.add(click(card));
+		}
+		for (HStoneCard card : currPlayer.getSpecialZone()) {
 			actions.add(click(card));
 		}
 		return actions;

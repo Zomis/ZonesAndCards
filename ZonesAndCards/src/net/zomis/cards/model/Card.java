@@ -30,8 +30,7 @@ public class Card<M extends CardModel> {
 
 	@Override
 	public String toString() {
-		return model.toString();
-//		return super.toString();
+		return "Card:" + model.toString();
 	}
 
 	public void zoneMoveOnBottom(CardZone<?> destination) {

@@ -1,5 +1,8 @@
 package net.zomis.cards.hstone;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.zomis.cards.hstone.actions.AttackAction;
 import net.zomis.cards.hstone.factory.Battlecry;
 import net.zomis.cards.hstone.factory.HStoneCardFactory;
@@ -11,19 +14,20 @@ import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
-import net.zomis.utils.ZomisList.FilterInterface;
 
 public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 
-	private FilterInterface<HStoneTarget> targets;
-	private HStoneTarget targetsFor;
+	private HSFilter targets;
 	
-	public void setTargetFilter(FilterInterface<HStoneTarget> targets, HStoneTarget forWhat) {
+	@Deprecated
+	private HStoneCard targetsFor;
+	
+	public void setTargetFilter(HSFilter targets, HStoneCard forWhat) {
 		this.targets = targets;
 		this.targetsFor = forWhat;
 	}
 	
-	public HStoneTarget getTargetsFor() {
+	public HStoneCard getTargetsFor() {
 		return targetsFor;
 	}
 	
@@ -32,7 +36,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	}
 	
 	public HStoneGame(HStoneChar playerA, HStoneChar playerB) {
-		HStoneCards.neutralSmall(this);
+		new HStoneCards().addCards(this);
 		
 		HStonePlayer pl1 = new HStonePlayer(this, playerA);
 		HStonePlayer pl2 = new HStonePlayer(this, playerB);
@@ -46,6 +50,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 			addZone(player.getDeck());
 			addZone(player.getHand());
 			addZone(player.getBattlefield());
+			addZone(player.getSpecialZone());
 		}
 		setActionHandler(new HStoneHandler());
 	}
@@ -85,7 +90,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 			this.endGame();
 	}
 
-	public boolean addAndProcessFight(HStoneTarget source, HStoneTarget target) {
+	public boolean addAndProcessFight(HStoneCard source, HStoneCard target) {
 		AttackAction attackAction = new AttackAction(this, source, target);
 		this.addAndProcessStackAction(attackAction);
 		System.out.println("After fight: " + stackSize());
@@ -94,10 +99,10 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		return attackAction.actionIsPerformed();
 	}
 
-	public boolean isTargetAllowed(HStoneTarget card) {
+	public boolean isTargetAllowed(HStoneCard card) {
 		if (this.targets == null)
 			return false;
-		return this.targets.shouldKeep(card);
+		return this.targets.shouldKeep(this.targetsFor, card);
 	}
 
 	public void selectOrPerform(HStoneEffect effect, HStoneCard card) {
@@ -110,13 +115,15 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	}
 
 	public void cleanup() {
-		for (Player pl : this.getPlayers()) {
-			HStonePlayer player = (HStonePlayer) pl;
+		for (HStonePlayer player : this.getPlayers()) {
 			if (player.getHealth() <= 0) {
 				endGame();
 			}
 			
-			for (HStoneCard card : player.getBattlefield().cardList()) {
+			for (HStoneCard card : player.getBattlefield()) {
+				card.cleanup();
+			}
+			for (HStoneCard card : player.getSpecialZone()) {
 				card.cleanup();
 			}
 		}
@@ -129,5 +136,21 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		}
 		return null;
 	}
+
+	public List<HStoneCard> findAll(HStoneCard searcher, HSFilter filter) {
+		List<HStoneCard> results = new ArrayList<HStoneCard>();
+		for (HStonePlayer player : getPlayers()) {
+			if (filter.shouldKeep(searcher, player.getPlayerCard()))
+				results.add(player.getPlayerCard());
+			
+			for (HStoneCard card : player.getBattlefield()) {
+				if (filter.shouldKeep(searcher, card))
+					results.add(card);
+			}
+		}
+		
+		return results;
+	}
+
 	
 }

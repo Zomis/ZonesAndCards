@@ -4,7 +4,7 @@ import net.zomis.cards.util.DeckList;
 
 public class HStoneDecks {
 
-	public static DeckList mageDefault() {
+	public static DeckList testDeck() {
 		return DeckList.newInstance("First Test Deck")
 			.add(2, "Argent Squire")
 			.add(2, "Wisp")
@@ -16,8 +16,9 @@ public class HStoneDecks {
 			.add(2, "Voodoo Doctor")
 			.add(2, "Worgen Infiltrator")
 			.add(2, "Young Dragonhawk")
-			.add(2, "Acidic Swamp Ooze")
+			.add(1, "Acidic Swamp Ooze")
 			.add(1, "Ancient Watcher")
+			.add(1, "Blood Knight")
 			.add(1, "Novice Engineer")
 			.add(1, "Murloc Tidehunter")
 			.add(1, "Bloodfen Raptor")

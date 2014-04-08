@@ -1,5 +1,5 @@
 package net.zomis.cards.hstone.factory;
 
 public enum CardType {
-	SPELL, MINION, SECRET;
+	SPELL, MINION, SECRET, PLAYER, WEAPON, POWER;
 }
