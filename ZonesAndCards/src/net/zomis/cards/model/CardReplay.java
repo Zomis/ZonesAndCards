@@ -71,6 +71,8 @@ public class CardReplay extends Replay<CardGame<?, ?>, Card<?>> {
 			if (zoneIndex == zonesData.length)
 				throw new IllegalStateException(zoneIndex + " of " + zonesData.length + " zones iterated");
 
+			zone.moveToTopOf(null);
+			
 			String zoneData = zonesData[zoneIndex];
 			if (zonesData[zoneIndex].isEmpty()) {
 				ZomisLog.warn("Empty zone: " + zone);

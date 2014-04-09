@@ -96,6 +96,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			throw new IllegalStateException("EventFactory not initialized.");
 		this.events = CustomFacade.getInst().createEvents();
 		this.actionZone = new CardZone<Card<M>>("Actions");
+		this.addZone(actionZone);
 //		this.events.registerListener(this); // This breaks GWT
 	}
 	/**
@@ -110,6 +111,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	public void addCard(M card) {
 		if (card == null)
 			throw new IllegalArgumentException("Card cannot be null");
+		if (this.availableCards.containsKey(card.getName()))
+			throw new IllegalStateException("A card with the name " + card.getName() + " has already been added");
 		this.availableCards.put(card.getName(), card);
 	}
 	
@@ -123,6 +126,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 
 	public Card<M> addAction(M actionModel, ActionProvider action) {
+		addCard(actionModel);
 		return this.actionZone.createCardOnBottom(actionModel);
 	}
 	
@@ -165,10 +169,13 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	public StackAction callPlayerAI(Player player, CardAI ai) {
 		if (ai == null)
 			return new InvalidStackAction("No AI specified to use for " + player);
-		ParamAndField<Player, StackAction> action = ai.play(player);
-		StackAction field = action.getField();
-		this.addAndProcessStackAction(field);
-		return action.getField();
+		ParamAndField<Player, Card<?>> action = ai.play(player);
+		Card<?> field = action.getField();
+		StackAction sa = field.clickAction();
+		if (sa.actionIsAllowed())
+			this.replay.addMove(field);
+		this.addAndProcessStackAction(sa);
+		return sa;
 	}
 
 	protected final void endGame() {
@@ -375,7 +382,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		if (action.actionIsAllowed()) {
 			replay.addMove(card);
 		}
-		// TODO: If action is allowed, add info about card zone and card index in zone to replay data
 		addAndProcessStackAction(action);
 		return action.actionIsPerformed();
 	}

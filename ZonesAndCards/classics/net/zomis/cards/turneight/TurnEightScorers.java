@@ -1,8 +1,8 @@
 package net.zomis.cards.turneight;
 
+import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.IsSubclassScorer;
-import net.zomis.aiscores.scorers.SubclassScorer;
+import net.zomis.aiscores.scorers.Scorers;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.Suite;
@@ -10,37 +10,43 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
+import net.zomis.cards.model.ai.IsActionClass;
 
 public enum TurnEightScorers {
 	; // it's an ENUM!
 	
-	public static IsSubclassScorer<Player, StackAction> IsDrawCard() {
-		return new IsSubclassScorer<Player, StackAction>(DrawCardAction.class);
+	public static AbstractScorer<Player, Card<?>> IsDrawCard() {
+		return new IsActionClass(DrawCardAction.class);
 	}
-	public static abstract class PlayCardScorer extends SubclassScorer<Player, StackAction, TurnEightPlayAction> {
-		public PlayCardScorer() {
-			super(TurnEightPlayAction.class);
-		}
+	public static AbstractScorer<Player, Card<?>> PlayCardScorer() {
+		return new IsActionClass(TurnEightPlayAction.class);
 	}
 	
-	public static IsSubclassScorer<Player, StackAction> IsNextTurn() {
-		return new IsSubclassScorer<Player, StackAction>(NextTurnAction.class);
+	public static AbstractScorer<Player, Card<?>> IsNextTurn() {
+		return new IsActionClass(NextTurnAction.class);
 	}
-	public static class IsEight extends PlayCardScorer {
-		@Override
-		public double scoreSubclass(TurnEightPlayAction cast, ScoreParameters<Player> scores) {
-			return cast.getModel().getRank() == TurnEightController.EIGHT ? 1 : 0;
-		}
+	public static AbstractScorer<Player, Card<?>> IsEight() {
+		return Scorers.multiplication(PlayCardScorer(), new AbstractScorer<Player, Card<?>>() {
+
+			@Override
+			public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+				ClassicCard cast = (ClassicCard) field.getModel();
+				return cast.getRank() == TurnEightController.EIGHT ? 1 : 0;
+			}
+		});
 	}
-	public static class NeedSuiteChange extends SubclassScorer<Player, StackAction, SetColorAction> {
-		public NeedSuiteChange() {
-			super(SetColorAction.class);
-		}
+	public static class NeedSuiteChange extends AbstractScorer<Player, Card<?>> {
 		@Override
-		public double scoreSubclass(SetColorAction cast, ScoreParameters<Player> scores) {
+		public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+			StackAction action = field.clickAction();
+			if (!(action instanceof SetColorAction))
+				return 0;
+			ClassicCard card = (ClassicCard) field.getModel();
+			TurnEightGame game = (TurnEightGame) field.getGame();
 			Suite suite = getPreferredSuite((CardPlayer) scores.getParameters());
-			return (cast.getSuite() == suite && cast.getGame().getCurrentSuite() != suite ? 1 : 0);
+			return card.getSuite() == suite && game.getCurrentSuite() != suite ? 1 : 0;
 		}
+		
 		private Suite getPreferredSuite(CardPlayer player) {
 			int[] suiteCount = new int[Suite.values().length];
 			for (Card<ClassicCard> card : player.getHand()) {
@@ -82,11 +88,16 @@ public enum TurnEightScorers {
 			return false;
 		}
 	}
-	public static class IsAce extends PlayCardScorer {
-		@Override
-		public double scoreSubclass(TurnEightPlayAction cast, ScoreParameters<Player> scores) {
-			return cast.getModel().getRank() == cast.getGame().getAceValue() ? 1 : 0;
-		}
+	public static AbstractScorer<Player, Card<?>> IsAce() {
+		return Scorers.multiplication(PlayCardScorer(), new AbstractScorer<Player, Card<?>>() {
+
+			@Override
+			public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+				ClassicCard card = (ClassicCard) field.getModel();
+				TurnEightGame game = (TurnEightGame) field.getGame();
+				return card.getRank() == game.getAceValue() ? 1 : 0;
+			}
+		});
 	}
 
 }

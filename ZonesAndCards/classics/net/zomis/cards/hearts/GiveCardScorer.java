@@ -1,15 +1,11 @@
 package net.zomis.cards.hearts;
 
+import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.SubclassScorer;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 
-public class GiveCardScorer extends SubclassScorer<Player, StackAction, HeartsGiveAction> {
-
-	public GiveCardScorer() {
-		super(HeartsGiveAction.class);
-	}
+public class GiveCardScorer extends AbstractScorer<Player, Card<?>> {
 
 	@Override
 	public boolean workWith(ScoreParameters<Player> scores) {
@@ -17,8 +13,8 @@ public class GiveCardScorer extends SubclassScorer<Player, StackAction, HeartsGi
 	}
 
 	@Override
-	public double scoreSubclass(HeartsGiveAction cast, ScoreParameters<Player> scores) {
-		return cast.getCard().getCurrentZone().size() > 3 ? 1 : -1;
+	public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+		return field.getCurrentZone().size() > 3 ? 1 : -1;
 	}
 
 }

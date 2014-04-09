@@ -46,6 +46,7 @@ import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.events.zone.ZoneReverseEvent;
 import net.zomis.cards.events.zone.ZoneShuffleEvent;
 import net.zomis.cards.events.zone.ZoneSortEvent;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
@@ -74,7 +75,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	private final JTextArea text = new JTextArea();
 	private final List<CardZoneView> zoneViews = new LinkedList<CardZoneView>();
 	private final JPanel panelGameZones;
-	private final JList<StackAction> actionList = new JList<StackAction>();
+	private final JList<Card<?>> actionList = new JList<Card<?>>();
 	
 	private boolean	aiAutoplay;
 
@@ -134,11 +135,11 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 				if (ai == null)
 					JOptionPane.showMessageDialog(null, "There is no AI");
 				
-				FieldScoreProducer<Player, StackAction> producer = new FieldScoreProducer<Player, StackAction>(ai.getConfig(), ai);
-				FieldScores<Player, StackAction> scores = producer.analyzeAndScore(player);
-				for (Entry<StackAction, FieldScore<StackAction>> ee : scores.getScores().entrySet()) {
+				FieldScoreProducer<Player, Card<?>> producer = new FieldScoreProducer<Player, Card<?>>(ai.getConfig(), ai);
+				FieldScores<Player, Card<?>> scores = producer.analyzeAndScore(player);
+				for (Entry<Card<?>, FieldScore<Card<?>>> ee : scores.getScores().entrySet()) {
 					CustomFacade.getLog().i("Detailed information for " + ee.getKey());
-					FieldScore<StackAction> score = ee.getValue();
+					FieldScore<Card<?>> score = ee.getValue();
 					CustomFacade.getLog().i("Total score " + score.getScore());
 					CustomFacade.getLog().i("Rank " + score.getRank());
 					CustomFacade.getLog().i("Normalized " + score.getNormalized());
@@ -166,14 +167,14 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		JPanel panelActions = new JPanel();
 		contentPane.add(panelActions, BorderLayout.EAST);
 		
-		actionList.setModel(new DefaultListModel<StackAction>());
+		actionList.setModel(new DefaultListModel<Card<?>>());
 		actionList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					StackAction sel = actionList.getSelectedValue();
+					Card<?> sel = actionList.getSelectedValue();
 					if (sel != null)
-						game.addAndProcessStackAction(sel);
+						game.click(sel);
 				}
 			}
 		});
@@ -282,7 +283,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	}
 
 	private void updateViews() {
-		DefaultListModel<StackAction> model = (DefaultListModel<StackAction>) this.actionList.getModel();
+		DefaultListModel<Card<?>> model = (DefaultListModel<Card<?>>) this.actionList.getModel();
 		model.clear();
 		
 		for (CardZoneView zv : zoneViews) {
@@ -290,9 +291,9 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		}
 		updateGameStatus();
 		
-		List<StackAction> actions = game.getAvailableActions(game.getCurrentPlayer());
-		for (StackAction element : actions) {
-			if (element.actionIsAllowed())
+		List<Card<?>> actions = game.getUseableCards(game.getCurrentPlayer());
+		for (Card<?> element : actions) {
+			if (element.clickAction().actionIsAllowed())
 				model.addElement(element);
 		}
 	}

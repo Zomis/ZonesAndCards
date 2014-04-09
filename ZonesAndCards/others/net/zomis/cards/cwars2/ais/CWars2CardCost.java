@@ -1,21 +1,20 @@
 package net.zomis.cards.cwars2.ais;
 
+import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.SubclassScorer;
 import net.zomis.cards.cwars2.CWars2Card;
-import net.zomis.cards.cwars2.CWars2PlayAction;
+import net.zomis.cards.cwars2.CWars2Game;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 
-public class CWars2CardCost extends SubclassScorer<Player, StackAction, CWars2PlayAction> {
+public class CWars2CardCost extends AbstractScorer<Player, Card<?>> {
 
-	public CWars2CardCost() {
-		super(CWars2PlayAction.class);
-	}
-	
 	@Override
-	public double scoreSubclass(CWars2PlayAction cast, ScoreParameters<Player> scores) {
-		CWars2Card card = (CWars2Card) cast.getCard().getModel();
+	public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+		CWars2Game game = (CWars2Game) field.getGame();
+		if (game.isDiscardMode())
+			return 0;
+		CWars2Card card = (CWars2Card) field.getModel();
 		return CWars2ScorerNeeds.scoreMap(scores.getParameters(), card.getCosts());
 	}
 

@@ -1,25 +1,20 @@
 package net.zomis.cards.cwars2.ais;
 
+import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.SubclassScorer;
 import net.zomis.cards.cwars2.CWars2Card;
-import net.zomis.cards.cwars2.CWars2PlayAction;
 import net.zomis.cards.cwars2.CWars2Player;
 import net.zomis.cards.cwars2.CWars2Res;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 
-public class CanWinScorer extends SubclassScorer<Player, StackAction, CWars2PlayAction> {
-
-	public CanWinScorer() {
-		super(CWars2PlayAction.class);
-	}
+public class CanWinScorer extends AbstractScorer<Player, Card<?>> {
 
 	@Override
-	public double scoreSubclass(CWars2PlayAction cast, ScoreParameters<Player> scores) {
+	public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
 		CWars2Player player = (CWars2Player) scores.getParameters();
 		CWars2Player opponent = player.getNextPlayer();
-		CWars2Card card = (CWars2Card) cast.getCard().getModel();
+		CWars2Card card = (CWars2Card) field.getModel();
 		if (card.getEffects().getResources(CWars2Res.CASTLE) + player.getResources().getResources(CWars2Res.CASTLE) >= 100)
 			return 1;
 		if (opponent.getResources().getResources(CWars2Res.CASTLE) - card.castleDamage() <= 0)

@@ -4,8 +4,8 @@ import java.util.Random;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.scorers.RandomScorer;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 
 public class CardAI_Random extends CardAI {
 
@@ -15,7 +15,7 @@ public class CardAI_Random extends CardAI {
 	}
 	
 	public CardAI_Random(Random random) {
-		this.setConfig(new ScoreConfigFactory<Player, StackAction>().withScorer(new RandomScorer<Player, StackAction>(random)).build());
+		this.setConfig(new ScoreConfigFactory<Player, Card<?>>().withScorer(new RandomScorer<Player, Card<?>>(random)).build());
 	}
 
 }

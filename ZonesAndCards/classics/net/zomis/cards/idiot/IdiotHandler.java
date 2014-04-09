@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
-import net.zomis.aiscores.scorers.IsSubclassScorer;
-import net.zomis.aiscores.scorers.SubclassScorer;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
@@ -17,6 +16,7 @@ import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
+import net.zomis.cards.model.ai.IsActionClass;
 import net.zomis.utils.ZomisList;
 
 public class IdiotHandler implements ActionHandler {
@@ -25,16 +25,19 @@ public class IdiotHandler implements ActionHandler {
 		public IdiotGameAI(IdiotGame game) {
 			super();
 			
-			ScoreConfigFactory<Player, StackAction> config = new ScoreConfigFactory<Player, StackAction>();
-			config.withScorer(new IsSubclassScorer<Player, StackAction>(RemoveAction.class), 10);
-			config.withScorer(new IsSubclassScorer<Player, StackAction>(MoveAction.class), 5);
-			config.withScorer(new SubclassScorer<Player, StackAction, MoveAction>(MoveAction.class) {
+			ScoreConfigFactory<Player, Card<?>> config = new ScoreConfigFactory<Player, Card<?>>();
+			config.withScorer(new IsActionClass(RemoveAction.class), 10);
+			config.withScorer(new IsActionClass(MoveAction.class), 5);
+			config.withScorer(new AbstractScorer<Player, Card<?>>() {
 				@Override
-				public double scoreSubclass(MoveAction cast, ScoreParameters<Player> scores) {
+				public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
+					if (!(field.clickAction() instanceof MoveAction))
+						return 0;
+					MoveAction cast = (MoveAction) field.clickAction();
 					return cast.getSource().size() > 1 ? 0 : 1; // only move if it makes some sense in moving
 				}
 			}, -5);
-			config.withScorer(new IsSubclassScorer<Player, StackAction>(DealAction.class), 1);
+			config.withScorer(new IsActionClass(DealAction.class), 1);
 			this.setConfig(config.build());
 		}
 	}

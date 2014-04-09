@@ -31,6 +31,8 @@ public class HeartsHandler implements ActionHandler {
 		if (player == null)
 			player = game.findPlayerWithBoard(zone);
 		
+		
+		
 		if (card.getGame().getCurrentPlayer() == null) {
 			// give phase
 			return new HeartsGiveAction(cardM);
