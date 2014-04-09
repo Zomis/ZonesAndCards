@@ -3,12 +3,15 @@ package net.zomis.cards.cwars2;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
+import net.zomis.cards.model.ActionProvider;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.resources.IResource;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.resources.common.FixedResourceStrategy;
@@ -25,6 +28,8 @@ public class CWars2Game extends CardGame<CWars2Player, CWars2Card> {
 	
 	private boolean discardMode;
 	private List<IResource> knownResources = new ArrayList<IResource>();
+	private Card<CWars2Card> discardCard;
+	private Card<CWars2Card> nextTurnCard;
 	
 	public List<IResource> getKnownResources() {
 		return knownResources;
@@ -54,6 +59,18 @@ public class CWars2Game extends CardGame<CWars2Player, CWars2Card> {
 			@Override
 			public void executeEvent(PhaseChangeEvent event) {
 				onPhaseChange(event);
+			}
+		});
+		this.discardCard = this.addAction(new CWars2Card("Discard"), new ActionProvider() {
+			@Override
+			public StackAction get() {
+				return new ToggleDiscardAction(CWars2Game.this);
+			}
+		});
+		this.nextTurnCard = this.addAction(new CWars2Card("End Turn"), new ActionProvider() {
+			@Override
+			public StackAction get() {
+				return new NextTurnAction(CWars2Game.this);
 			}
 		});
 	}
@@ -90,25 +107,19 @@ public class CWars2Game extends CardGame<CWars2Player, CWars2Card> {
 		this.discardMode = false;
 	}
 	
-	@Deprecated
-	CWars2Game addRandomDecks() {
-		for (Player pl : this.getPlayers()) {
-			CWars2Player player = (CWars2Player) pl;
-			CWars2DeckBuilder deckBuilder = new CWars2DeckBuilder(new ScoreConfigFactory<CWars2Player, CWars2Card>());
-			deckBuilder.createDeck(player, getMinCardsInDeck());
-		}
-		return this;
-	}
-	
 	@Override
 	protected void onStart() {
-		for (Player pl : this.getPlayers()) {
-			CWars2Player player = (CWars2Player) pl;
+		for (CWars2Player player : this.getPlayers()) {
 			int minCards = getMinCardsInDeck();
-			int playerCount = player.getCardCount();
-			if (playerCount < minCards)
-				throw new IllegalStateException("Not enough cards added for " + pl + ". Use addDefaultDecks() to add the default decks. Expected " + minCards + " but found " + playerCount);
-			player.saveDeck();
+			if (player.getDeck().size() + player.handSize() < minCards) {
+				// Build deck from the DeckList
+				int playerCount = player.getCardCount();
+				if (playerCount < minCards)
+					throw new IllegalStateException("Not enough cards added for " + player +
+							". Expected " + minCards + " but found " + playerCount +
+							" Library contains " + player.getDeck().size() + " handsize " + player.handSize());
+				player.saveDeck();
+			}
 			player.fillHand();
 		}
 		
@@ -187,5 +198,13 @@ public class CWars2Game extends CardGame<CWars2Player, CWars2Card> {
 		if (res.getResources(CWars2Res.CASTLE) >= 100)
 			return true;
 		return null;
+	}
+
+	public Card<?> getActionDiscardCard() {
+		return this.discardCard;
+	}
+
+	public Card<?> getActionNextTurnCard() {
+		return this.nextTurnCard;
 	}
 }

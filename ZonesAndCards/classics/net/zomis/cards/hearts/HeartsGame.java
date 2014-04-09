@@ -2,7 +2,7 @@ package net.zomis.cards.hearts;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -14,7 +14,6 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
@@ -22,17 +21,17 @@ import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.utils.ZomisList;
 
 public class HeartsGame extends ClassicGame {
-	public static final int MAGIC_NUMBER = 52 / 4;
+	public static final int RANKS_PER_SUITE = 52 / 4;
 	
 	private final Comparator<Card<ClassicCard>> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
 	private final ClassicCardZone pile;
-	private final ActionHandler handler = new HeartsHandler();
 	
 	protected HeartsGiveDirection	giveDirection;
 	private boolean heartsBroken;
 	
 	public HeartsGame(HeartsGiveDirection giveDirection) {
 		super(AceValue.HIGH);
+		this.setActionHandler(new HeartsHandler());
 		this.giveDirection = giveDirection;
 		this.pile = new ClassicCardZone("Current");
 		this.pile.setGloballyKnown(true);
@@ -75,8 +74,8 @@ public class HeartsGame extends ClassicGame {
 		this.pile.moveToBottomOf(null);
 		ClassicCardZone deck = new ClassicCardZone("Deck");
 		deck.addDeck(this, 0);
-		if (deck.cardList().size() % this.getPlayers().size() != 0) 
-			throw new IllegalStateException("Something is horribly wrong with the card count or player count. " + deck.cardList().size() + " modulo " + this.getPlayers().size());
+		if (deck.size() % this.getPlayers().size() != 0) 
+			throw new IllegalStateException("Something is horribly wrong with the card count or player count. " + deck.size() + " modulo " + this.getPlayers().size());
 		if (this.getPlayers().size() != 4)
 			throw new IllegalStateException("Hearts must currently be played with 4 players.");
 		
@@ -90,11 +89,6 @@ public class HeartsGame extends ClassicGame {
 		}
 	}
 
-	@Override
-	public ActionHandler getActionHandler() {
-		return this.handler;
-	}
-
 	public void sort(ClassicCardZone zone) {
 //		CustomFacade.getLog().d("Sorting: " + zone);
 		zone.sort(compare);
@@ -106,7 +100,7 @@ public class HeartsGame extends ClassicGame {
 			CardPlayer pl = (CardPlayer) player;
 			pl.getBoard().setGloballyKnown(true);
 			sort(pl.getHand());
-			if (!ZomisList.filter2(pl.getHand().cardList(), new ClassicCardFilter(Suite.CLUBS, 2)).isEmpty()) {
+			if (!ZomisList.getAll(pl.getHand(), new ClassicCardFilter(Suite.CLUBS, 2)).isEmpty()) {
 				setActivePlayer(pl);
 			}
 		}
@@ -164,8 +158,8 @@ public class HeartsGame extends ClassicGame {
 		CardPlayer nextPlayer = this.lastPlayed.get(maxCard);
 		
 		// Find all the cards that give points
-		LinkedList<Card<ClassicCard>> hearts = ZomisList.filter2(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
-		LinkedList<Card<ClassicCard>> queen = ZomisList.filter2(this.pile.cardList(),  new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
+		List<Card<ClassicCard>> hearts = ZomisList.getAll(this.pile, new ClassicCardFilter(Suite.HEARTS));
+		List<Card<ClassicCard>> queen = ZomisList.getAll(this.pile, new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
 		hearts.addAll(queen);
 		for (Card<ClassicCard> card : hearts) {
 			// give the point cards to the player who won the stick
@@ -209,8 +203,8 @@ public class HeartsGame extends ClassicGame {
 		if (this.getCurrentPlayer() == null)
 			return 0;
 		int i = 0;
-		i += ZomisList.filter2(player.getBoard().cardList(), new ClassicCardFilter(Suite.HEARTS)).size();
-		i += MAGIC_NUMBER * ZomisList.filter2(player.getBoard().cardList(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN)).size();
+		i += ZomisList.getAll(player.getBoard(), new ClassicCardFilter(Suite.HEARTS)).size();
+		i += RANKS_PER_SUITE * ZomisList.getAll(player.getBoard(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN)).size();
 		return i;
 	}
 	

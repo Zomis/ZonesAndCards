@@ -1,5 +1,6 @@
 package net.zomis.cards.mdjq;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +42,14 @@ public class MDJQHandler implements ActionHandler {
 				actions.add(act);
 		}
 		return actions;
+	}
+
+	@Override
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+		List<Card<?>> cards = new ArrayList<Card<?>>();
+		
+		
+		return cards;
 	}
 
 }

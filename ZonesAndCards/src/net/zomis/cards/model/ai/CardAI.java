@@ -47,8 +47,13 @@ public class CardAI implements ScoreStrategy<Player, StackAction> {
 	}
 
 	public ParamAndField<Player, StackAction> play(Player player) {
-		if (this.mConfig == null)
+		if (mConfig == null)
 			throw new IllegalStateException("Config not initialized for AI " + this);
+		if (player == null)
+			throw new IllegalArgumentException("Player is null");
+		if (player.getGame() == null)
+			throw new IllegalArgumentException("Player does not have a game");
+		
 		ParamAndField<Player, StackAction> best = ScoreUtils.pickBest(this.createScoreProvider(), 
 				player, player.getGame().getRandom());
 		if (best == null || best.getFieldScore().getScore() < this.minScore) {

@@ -58,7 +58,6 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		return cards.contains(card);
 	}
 
-	@Deprecated
 	public LinkedList<E> cardList() {
 		return cards;
 	}
@@ -96,6 +95,9 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	}
 	
 	public E createCardOnTop(CardModel cardModel) {
+		if (cardModel == null)
+			throw new NullPointerException("CardModel cannot be null");
+		
 		@SuppressWarnings("unchecked")
 		E card = (E) cardModel.createCardInternal(this); // TODO: Possibly use a "CardFactory" somewhere...
 		this.cards.addFirst((E) card);
@@ -107,6 +109,8 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 			this.game.executeEvent(event);
 	}
 	public E createCardOnBottom(CardModel cardModel) {
+		if (cardModel == null)
+			throw new NullPointerException("CardModel cannot be null");
 		@SuppressWarnings("unchecked")
 		E card = (E) cardModel.createCardInternal(this);
 		this.cards.addLast(card);
@@ -118,11 +122,13 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 			return null;
 		return this.cards.getFirst();
 	}
+	
 	public E getBottomCard() {
 		if (cards.isEmpty())
 			return null;
 		return this.cards.getLast();
 	}
+	
 	public CardZone<E> extractTopCards(int number) {
 		CardZone<E> copy = this.createEmptyCopy();
 		for (int i = 0; i < number; i++) {
@@ -147,14 +153,14 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		return this;
 	}
 	public void moveToTopOf(CardZone<E> destination) {
-		List<E> list = new ArrayList<E>(cardList());
+		List<E> list = new ArrayList<E>(cards);
 		Collections.reverse(list);
 		for (Card<?> card : list) {
 			card.zoneMoveOnTop(destination);
 		}
 	}
 	public void moveToBottomOf(CardZone<E> destination) {
-		for (E card : new ArrayList<E>(cardList())) {
+		for (E card : new ArrayList<E>(cards)) {
 			card.zoneMoveOnBottom(destination);
 		}
 	}

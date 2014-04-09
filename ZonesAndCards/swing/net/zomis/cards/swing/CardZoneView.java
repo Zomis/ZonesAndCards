@@ -39,7 +39,7 @@ public class CardZoneView implements CardViewClickListener {
 		cards.setLayout(new FlowLayout());
 		thisPanel.add(cards);
 
-		for (Card<?> card : zone.cardList()) {
+		for (Card<?> card : zone) {
 			addCard(card);
 		}
 	}
@@ -102,7 +102,7 @@ public class CardZoneView implements CardViewClickListener {
 
 	public void recreateFromScratch() {
 		cards.removeAll();
-		for (Card<?> card : this.zone.cardList())
+		for (Card<?> card : this.zone)
 			this.addCard(card);
 	}
 

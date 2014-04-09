@@ -81,7 +81,7 @@ public class HeartsSuperGame extends HeartsGame implements EventListener {
 	@Override
 	public StackAction processStackAction() {
 		CardPlayer curr = this.getCurrentPlayer();
-		if (curr != null && curr.getHand().size() > HeartsGame.MAGIC_NUMBER)
+		if (curr != null && curr.getHand().size() > HeartsGame.RANKS_PER_SUITE)
 			throw new AssertionError("Where the **** did all those cards come from? " + curr.getHand().size() + ": " + curr.getHand());
 		StackAction sup = super.processStackAction();
 //		CustomFacade.getLog().d(curr + " - " + sup.toString());

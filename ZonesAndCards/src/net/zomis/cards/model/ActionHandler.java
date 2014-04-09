@@ -7,7 +7,10 @@ public interface ActionHandler {
 	// TODO: Add StackAction(s) for dragAndDrop(Card source, Card destination)
 	// TODO: Add boolean or StackAction for startDrag(Card source)
 	
-//	List<StackAction> getAvailableActions(CardGame<Player, CardModel> cardGame, Player player);
 	StackAction click(Card<?> card);
+	
+	@Deprecated
 	<E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player);
+	
+	List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player);
 }

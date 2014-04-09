@@ -14,8 +14,14 @@ public class CWars2DiscardAction extends ZoneMoveAction {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public Card<CWars2Card> getCard() {
+		return (Card<CWars2Card>) super.getCard();
+	}
+	
+	@Override
 	public boolean actionIsAllowed() {
-		if (!game.getCurrentPlayer().getHand().cardList().contains(getCard()))
+		if (!game.getCurrentPlayer().getHand().contains(getCard()))
 			return false;
 		
 		return game.getDiscarded() < game.getDiscardsPerTurn(game.getCurrentPlayer());

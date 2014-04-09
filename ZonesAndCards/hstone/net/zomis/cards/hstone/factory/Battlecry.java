@@ -5,7 +5,6 @@ import java.util.List;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneEnchantment;
-import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.model.StackAction;
 
@@ -36,6 +35,10 @@ public class Battlecry {
 		};
 	}
 
+	public static HStoneEffect heal(final int healing) {
+		return heal(healing, HSTargetType.MINION, HSTargetType.PLAYER);
+	}
+	
 	public static HStoneEffect heal(final int healing, HSTargetType... target) {
 		return new HStoneEffect(combined(target)) {
 			@Override
@@ -49,8 +52,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStonePlayer player = source.getPlayer();
-				player.getNextPlayer().removeWeapon();
+				source.getPlayer().getNextPlayer().removeWeapon();
 			}
 		};
 	}
@@ -70,8 +72,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStoneCard card = (HStoneCard) source;
-				card.getPlayer().getResources().changeResources(HStoneRes.MANA_AVAILABLE, additionalMana);
+				source.getPlayer().getResources().changeResources(HStoneRes.MANA_AVAILABLE, additionalMana);
 			}
 		};
 	}
@@ -92,7 +93,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.enchant(new HStoneEnchantment((HStoneCard) source, attack, health));
+				source.enchant(new HStoneEnchantment(source, attack, health));
 			}
 		};
 	}
@@ -110,7 +111,7 @@ public class Battlecry {
 		};
 	}
 
-	public static Object typePTBonus(HStoneMinionType murloc, int i, int j) {
+	public static HStoneEnchantment typePTBonus(HStoneMinionType minionType, int attack, int health) {
 		// TODO: Check what happens if you silence a minion that has a static enchant from another minion
 		return null;
 	}
@@ -119,8 +120,7 @@ public class Battlecry {
 		return new HStoneEffect(HSTargetType.MINION) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStoneCard minion = (HStoneCard) target;
-				minion.silence();
+				target.silence();
 			}
 		};
 	}
@@ -213,8 +213,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStoneCard card = (HStoneCard) target;
-				card.removeAbility(HSAbility.DIVINE_SHIELD);
+				target.removeAbility(HSAbility.DIVINE_SHIELD);
 			}
 		};
 	}
@@ -256,8 +255,12 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect equip(String string) {
-		// TODO Auto-generated method stub
-		return null;
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				// TODO Auto-generated method stub
+			}
+		};
 	}
 
 	public static HStoneEffect selfPlayerDamage(final int damage) {

@@ -52,7 +52,7 @@ public class CardView implements ActionListener {
 		boolean known = card.getCurrentZone().isKnown(currentPlayer) || allKnown;
 		String html = known ? text.textFor(card) : "???";
 		
-		StackAction action = this.card.getGame().getActionHandler().click(getCard());
+		StackAction action = this.card.getGame().getActionFor(getCard());
 		button.setText("<html>" + html.replaceAll("\\n", "<br>") + "</html>");
 		button.setEnabled(action == null ? false : action.actionIsAllowed());
 	}

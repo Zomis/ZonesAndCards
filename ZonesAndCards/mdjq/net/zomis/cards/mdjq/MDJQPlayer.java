@@ -66,7 +66,7 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 
 	@Override
 	public int getCardCount() {
-		return this.library.cardList().size();
+		return this.library.size();
 	}
 
 	@Override
@@ -76,8 +76,9 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 
 	@Override
 	public void addCard(MDJQCardModel card) {
-		this.library.cardList().add(card.createCard(library));
+		this.library.createCardOnBottom(card);
 	}
+	
 	@Override
 	public String toString() {
 		return this.getName();
@@ -112,6 +113,11 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 	@Override
 	public void clearCards() {
 		this.library.moveToBottomOf(null);
+	}
+
+	public void drawCard() {
+		MDJQPermanent card = getLibrary().getTopCard();
+		card.zoneMoveOnBottom(getHand());
 	}
 	
 }

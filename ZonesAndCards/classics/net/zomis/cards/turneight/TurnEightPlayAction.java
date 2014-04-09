@@ -17,9 +17,9 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 	public boolean actionIsAllowed() {
 		TurnEightGame game = (TurnEightGame) getCard().getGame();
 		ClassicCardZone discard = game.getDiscard();
-		if (discard.cardList().isEmpty())
+		if (discard.isEmpty())
 			return false;
-		ClassicCard topCard = (ClassicCard) discard.cardList().peekLast().getModel();
+		ClassicCard topCard = (ClassicCard) discard.getBottomCard().getModel();
 		ClassicCard myCard = getModel();
 		
 		if (!TurnEightController.finishAllowed(myCard, game.getCurrentPlayer())) {
@@ -45,8 +45,9 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 		
 		if (!playable)
 			return false;
-		
-		if (!game.getCurrentPlayer().getHand().cardList().contains(getCard())) {
+		@SuppressWarnings("unchecked")
+		Card<ClassicCard> card = (Card<ClassicCard>) getCard();
+		if (!game.getCurrentPlayer().getHand().contains(card)) {
 //			CustomFacade.getLog().i("Current player is: " + game.getCurrentPlayer());
 //			CustomFacade.getLog().i(myCard + " card not in list: " + game.getCurrentPlayer().getHand().cardList());
 			return false;
@@ -69,7 +70,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 //			CustomFacade.getLog().i("All others pick up a card. Everyone except " + currentPlayer);
 			for (Player player : currentPlayer.getOpponents()) {
 				CardPlayer pl2 = (CardPlayer) player;
-				if (!pl2.getHand().cardList().isEmpty())
+				if (!pl2.getHand().isEmpty())
 					this.getGame().playerForceDraw((CardPlayer) player);
 			}
 		}

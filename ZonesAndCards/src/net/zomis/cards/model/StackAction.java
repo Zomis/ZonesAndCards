@@ -39,9 +39,6 @@ public class StackAction {
 	void internalPerform() {
 		this.onPerform();
 		++this.performCounter;
-//		if (this.performCounter > 1) {
-//			CustomFacade.getLog().w("StackAction performed " + this.performCounter + " times: " + this);
-//		}
 	}
 	
 	public int getPerformCounter() {

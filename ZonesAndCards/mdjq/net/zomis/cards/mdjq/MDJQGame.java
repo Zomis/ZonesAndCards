@@ -21,7 +21,6 @@ import net.zomis.cards.mdjq.phases.MDJQUntapPhase;
 import net.zomis.cards.mdjq.phases.MDJQUpkeepPhase;
 import net.zomis.cards.mdjq.scorers.CardNameScorer;
 import net.zomis.cards.mdjq.scorers.IsColorScorer;
-import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
@@ -38,6 +37,7 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 	private MDJQZone exile;
 	
 	public MDJQGame() {
+		this.setActionHandler(new MDJQHandler());
 		this.battlefield = new MDJQZone("Battlefield", ZoneType.BATTLEFIELD, null);
 		this.battlefield.setGloballyKnown(true);
 		this.exile = new MDJQZone("Exile", ZoneType.EXILE, null);
@@ -158,11 +158,6 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 	}
 	
 	@Override
-	public ActionHandler getActionHandler() {
-		return new MDJQHandler();
-	}
-	
-	@Override
 	public void addStackAction(StackAction a) {
 //		CustomFacade.getLog().d("Add to Stack: " + a);
 		if (!(a instanceof MDJQStackAction)) {
@@ -216,8 +211,7 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 		player.getDeck().shuffle();
 		
 		for (int c = 0; c < 7; c++) {
-			MDJQPermanent card = player.getLibrary().cardList().peekFirst();
-			card.zoneMoveOnBottom(player.getHand());
+			player.drawCard();
 		}
 	}
 	
@@ -233,14 +227,14 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 	}
 	
 	public List<MDJQObject> getObjects() {
-		LinkedList<MDJQObject> objects = new LinkedList<MDJQObject>();
-		for (Player pl : this.getPlayers()) {
-			objects.add((MDJQObject) pl);
+		List<MDJQObject> objects = new LinkedList<MDJQObject>();
+		for (MDJQPlayer pl : this.getPlayers()) {
+			objects.add(pl);
 		}
 		for (CardZone<?> z : this.getPublicZones()) {
 			MDJQZone zone = (MDJQZone) z;
-			for (MDJQPermanent card : zone.cardList()) {
-				objects.add((MDJQObject) card);
+			for (MDJQPermanent card : zone) {
+				objects.add(card);
 			}
 		}
 		

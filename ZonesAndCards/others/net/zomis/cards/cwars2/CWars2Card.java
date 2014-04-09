@@ -69,8 +69,8 @@ public class CWars2Card extends CardModel {
 	}
 	void perform(CWars2Game game) {
 		for (PublicAction act : extras) {
-			act.onPerform(); // for replay reasons, do not use game Stack here
-//			game.addAndProcessStackAction(act);
+//			act.onPerform(); // for replay reasons, do not use game Stack here
+			game.addAndProcessStackAction(act);
 		}
 	}
 	public int castleDamage() {

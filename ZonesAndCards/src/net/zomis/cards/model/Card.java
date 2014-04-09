@@ -22,8 +22,9 @@ public class Card<M extends CardModel> {
 	}
 	
 	public StackAction clickAction() {
-		return this.getGame().getActionHandler().click(this);
+		return this.getGame().getActionFor(this);
 	}
+	
 	public M getModel() {
 		return model;
 	}

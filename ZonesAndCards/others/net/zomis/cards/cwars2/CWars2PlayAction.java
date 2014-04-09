@@ -20,10 +20,16 @@ public class CWars2PlayAction extends ZoneMoveAction {
 		return player;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Card<CWars2Card> getCard() {
+		return (Card<CWars2Card>) super.getCard();
+	}
+	
 	@Override
 	public boolean actionIsAllowed() {
 		CWars2Player player = (CWars2Player) getCard().getGame().getCurrentPlayer();
-		if (!player.getHand().cardList().contains(getCard()))
+		if (!player.getHand().contains(getCard()))
 			return setErrorMessage("Card is not in player's hand");
 		if (player.getGame().getDiscarded() > 0)
 			return setErrorMessage("Cards has been discarded");

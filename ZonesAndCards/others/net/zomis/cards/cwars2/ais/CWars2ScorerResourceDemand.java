@@ -30,7 +30,7 @@ public class CWars2ScorerResourceDemand implements PreScorer<Player> {
 
 		private AnalyzeResult analyze() {
 			CWars2Player pl = (CWars2Player) player;
-			for (Card<CWars2Card> card : pl.getHand().cardList()) {
+			for (Card<CWars2Card> card : pl.getHand()) {
 				map.change(card.getModel().getCosts(), 1);
 			}
 			return this;

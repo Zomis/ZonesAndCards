@@ -18,7 +18,7 @@ public class MDJQUntapPhase extends MDJQPhase {
 	
 	@Override
 	public void onEnd(CardGame<?, ?> game) {
-		for (MDJQPermanent perm : this.getPlayer().getGame().getBattlefield().cardList()) {
+		for (MDJQPermanent perm : this.getPlayer().getGame().getBattlefield()) {
 			if (perm.getController() == this.getPlayer())
 				perm.untap();
 		}

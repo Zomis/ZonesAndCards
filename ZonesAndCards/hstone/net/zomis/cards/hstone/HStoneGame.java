@@ -11,7 +11,6 @@ import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.factory.HStoneRarity;
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.phases.GamePhase;
 
@@ -130,11 +129,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	}
 
 	public HStoneCardModel getCardModel(String minion) {
-		for (CardModel model : getAvailableCards()) {
-			if (model.getName().equals(minion))
-				return (HStoneCardModel) model;
-		}
-		return null;
+		return getCards().get(minion);
 	}
 
 	public List<HStoneCard> findAll(HStoneCard searcher, HSFilter filter) {

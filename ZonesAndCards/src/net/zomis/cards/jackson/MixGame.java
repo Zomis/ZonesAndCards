@@ -1,6 +1,7 @@
 package net.zomis.cards.jackson;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.zomis.cards.model.Card;
@@ -41,7 +42,7 @@ public abstract class MixGame extends CardGame<Player, CardModel> {
 	
 	@Override
 	@JsonIgnore
-	public abstract Set<CardZone<?>> getPublicZones();
+	public abstract List<CardZone<?>> getPublicZones();
 	
 	@Override
 	@JsonIgnore

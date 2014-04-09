@@ -33,7 +33,7 @@ public class MDJQZone extends CardZone<MDJQPermanent> {
 	}
 
 	public MDJQPermanent findCardWithName(String string) {
-		for (MDJQPermanent card : this.cardList()) {
+		for (MDJQPermanent card : this) {
 			if (card.getModel().getName().equals(string))
 				return (MDJQPermanent) card;
 		}
@@ -41,7 +41,7 @@ public class MDJQZone extends CardZone<MDJQPermanent> {
 	}
 
 	void trigger(MDJQEvent event) {
-		for (MDJQPermanent perm : this.cardList()) {
+		for (MDJQPermanent perm : this) {
 			MDJQPermanent permanent = (MDJQPermanent) perm;
 			for (TriggeredAbility ability : permanent.getModel().getTriggeredAbilities()) {
 				ability.trigger(permanent, event);

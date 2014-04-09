@@ -12,7 +12,9 @@ import net.zomis.cards.mdjq.MDJQRes.MColor;
 import net.zomis.cards.mdjq.MDJQRes.TribalType;
 import net.zomis.cards.mdjq.activated.ActivatedAbility;
 import net.zomis.cards.mdjq.cards.TriggeredAbility;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.resources.ResourceMap;
 
 public class MDJQCardModel extends CardModel {
@@ -84,13 +86,19 @@ public class MDJQCardModel extends CardModel {
 		return this;
 	}
 	
-	public MDJQPermanent createCard(MDJQZone initialZone) {
-		for (MDJQPlayer player : initialZone.getGame().getPlayers()) {
-			if (player.getLibrary() == initialZone)
-				return new MDJQPermanent(this, initialZone, player); 
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
+		MDJQZone initZone = (MDJQZone) initialZone;
+		for (MDJQPlayer player : initZone.getGame().getPlayers()) {
+			if (player.getLibrary() == initZone) {
+				MDJQPermanent perm = new MDJQPermanent(this, initZone, player);
+				return (Card<E>) perm;
+			}
 		}
 		throw new IllegalArgumentException("Zone " + initialZone + " is not any player's library. Need to know who is the owner of the card.");
 	}
+	
 	public ResourceMap getManaCost() {
 		return manaCost;
 	}

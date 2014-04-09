@@ -43,7 +43,7 @@ public enum TurnEightScorers {
 		}
 		private Suite getPreferredSuite(CardPlayer player) {
 			int[] suiteCount = new int[Suite.values().length];
-			for (Card<ClassicCard> card : player.getHand().cardList()) {
+			for (Card<ClassicCard> card : player.getHand()) {
 				ClassicCard model = (ClassicCard) card.getModel();
 				suiteCount[model.getSuite().ordinal()] += getIncreaseBy(model, player.getGame().getAceValue());
 			}
@@ -74,7 +74,7 @@ public enum TurnEightScorers {
 			if (game.getPlayerChoice() == suite)
 				return false;
 			
-			for (Card<ClassicCard> card : ((CardPlayer) scores.getParameters()).getHand().cardList()) {
+			for (Card<ClassicCard> card : ((CardPlayer) scores.getParameters()).getHand()) {
 				ClassicCard cm = (ClassicCard) card.getModel();
 				if (cm.getRank() == TurnEightController.EIGHT)
 					return true;

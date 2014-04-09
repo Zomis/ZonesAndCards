@@ -95,13 +95,23 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		ResourceMap res = getResources();
 		int damage = res.getResources(HStoneRes.AWAITING_DAMAGE);
 		int heal = res.getResources(HStoneRes.AWAITING_HEAL);
+		int healthChange = heal - damage;
 		
-		res.changeResources(HStoneRes.HEALTH, heal - damage);
+		if (healthChange < 0 && res.hasResources(HStoneRes.ARMOR, 1)) {
+			int armorPain = Math.min(-healthChange, res.getResources(HStoneRes.ARMOR));
+
+			res.changeResources(HStoneRes.ARMOR, -armorPain);
+			res.changeResources(HStoneRes.HEALTH, healthChange + armorPain);
+		}
+		else res.changeResources(HStoneRes.HEALTH, healthChange);
+		
 		res.set(HStoneRes.AWAITING_DAMAGE, 0);
 		res.set(HStoneRes.AWAITING_HEAL, 0);
 		
-		if (!res.hasResources(HStoneRes.HEALTH, 1))
-			this.destroy();
+		if (isType(CardType.MINION) || isType(CardType.PLAYER)) {
+			if (!res.hasResources(HStoneRes.HEALTH, 1))
+				this.destroy();
+		}
 	}
 
 	public void removeAbility(HSAbility ability) {

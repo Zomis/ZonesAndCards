@@ -1,5 +1,6 @@
 package net.zomis.cards.hearts;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class HeartsHandler implements ActionHandler {
 
 	@Override
 	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player pl) {
-//		HeartsGame game = (HeartsGame) cardGame;
 		CardPlayer player = (CardPlayer) pl;
 		List<StackAction> list = new LinkedList<StackAction>();
 		if (pl == null) {
@@ -53,15 +53,15 @@ public class HeartsHandler implements ActionHandler {
 		}
 		CardPlayer currentPlayer = player.getGame().getCurrentPlayer();
 		if (currentPlayer == null) {
-			for (Card<ClassicCard> card : player.getHand().cardList()) {
+			for (Card<ClassicCard> card : player.getHand()) {
 				list.add(new HeartsGiveAction(card));
 			}
-			for (Card<ClassicCard> card : player.getBoard().cardList()) {
+			for (Card<ClassicCard> card : player.getBoard()) {
 				list.add(new HeartsGiveAction(card));
 			}
 		}
 		else if (player.getGame().getCurrentPlayer() == player) {
-			for (Card<ClassicCard> card : player.getHand().cardList()) {
+			for (Card<ClassicCard> card : player.getHand()) {
 				list.add(new HeartsPlayAction(card));
 			}
 		}
@@ -72,6 +72,14 @@ public class HeartsHandler implements ActionHandler {
 		if (list.isEmpty())
 			CustomFacade.getLog().i("Player " + player + " with hand " + player.getHand() + " can do " + list);
 		return list;
+	}
+
+	@Override
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+		List<Card<?>> cards = new ArrayList<Card<?>>();
+		
+		
+		return cards;
 	}
 
 }

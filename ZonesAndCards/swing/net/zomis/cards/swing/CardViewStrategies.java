@@ -20,7 +20,7 @@ public class CardViewStrategies {
 	static class TextActionString implements CardViewTextStrategy {
 		@Override
 		public String textFor(Card<?> card) {
-			StackAction action = card.getGame().getActionHandler().click(card);
+			StackAction action = card.getGame().getActionFor(card);
 			return String.valueOf(action);
 		}
 	}

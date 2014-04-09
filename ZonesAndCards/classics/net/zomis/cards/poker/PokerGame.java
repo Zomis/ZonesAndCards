@@ -47,6 +47,14 @@ public class PokerGame extends ClassicGame {
 			public StackAction click(Card<?> card) {
 				return null;
 			}
+
+			@Override
+			public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+				List<Card<?>> cards = new ArrayList<Card<?>>();
+				
+				
+				return cards;
+			}
 		});
 		
 		deck = new ClassicCardZone("Deck");
@@ -77,7 +85,6 @@ public class PokerGame extends ClassicGame {
 		
 		@Override
 		protected void onPerform() {
-			super.onPerform();
 			PokerGame game = (PokerGame) player.getGame();
 			player.getHand().moveToBottomOf(game.deck);
 			game.deck.shuffle();

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.cwars2.CWars2Res.Resources;
+import net.zomis.cards.cwars2.ais.CWars2Decks;
 import net.zomis.cards.cwars2.cards.BricksCards;
 import net.zomis.cards.cwars2.cards.CrystalCards;
 import net.zomis.cards.cwars2.cards.MultiplayerSpecificCards;
@@ -98,7 +99,7 @@ public class CWars2Setup {
 		CWars2Setup setup = CWars2Setup.newMultiplayerGame();
 		if (seed != null)
 			setup.setRandomSeed(seed);
-		setup.game.addRandomDecks();
+		setup.setDecks(CWars2Decks.zomisMultiplayerDeck(), CWars2Decks.zomisMultiplayerDeck());
 		setup.game.init();
 		return setup.build();
 	}

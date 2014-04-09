@@ -7,7 +7,7 @@ import net.zomis.cards.model.actions.ZoneMoveAction;
 public class RemoveAction extends ZoneMoveAction {
 
 	public RemoveAction(ClassicCardZone idiot) {
-		super(idiot.cardList().peekLast());
+		super(idiot.getBottomCard());
 		this.setDestination(null);
 	}
 
@@ -22,14 +22,14 @@ public class RemoveAction extends ZoneMoveAction {
 		for (ClassicCardZone zone : game.getIdiotZones()) {
 			if (zone == this.getCard().getCurrentZone())
 				continue;
-			if (zone.cardList().isEmpty())
+			if (zone.isEmpty())
 				continue;
 			
-			ClassicCard top = (ClassicCard) zone.cardList().peekLast().getModel();
-			if (top.getSuite() != model.getSuite())
+			ClassicCard lastCard = (ClassicCard) zone.getBottomCard().getModel();
+			if (lastCard.getSuite() != model.getSuite())
 				continue;
 			
-			if (top.getRank() > model.getRank())
+			if (lastCard.getRank() > model.getRank())
 				return true;
 		}
 		return false;

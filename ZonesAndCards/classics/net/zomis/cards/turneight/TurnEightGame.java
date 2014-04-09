@@ -6,7 +6,6 @@ import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
@@ -56,6 +55,7 @@ public class TurnEightGame extends ClassicGame {
 	 * */
 	public TurnEightGame() {
 		super(AceValue.HIGH);
+		setActionHandler(new TurnEightController());
 		this.deck = new ClassicCardZone("Deck");
 		this.discard = new ClassicCardZone("Pile");
 		this.discard.setGloballyKnown(true);
@@ -97,7 +97,7 @@ public class TurnEightGame extends ClassicGame {
 				discard.moveToBottomOf(deck);
 				deck.shuffle();
 			}
-			Card<ClassicCard> firstCard = deck.cardList().peek();
+			Card<ClassicCard> firstCard = deck.getTopCard();
 			firstCard.zoneMoveOnTop(this.discard);
 			firstCardModel = (ClassicCard) firstCard.getModel();
 			setCurrentSuite(firstCardModel.getSuite());
@@ -116,11 +116,6 @@ public class TurnEightGame extends ClassicGame {
 	}
 	public ClassicCardZone getDiscard() {
 		return discard;
-	}
-	
-	@Override
-	public ActionHandler getActionHandler() {
-		return new TurnEightController();
 	}
 	
 	public TurnEightGame addPlayer(String name, CardAI ai) {
@@ -152,7 +147,7 @@ public class TurnEightGame extends ClassicGame {
 		if (this.getCurrentPlayer().getHand().isEmpty()) {
 			for (Player pl : this.getPlayers()) {
 				CardPlayer player = (CardPlayer) pl;
-				if (!player.getHand().cardList().isEmpty()) { // if any player exist who still have something on their hand
+				if (!player.getHand().isEmpty()) { // if any player exist who still have something on their hand
 					this.nextPhase(); // call recursively
 					return result;
 				}
@@ -166,19 +161,19 @@ public class TurnEightGame extends ClassicGame {
 	public boolean isNextPhaseAllowed() {
 		if (getCurrentPlayer() == null)
 			return false;
-		return hasPlayed() || this.drawnCards == DRAW_MAX || getCurrentPlayer().getHand().cardList().isEmpty();
+		return hasPlayed() || this.drawnCards == DRAW_MAX || getCurrentPlayer().getHand().isEmpty();
 	}
 	public void playerForceDraw(CardPlayer player) {
 		if (player == null)
 			throw new NullPointerException("Null player cannot draw a card.");
-		if (this.deck.cardList().isEmpty()) {
-			Card<ClassicCard> last = this.discard.cardList().getLast();
+		if (this.deck.isEmpty()) {
+			Card<ClassicCard> last = this.discard.getBottomCard();
 			this.discard.moveToBottomOf(this.deck);
 			last.zoneMoveOnTop(this.discard);
 			this.deck.shuffle();
 		}
 		if (this.deck.getTopCard() == null) {
-			throw new AssertionError("How on earth can top card be null? Players: " + this.getPlayers() + " Discard pile is " + this.discard.cardList());
+			throw new AssertionError("Top card of deck was null");
 		}
 		this.deck.getTopCard().zoneMoveOnBottom(player.getHand());
 	}

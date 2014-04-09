@@ -16,7 +16,9 @@ public class BattlefieldAction extends StackAction {
 	@Override
 	public boolean actionIsAllowed() {
 		if (card.getGame().isTargetSelectionMode()) {
-			return card.getGame().isTargetAllowed(card);
+			if (!card.getGame().isTargetAllowed(card))
+				return setErrorMessage("Target not allowed: " + card);
+			return true;
 		}
 		return card.isAttackPossible();
 	}

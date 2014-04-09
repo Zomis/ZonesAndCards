@@ -1,6 +1,6 @@
 package net.zomis.cards.hearts;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
@@ -39,7 +39,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		}
 		
 		ClassicCard bottom = (ClassicCard) getGame().getPile().getBottomCard().getModel();
-		LinkedList<Card<ClassicCard>> list = ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(bottom.getSuite()));
+		List<Card<ClassicCard>> list = ZomisList.getAll(player.getHand(), new ClassicCardFilter(bottom.getSuite()));
 		
 		if (list.isEmpty()) {
 			return noMatchingSuiteAllowed(player);
@@ -51,7 +51,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	
 	private boolean noMatchingSuiteAllowed(CardPlayer player) {
 		// Don't have a card of the requested suite, can play any card.
-		if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+		if (player.getHand().size() == ZomisList.getAll(player.getHand(), new ClassicCardFilter(Suite.HEARTS)).size()) {
 			return true; // Have only HEARTS left, then it doesn't matter.
 		}
 		if (player.getHand().size() == 13) {
@@ -63,10 +63,10 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	}
 
 	private boolean pileEmptyAllowed(CardPlayer player) {
-		if (player.getHand().size() == ZomisList.filter2(player.getHand().cardList(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+		if (player.getHand().size() == ZomisList.getAll(player.getHand(), new ClassicCardFilter(Suite.HEARTS)).size()) {
 			return setOKMessage("Only hearts left");
 		}
-		if (player.getHand().size() == HeartsGame.MAGIC_NUMBER) {
+		if (player.getHand().size() == HeartsGame.RANKS_PER_SUITE) {
 			return setMixedMessage(cardModel.getSuite() == Suite.CLUBS && cardModel.getRank() == 2, "First hand, must be 2 of clubs");
 		}
 		// Can only play hearts if hearts has been broken (played before)

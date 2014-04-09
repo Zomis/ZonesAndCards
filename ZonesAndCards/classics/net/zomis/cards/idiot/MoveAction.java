@@ -14,8 +14,8 @@ public class MoveAction extends ZoneMoveAction {
 
 	@Override
 	public boolean actionIsAllowed() {
-		return getCard() != null && getDestination().cardList().isEmpty() &&
-			getCard().getCurrentZone().cardList().peekLast() == getCard();
+		return getCard() != null && getDestination().isEmpty() &&
+			getCard().getCurrentZone().getBottomCard() == getCard();
 	}
 	
 }

@@ -32,8 +32,13 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		this.hand        = new CardZone<HStoneCard>(getName() + "-Hand", this);
 		this.library     = new CardZone<HStoneCard>(getName() + "-Deck", this);
 		this.battlefield = new CardZone<HStoneCard>(getName() + "-Battlefield", this);
+		
+		this.hand.setKnown(this, true);
+		this.battlefield.setGloballyKnown(true);
+		
 		this.cards = new ArrayList<HStoneCardModel>();
 		this.specialZone = new CardZone<HStoneCard>(getName(), this);
+		
 		this.heroPower = character.getCharClass().heroPowerCard(specialZone);
 		this.playerCard = character.playerCard(specialZone);
 		DeckBuilder.createExact(this, character.getDeck().getCount(game));

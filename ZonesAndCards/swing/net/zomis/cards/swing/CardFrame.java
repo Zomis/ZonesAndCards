@@ -332,7 +332,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 
 	@Override
 	public void onCardClick(CardView cardView) {
-		cardView.getCard().getGame().addAndProcessStackAction(game.getActionHandler().click(cardView.getCard()));
+		cardView.getCard().getGame().click(cardView.getCard());
 		updateViews();
 	}
 	public static void main(String[] args) {

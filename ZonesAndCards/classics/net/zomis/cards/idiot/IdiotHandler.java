@@ -1,5 +1,6 @@
 package net.zomis.cards.idiot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class IdiotHandler implements ActionHandler {
 			return new DealAction(game);
 		}
 		
-		if (card.getCurrentZone().cardList().peekLast() != card)
+		if (card.getCurrentZone().getBottomCard() != card)
 			return new InvalidStackAction("Not last card");
 		
 		RemoveAction remove = new RemoveAction((ClassicCardZone) card.getCurrentZone());
@@ -54,7 +55,7 @@ public class IdiotHandler implements ActionHandler {
 		
 		List<StackAction> random = new LinkedList<StackAction>();
 		for (ClassicCardZone zone : game.getIdiotZones()) {
-			if (zone.cardList().isEmpty()) {
+			if (zone.isEmpty()) {
 				random.add(new MoveAction(card, zone));
 			}
 		}
@@ -74,10 +75,18 @@ public class IdiotHandler implements ActionHandler {
 				continue;
 			result.add(new RemoveAction(idiots));
 			for (ClassicCardZone idiot2 : game.getIdiotZones()) {
-				result.add(new MoveAction(idiots.cardList().peekLast(), idiot2));
+				result.add(new MoveAction(idiots.getBottomCard(), idiot2));
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+		List<Card<?>> cards = new ArrayList<Card<?>>();
+		
+		
+		return cards;
 	}
 
 }

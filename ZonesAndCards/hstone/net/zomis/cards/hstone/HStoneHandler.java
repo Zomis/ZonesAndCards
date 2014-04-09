@@ -64,4 +64,23 @@ public class HStoneHandler implements ActionHandler {
 		return actions;
 	}
 
+	@Override
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+		List<Card<?>> cards = new ArrayList<Card<?>>();
+		
+		HStonePlayer currPlayer = (HStonePlayer) player;
+		
+		for (HStoneCard card : currPlayer.getHand()) {
+			cards.add(card);
+		}
+		for (HStoneCard card : currPlayer.getBattlefield()) {
+			cards.add(card);
+		}
+		for (HStoneCard card : currPlayer.getSpecialZone()) {
+			cards.add(card);
+		}
+		
+		return cards;
+	}
+
 }

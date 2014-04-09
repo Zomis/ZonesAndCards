@@ -1,5 +1,6 @@
 package net.zomis.cards.turneight;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.scorers.IsSubclassScorer;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
+import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.ActionHandler;
@@ -46,14 +48,14 @@ public class TurnEightController implements ActionHandler {
 			return true;
 		}
 		
-		LinkedList<Card<ClassicCard>> list = player.getHand().cardList();
+		ClassicCardZone list = player.getHand();
 		if (list.isEmpty())
 			return true;
-		ClassicCard card1 = (ClassicCard) list.getFirst().getModel();
-		ClassicCard card2 = (ClassicCard) list.getLast().getModel();
+		ClassicCard card1 = (ClassicCard) list.getTopCard().getModel();
+		ClassicCard card2 = (ClassicCard) list.getBottomCard().getModel();
 		int ace = game.getAceValue();
 		
-		if (player.getHand().cardList().size() <= 2) {
+		if (player.getHand().size() <= 2) {
 			boolean hasAce = (card1.getRank() == ace) || (card2.getRank() == ace);
 			if (hasAce)
 				return false;
@@ -99,8 +101,9 @@ public class TurnEightController implements ActionHandler {
 	@Override
 	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 		List<StackAction> result = new LinkedList<StackAction>();
+		
 		CardPlayer cplayer = (CardPlayer) player;
-		for (Card<ClassicCard> card : cplayer.getHand().cardList()) {
+		for (Card<ClassicCard> card : cplayer.getHand()) {
 			TurnEightPlayAction action = new TurnEightPlayAction(card);
 			if (action.actionIsAllowed()) {
 				result.add(action);
@@ -116,5 +119,13 @@ public class TurnEightController implements ActionHandler {
 		}
 		return result;
 	}
-	
+
+	@Override
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+		List<Card<?>> cards = new ArrayList<Card<?>>();
+		
+		
+		return cards;
+	}
+
 }

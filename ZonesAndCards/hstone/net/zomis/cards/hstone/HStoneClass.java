@@ -43,7 +43,7 @@ public enum HStoneClass {
 			case PALADIN:
 				return factory().effect(summon("Soldier")).card();
 			case PRIEST:
-				return factory().effect(heal(1)).card();
+				return factory().effect(heal(2)).card();
 			case ROGUE:
 				return factory().effect(equip("Rogue Weapon")).card();
 			case WARLOCK:

@@ -8,7 +8,7 @@ import net.zomis.cards.util.DeckList;
 public class HStoneChar {
 
 	private final String name;
-	private final HStoneClass	charClass;
+	private final HStoneClass charClass;
 	private final DeckList deck;
 	private final HStoneCardModel charModel;
 
@@ -16,7 +16,7 @@ public class HStoneChar {
 		this.name = name;
 		this.charClass = charClass;
 		this.deck = deck;
-		this.charModel = new HStoneCardModel(name, -1, CardType.PLAYER);
+		this.charModel = new HStoneCardModel("PLAYER", -1, CardType.PLAYER);
 	}
 	
 	public String getName() {

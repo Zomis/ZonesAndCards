@@ -2,7 +2,7 @@ package net.zomis.cards.mdjq;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
@@ -20,7 +20,7 @@ public class MDJQDeckBuilder extends DeckBuilder<MDJQPlayer, MDJQCardModel> {
 	@Override
 	public Collection<MDJQCardModel> getFieldsToScore(MDJQPlayer params) {
 		HashSet<MDJQCardModel> list = new HashSet<MDJQCardModel>();
-		for (CardModel card : params.getGame().getAvailableCards()) {
+		for (CardModel card : params.getGame().getCards().values()) {
 			list.add((MDJQCardModel) card);
 		}
 		return list;
@@ -28,8 +28,8 @@ public class MDJQDeckBuilder extends DeckBuilder<MDJQPlayer, MDJQCardModel> {
 
 	@Override
 	public boolean canScoreField(ScoreParameters<MDJQPlayer> parameters, MDJQCardModel field) {
-		LinkedList<MDJQPermanent> list = parameters.getParameters().getDeck().cardList();
-		LinkedList<MDJQPermanent> list2 = ZomisList.filter2(list, new CardModelFilter(field));
+		MDJQZone list = parameters.getParameters().getDeck();
+		List<MDJQPermanent> list2 = ZomisList.getAll(list, new CardModelFilter(field));
 		return list2.size() < field.getCardLimit();
 	}
 

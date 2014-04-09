@@ -19,7 +19,10 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	private List<CWars2Card> cards;
 	private CardZone<Card<CWars2Card>> discard;
 	
-	CWars2Player() { this(null); }
+	CWars2Player() {
+		this(null);
+	}
+	
 	public CWars2Player(String name) {
 		this.setName(name);
 		this.deck = new CardZone<Card<CWars2Card>>("Deck-" + getName());
@@ -42,14 +45,15 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	public int handSize() {
 		return this.getResources().getResources(CWars2Res.HANDSIZE);
 	}
+	
 	void fillHand() {
-		while (this.getHand().cardList().size() < this.handSize()) {
+		while (this.getHand().size() < this.handSize()) {
 			drawCard();
 		}
 	}
 	
 	private void drawCard() {
-		if (deck.cardList().isEmpty()) {
+		if (deck.isEmpty()) {
 			if (this.cards.isEmpty())
 				throw new IllegalStateException("Player has no cards: " + this);
 			
@@ -61,10 +65,12 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 		
 		deck.getTopCard().zoneMoveOnBottom(this.hand);
 	}
+	
 	@Override
 	public CWars2Game getGame() {
 		return (CWars2Game) super.getGame();
 	}
+	
 	@Override
 	public void addCard(CWars2Card field) {
 		this.cards.add(field);
