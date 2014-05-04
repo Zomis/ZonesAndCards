@@ -14,7 +14,7 @@ public class MDJQZone extends CardZone<MDJQPermanent> {
 	private MDJQPlayer	owner;
 	
 	public MDJQZone(String zoneName, ZoneType type, MDJQPlayer owner) {
-		super(zoneName);
+		super(zoneName, owner);
 		this.zoneType = type;
 		this.owner = owner;
 	}

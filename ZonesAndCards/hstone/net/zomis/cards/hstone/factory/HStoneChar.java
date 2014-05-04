@@ -17,6 +17,7 @@ public class HStoneChar {
 		this.charClass = charClass;
 		this.deck = deck;
 		this.charModel = new HStoneCardModel("PLAYER", -1, CardType.PLAYER);
+		this.charModel.setPT(0, 30);
 	}
 	
 	public String getName() {

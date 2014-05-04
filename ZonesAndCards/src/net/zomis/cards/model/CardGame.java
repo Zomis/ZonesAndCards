@@ -14,7 +14,6 @@ import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
-import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.GamePhase;
@@ -42,8 +41,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		@Override
 		public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
 			ArrayList<Card<?>> a = new ArrayList<Card<?>>();
-			CardModel cm = new HStoneCardModel(null, 0, null);
-			a.add(cm.createCardInternal(null));
 			return a;
 		}
 	}
@@ -58,12 +55,17 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	
 	@SuppressWarnings("unchecked")
 	@Deprecated
+	/**
+	 * @deprecated Use #getUsableCards instead
+	 */
 	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(Player player) {
 		return this.actionHandler.getAvailableActions((E) this, player);
 	}
 	
 	public List<Card<?>> getUseableCards(Player player) {
-		return this.actionHandler.getUseableCards(this, player);
+		List<Card<?>> list = this.actionHandler.getUseableCards(this, player);
+		list.addAll(this.actionZone.cardList());
+		return list;
 	}
 	
 	private final Map<String, M> availableCards = new HashMap<String, M>();
@@ -90,13 +92,17 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	
 	private final List<CardZone<?>> zones = new ArrayList<CardZone<?>>();
 	private CardReplay replay;
+
+	private final Map<M, ActionProvider> actions;
 	
 	public CardGame() {
 		if (!CustomFacade.isInitialized())
 			throw new IllegalStateException("EventFactory not initialized.");
 		this.events = CustomFacade.getInst().createEvents();
 		this.actionZone = new CardZone<Card<M>>("Actions");
+		this.actionZone.setGloballyKnown(true);
 		this.addZone(actionZone);
+		this.actions = new HashMap<M, ActionProvider>();
 //		this.events.registerListener(this); // This breaks GWT
 	}
 	/**
@@ -127,6 +133,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 
 	public Card<M> addAction(M actionModel, ActionProvider action) {
 		addCard(actionModel);
+		actions.put(actionModel, action);
 		return this.actionZone.createCardOnBottom(actionModel);
 	}
 	
@@ -134,7 +141,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	 * Was meant to add a StackAction to the Stack and record it in history, but use instead CardGame.click(card) for that.
 	 * @param action Action to add to stack
 	 */
-	@Deprecated
 	public void addStackAction(StackAction action) {
 		this.stack.addFirst(action);
 	}
@@ -391,6 +397,14 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 
 	public StackAction getActionFor(Card<?> card) {
+		if (actions.containsKey(card.getModel())) {
+			return actions.get(card.getModel()).get();
+		}
 		return actionHandler.click(card);
 	}
+
+	public CardZone<?> getActionZone() {
+		return this.actionZone;
+	}
+
 }

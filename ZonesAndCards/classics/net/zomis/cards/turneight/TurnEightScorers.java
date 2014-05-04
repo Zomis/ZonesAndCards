@@ -1,6 +1,7 @@
 package net.zomis.cards.turneight;
 
 import net.zomis.aiscores.AbstractScorer;
+import net.zomis.aiscores.FScorer;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.aiscores.scorers.Scorers;
 import net.zomis.cards.classics.CardPlayer;
@@ -15,19 +16,18 @@ import net.zomis.cards.model.ai.IsActionClass;
 public enum TurnEightScorers {
 	; // it's an ENUM!
 	
-	public static AbstractScorer<Player, Card<?>> IsDrawCard() {
+	public static FScorer<Player, Card<?>> IsDrawCard() {
 		return new IsActionClass(DrawCardAction.class);
 	}
-	public static AbstractScorer<Player, Card<?>> PlayCardScorer() {
+	public static FScorer<Player, Card<?>> PlayCardScorer() {
 		return new IsActionClass(TurnEightPlayAction.class);
 	}
 	
-	public static AbstractScorer<Player, Card<?>> IsNextTurn() {
+	public static FScorer<Player, Card<?>> IsNextTurn() {
 		return new IsActionClass(NextTurnAction.class);
 	}
-	public static AbstractScorer<Player, Card<?>> IsEight() {
+	public static FScorer<Player, Card<?>> IsEight() {
 		return Scorers.multiplication(PlayCardScorer(), new AbstractScorer<Player, Card<?>>() {
-
 			@Override
 			public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
 				ClassicCard cast = (ClassicCard) field.getModel();
@@ -88,9 +88,8 @@ public enum TurnEightScorers {
 			return false;
 		}
 	}
-	public static AbstractScorer<Player, Card<?>> IsAce() {
+	public static FScorer<Player, Card<?>> IsAce() {
 		return Scorers.multiplication(PlayCardScorer(), new AbstractScorer<Player, Card<?>>() {
-
 			@Override
 			public double getScoreFor(Card<?> field, ScoreParameters<Player> scores) {
 				ClassicCard card = (ClassicCard) field.getModel();

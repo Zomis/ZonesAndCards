@@ -6,10 +6,9 @@ import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.events.game.AfterActionEvent;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.phases.PlayerPhase;
-import net.zomis.cards.util.StackActionAllowedFilter;
 import net.zomis.events.EventHandlerGWT;
 import net.zomis.iterate.ArrayIterator;
 import net.zomis.iterate.IndexIterator;
@@ -21,7 +20,11 @@ public class IdiotGame extends ClassicGame {
 
 	private final ClassicCardZone[] zones;
 	private ClassicCardZone	deck;
-	private static final FilterInterface<StackAction> allowedActionFilter = new StackActionAllowedFilter(true);
+	private static final FilterInterface<Card<?>> allowedActionFilter = new FilterInterface<Card<?>>() {
+		public boolean shouldKeep(net.zomis.cards.model.Card<?> obj) {
+			return obj.clickAction().actionIsAllowed();
+		}
+	};
 	
 	public IdiotGame() {
 		super(AceValue.HIGH);
@@ -56,7 +59,7 @@ public class IdiotGame extends ClassicGame {
 	}
 	
 	private void onAfterAction(AfterActionEvent event) {
-		if (ZomisList.filter2(this.getAvailableActions(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
+		if (ZomisList.filter2(this.getUseableCards(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
 			this.endGame();
 	}
 	

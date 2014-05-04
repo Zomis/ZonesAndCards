@@ -8,6 +8,7 @@ import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
+import net.zomis.cards.model.HasBattlefield;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceListener;
@@ -15,7 +16,8 @@ import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckPlayer;
 
-public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HStoneCardModel>, ResourceListener {
+public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HStoneCardModel>, ResourceListener,
+	HasBattlefield {
 
 	private static final int	MAX_CARDS_IN_HAND	= 10;
 	private final CardZone<HStoneCard> library;
@@ -29,15 +31,16 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	
 	public HStonePlayer(HStoneGame game, HStoneChar character) {
 		this.setName(character.getName());
-		this.hand        = new CardZone<HStoneCard>(getName() + "-Hand", this);
-		this.library     = new CardZone<HStoneCard>(getName() + "-Deck", this);
-		this.battlefield = new CardZone<HStoneCard>(getName() + "-Battlefield", this);
+		this.hand        = new CardZone<HStoneCard>("Hand", this);
+		this.library     = new CardZone<HStoneCard>("Deck", this);
+		this.battlefield = new CardZone<HStoneCard>("Battlefield", this);
 		
 		this.hand.setKnown(this, true);
 		this.battlefield.setGloballyKnown(true);
 		
 		this.cards = new ArrayList<HStoneCardModel>();
-		this.specialZone = new CardZone<HStoneCard>(getName(), this);
+		this.specialZone = new CardZone<HStoneCard>("Special", this);
+		this.specialZone.setGloballyKnown(true);
 		
 		this.heroPower = character.getCharClass().heroPowerCard(specialZone);
 		this.playerCard = character.playerCard(specialZone);
@@ -62,6 +65,7 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		return library;
 	}
 	
+	@Override
 	public CardZone<HStoneCard> getBattlefield() {
 		return battlefield;
 	}
@@ -98,13 +102,15 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	}
 
 	public void drawCard() {
-		if (hand.size() >= MAX_CARDS_IN_HAND) {
-			return;
-		}
 		if (library.isEmpty()) {
 			int times = getResources().getResources(HStoneRes.EMPTY_DRAWS);
+//			FightModule.damage(getPlayerCard(), times);
 			getResources().changeResources(HStoneRes.HEALTH, -times);
 			getResources().changeResources(HStoneRes.EMPTY_DRAWS, 1);
+			return;
+		}
+		if (hand.size() >= MAX_CARDS_IN_HAND) {
+			library.getTopCard().zoneMoveOnBottom(null);
 			return;
 		}
 		library.getTopCard().zoneMoveOnBottom(hand);
@@ -157,8 +163,12 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		return this.weapon;
 	}
 
-	CardZone<HStoneCard> getSpecialZone() {
+	public CardZone<HStoneCard> getSpecialZone() {
 		return this.specialZone;
+	}
+
+	public int getArmor() {
+		return getResources().getResources(HStoneRes.ARMOR);
 	}
 	
 }

@@ -10,7 +10,7 @@ public class HStoneCards implements CardSet<HStoneGame> {
 
 	@Override
 	public void addCards(HStoneGame game) {
-		// TODO: Page 45 and forward
+		// TODO: Page 45 and forward. Or rather: Make method HStoneLoad work.
 		
 		new FreeCards().addCards(game);
 		new ManaOneCards().addCards(game);

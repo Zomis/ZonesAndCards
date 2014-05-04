@@ -12,9 +12,11 @@ import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
+import net.zomis.cards.model.actions.NextTurnAction;
 
 public class HStoneHandler implements ActionHandler {
 
@@ -25,14 +27,23 @@ public class HStoneHandler implements ActionHandler {
 		HStonePlayer player = game.getCurrentPlayer();
 		
 		if (game.isTargetSelectionMode()) {
-			return new BattlefieldAction((HStoneCard) card);
+			CardZone<?> zone = hscard.getCurrentZone();
+			if (zone != hscard.getPlayer().getBattlefield() && zone != hscard.getPlayer().getSpecialZone())
+				return new InvalidStackAction("Illegal zone");
+			return new BattlefieldAction(hscard);
+		}
+		if (player == null) {
+			if (hscard.getCurrentZone() == hscard.getPlayer().getHand()) {
+				return new NextTurnAction(game); // TODO: Implement switching cards
+			}
+			else return new InvalidStackAction("Pre-Phase and not in hand zone. " + hscard + " in zone " + hscard.getCurrentZone());
 		}
 		
 		if (hscard.getCurrentZone() == player.getHand()) {
 			return new PlayAction(hscard);
 		}
 		if (hscard.getCurrentZone() == player.getBattlefield()) {
-			return useAtBattlefield(hscard);
+			return new BattlefieldAction(hscard);
 		}
 		if (hscard.getModel().isType(CardType.POWER)) {
 			return new AbilityAction(hscard);
@@ -43,23 +54,21 @@ public class HStoneHandler implements ActionHandler {
 		return new InvalidStackAction("HSTONE_INVALID: " + card + " in zone " + card.getCurrentZone());
 	}
 
-	private StackAction useAtBattlefield(HStoneCard card) {
-		return new BattlefieldAction(card);
-	}
-
 	@Override
+	@Deprecated
 	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
 		List<StackAction> actions = new ArrayList<StackAction>();
 		HStonePlayer currPlayer = (HStonePlayer) player;
 		actions.add(new HeroPowerAction(currPlayer));
+		HStoneGame game = currPlayer.getGame();
 		for (HStoneCard card : currPlayer.getHand()) {
-			actions.add(click(card));
+			actions.add(game.getActionFor(card));
 		}
 		for (HStoneCard card : currPlayer.getBattlefield()) {
-			actions.add(click(card));
+			actions.add(game.getActionFor(card));
 		}
 		for (HStoneCard card : currPlayer.getSpecialZone()) {
-			actions.add(click(card));
+			actions.add(game.getActionFor(card));
 		}
 		return actions;
 	}
@@ -70,6 +79,7 @@ public class HStoneHandler implements ActionHandler {
 		
 		HStonePlayer currPlayer = (HStonePlayer) player;
 		
+		cards.addAll(currPlayer.getGame().getActionZone().cardList());
 		for (HStoneCard card : currPlayer.getHand()) {
 			cards.add(card);
 		}

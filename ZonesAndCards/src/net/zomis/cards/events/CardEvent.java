@@ -11,7 +11,7 @@ public class CardEvent extends CardGameEvent {
 		this.card = card;
 	}
 	
-	public final Card<?> getCard() {
+	public Card<?> getCard() {
 		return card;
 	}
 }

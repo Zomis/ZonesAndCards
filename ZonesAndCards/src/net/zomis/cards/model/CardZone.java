@@ -67,6 +67,10 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		return "Zone{" + getName() + "}";
 	}
 	
+	public String getFullName() {
+		return owner == null ? getName() : "Player" + getOwner().getIndex() + " " + getName();
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -174,7 +178,7 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	}
 	private int timesCopied;
 	private CardZone<E> createEmptyCopy() {
-		CardZone<E> zone = new CardZone<E>(this.getName() + "-Copy" + ++timesCopied);
+		CardZone<E> zone = new CardZone<E>(this.getName() + "-Copy" + ++timesCopied, owner);
 		zone.setGloballyKnown(this.knownGlobal);
 		for (Entry<Player, Boolean> ee : this.known.entrySet()) {
 			zone.setKnown(ee.getKey(), ee.getValue());

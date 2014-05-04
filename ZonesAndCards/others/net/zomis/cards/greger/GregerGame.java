@@ -67,7 +67,7 @@ public class GregerGame extends CardGame<Player, GregerCardModel> {
 	public void addPlayer(String name) {
 		Player pl = new Player().setName(name);
 		this.addPlayer(pl);
-		CardZone<Card<GregerCardModel>> hand = new CardZone<Card<GregerCardModel>>("Hand-" + pl);
+		CardZone<Card<GregerCardModel>> hand = new CardZone<Card<GregerCardModel>>("Hand", pl);
 		hand.setKnown(pl, true);
 		this.playerHands.put(pl, hand);
 		

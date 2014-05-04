@@ -2,6 +2,6 @@ package net.zomis.cards.hstone.factory;
 
 public enum HStoneMinionType {
 
-	MURLOC;
+	PIRATE, MURLOC, BEAST, DRAGON, TOTEM, DEMON;
 	
 }

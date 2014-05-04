@@ -2,6 +2,7 @@ package net.zomis.cards.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,11 +41,12 @@ public class DeckList {
 		}
 		return this;
 	}
+	
 	public List<CardCount> getCount(CardGame<?, ?> game) {
 		Map<String, Integer> cardCopy = new HashMap<String, Integer>(this.cards);
 		List<CardCount> count = new ArrayList<CardCount>(cardCopy.size());
-		Set<CardModel> cards = game.getAvailableCards();
-		for (CardModel ee : cards) {
+		Set<CardModel> gameCards = new HashSet<CardModel>(game.getCards().values());
+		for (CardModel ee : gameCards) {
 			Integer cardCount = cardCopy.get(ee.getName());
 			if (cardCount != null) {
 				CardCount cc = new CardCount(ee, null);
@@ -54,7 +56,7 @@ public class DeckList {
 			}
 		}
 		if (!cardCopy.isEmpty()) {
-			throw new IllegalArgumentException("Some cards were not found in game: " + cardCopy.keySet() + ". Game contains " + cards.size() + " known cards.");
+			throw new IllegalArgumentException("Some cards were not found in game: " + cardCopy.keySet() + ". Game contains " + gameCards.size() + " known cards.");
 		}
 		
 		return new ArrayList<CardCount>(count);

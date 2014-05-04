@@ -16,7 +16,7 @@ public class HStonePhase extends PlayerPhase {
 	}
 
 	@Override
-	public void onStart(CardGame<?, ?> game) {
+	public void onStart(CardGame<?, ?> gm) {
 		ResourceMap res = getPlayer().getResources();
 		
 		if (!res.hasResources(HStoneRes.MANA_TOTAL, 10))
@@ -25,11 +25,15 @@ public class HStonePhase extends PlayerPhase {
 		res.set(HStoneRes.MANA_AVAILABLE, res.getResources(HStoneRes.MANA_TOTAL) - res.getResources(HStoneRes.MANA_OVERLOAD));
 		res.set(HStoneRes.MANA_OVERLOAD, 0);
 		
+		HStoneGame game = getPlayer().getGame();
 		getPlayer().drawCard();
+		game.increaseTurnCounter();
+		game.executeTurnStartEvent();
+		game.cleanup();
 	}
 	
 	@Override
-	public void onEnd(CardGame<?, ?> game) {
+	public void onEnd(CardGame<?, ?> gm) {
 		HStonePlayer pl = (HStonePlayer) getPlayer();
 		for (HStoneCard card : pl.getBattlefield()) {
 			card.onEndTurn();
@@ -37,7 +41,8 @@ public class HStonePhase extends PlayerPhase {
 		for (HStoneCard card : pl.getSpecialZone()) {
 			card.onEndTurn();
 		}
-		
-		super.onEnd(game);
+		HStoneGame game = pl.getGame();
+		game.executeTurnEndEvent();
+		game.cleanup();
 	}
 }

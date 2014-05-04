@@ -22,7 +22,8 @@ public class Card<M extends CardModel> {
 	}
 	
 	public StackAction clickAction() {
-		return this.getGame().getActionFor(this);
+		CardGame<?, ?> game = this.getGame();
+		return game.getActionFor(this);
 	}
 	
 	public M getModel() {
@@ -67,6 +68,14 @@ public class Card<M extends CardModel> {
 		if (currentZone == null)
 			throw new NullPointerException("Card is not within a zone: " + this + ". Is it possible that this card has been moved to /dev/null?");
 		return currentZone.getGame();
+	}
+	
+	public String getDescription() {
+		return getModel().getName();
+	}
+
+	public boolean isKnown() {
+		return getCurrentZone().isKnown(getGame().getCurrentPlayer());
 	}
 	
 }

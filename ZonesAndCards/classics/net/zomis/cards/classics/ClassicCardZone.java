@@ -5,9 +5,13 @@ import java.util.SortedMap;
 
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.Player;
 
 public class ClassicCardZone extends CardZone<Card<ClassicCard>> {
 
+	public ClassicCardZone(String name, Player owner) {
+		super(name, owner);
+	}
 	public ClassicCardZone(String zoneName) {
 		super(zoneName);
 	}

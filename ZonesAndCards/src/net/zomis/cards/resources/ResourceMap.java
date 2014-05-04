@@ -158,5 +158,9 @@ public final class ResourceMap {
 			ee.getValue().clamp();
 		}
 	}
+
+	public boolean isEmpty() {
+		return this.data.isEmpty();
+	}
 	
 }

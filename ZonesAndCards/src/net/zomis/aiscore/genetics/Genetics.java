@@ -1,16 +1,15 @@
 package net.zomis.aiscore.genetics;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import net.zomis.aiscores.ScoreConfig;
 
 public class Genetics<Params, Field> {
 
-	private final Set<ScoreConfig<Params, Field>> configs;
+//	private final Set<ScoreConfig<Params, Field>> configs;
 	
 	public Genetics(Set<ScoreConfig<Params, Field>> configs) {
-		this.configs = new HashSet<ScoreConfig<Params,Field>>(configs);
+//		this.configs = new HashSet<ScoreConfig<Params,Field>>(configs);
 		/* chromosome = array of values (genes)
 		 * Input: list/array/set of chromosomes
 		 * 

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.triggers.HStoneTrigger;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
@@ -23,7 +24,7 @@ public class HStoneCardModel extends CardModel {
 	private final Set<HSAbility> abilities;
 	private final EnumSet<HStoneMinionType> minionTypes;
 	private HStoneEffect	effect;
-	private final List<HStoneTrigger> triggers;
+	private final List<HStoneTrigger<?>> triggers;
 	
 	public int getManaCost() {
 		return manaCost;
@@ -31,7 +32,7 @@ public class HStoneCardModel extends CardModel {
 
 	public HStoneCardModel(String name, int manaCost, CardType type) {
 		super(name);
-		this.triggers = new ArrayList<HStoneTrigger>();
+		this.triggers = new ArrayList<HStoneTrigger<?>>();
 		this.manaCost = manaCost;
 		this.type = type;
 		this.abilities = new HashSet<HSAbility>();
@@ -66,8 +67,8 @@ public class HStoneCardModel extends CardModel {
 		return type == CardType.MINION;
 	}
 	
-	public boolean isSecret() {
-		return type == CardType.SECRET;
+	public boolean isWeapon() {
+		return type == CardType.WEAPON;
 	}
 	
 	public int getAttack() {
@@ -100,12 +101,12 @@ public class HStoneCardModel extends CardModel {
 		return effect.needsTarget() ? effect : null;
 	}
 
-	public void addTriggerEffect(HStoneTrigger battlecryTrigger) {
-		this.triggers.add(battlecryTrigger);
+	public void addTriggerEffect(HStoneTrigger<?> trigger) {
+		this.triggers.add(trigger);
 	}
 	
-	public List<HStoneTrigger> getTriggers() {
-		return new ArrayList<HStoneTrigger>(this.triggers);
+	public List<HStoneTrigger<?>> getTriggers() {
+		return new ArrayList<HStoneTrigger<?>>(this.triggers);
 	}
 
 	public boolean isOfType(HStoneMinionType minionType) {
@@ -119,5 +120,5 @@ public class HStoneCardModel extends CardModel {
 	public boolean isType(CardType type) {
 		return this.type == type;
 	}
-	
+
 }

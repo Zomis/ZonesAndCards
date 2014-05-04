@@ -1,11 +1,12 @@
-package net.zomis.cards.hstone.factory;
+package net.zomis.cards.hstone.triggers;
 
 import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStonePlayer;
+import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.events.EventHandlerGWT;
 
-public class BattlecryTrigger extends HStoneTrigger {
+public class BattlecryTrigger extends HStoneTrigger<ZoneChangeEvent> {
 
 	public BattlecryTrigger(HStoneEffect effect) {
 		super(ZoneChangeEvent.class, effect);
@@ -26,10 +27,6 @@ public class BattlecryTrigger extends HStoneTrigger {
 				owner.getGame().selectOrPerform(effect, card);
 			}
 		};
-	}
-
-	protected void applyTrigger(ZoneChangeEvent event) {
-		
 	}
 
 }

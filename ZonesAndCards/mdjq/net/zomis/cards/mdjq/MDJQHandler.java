@@ -37,7 +37,7 @@ public class MDJQHandler implements ActionHandler {
 		
 		List<StackAction> actions = new LinkedList<StackAction>();
 		for (MDJQPermanent card : player.getHand().cardList()) {
-			StackAction act = this.click(card);
+			StackAction act = card.getGame().getActionFor(card);
 			if (act.actionIsAllowed())
 				actions.add(act);
 		}

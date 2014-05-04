@@ -4,8 +4,10 @@ import java.util.List;
 
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
-import net.zomis.cards.hstone.HStoneEnchantment;
+import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
+import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.model.StackAction;
 
 public class Battlecry {
@@ -81,10 +83,19 @@ public class Battlecry {
 		return damage(damage, HSTargetType.MINION, HSTargetType.PLAYER);
 	}
 
-	public static HStoneEffect tempBoost(int attack, int health) {
-		return new HStoneEffect() {
+	public static HStoneEffect tempBoost(HSFilter targetFilter, final int attack, final int health) {
+		return new HStoneEffect(targetFilter) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
+				final HStoneGame game = source.getGame();
+				final int turn = game.getTurnNumber();
+				HStoneEnchantment enchantment = new HStoneEnchSpecificPT(target, attack, health) {
+					@Override
+					public boolean isActive() {
+						return turn == game.getTurnNumber();
+					}
+				};
+				source.getGame().addEnchantment(enchantment);
 			}
 		};
 	}
@@ -93,7 +104,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.enchant(new HStoneEnchantment(source, attack, health));
+				source.getGame().addEnchantment(new HStoneEnchSpecificPT(source, attack, health));
 			}
 		};
 	}
@@ -111,11 +122,6 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEnchantment typePTBonus(HStoneMinionType minionType, int attack, int health) {
-		// TODO: Check what happens if you silence a minion that has a static enchant from another minion
-		return null;
-	}
-
 	public static HStoneEffect silencer() {
 		return new HStoneEffect(HSTargetType.MINION) {
 			@Override
@@ -130,13 +136,13 @@ public class Battlecry {
 			@Override
 			public void performEffect(final HStoneCard source, HStoneCard target) {
 				final HStoneCardModel model = source.getGame().getCardModel(minion);
-				StackAction sa = new StackAction() {
+				StackAction summonAction = new StackAction() {
 					@Override
 					protected void onPerform() {
 						source.getPlayer().getBattlefield().createCardOnBottom(model);
 					}
 				};
-				source.getGame().addStackAction(sa);
+				source.getGame().addStackAction(summonAction); // if this is not added to stack, cards get put on the battlefield in the wrong order
 			}
 		};
 	}
@@ -175,20 +181,8 @@ public class Battlecry {
 	public static HStoneEffect otherPT(final int attack, final int health) {
 		return new HStoneEffect() {
 			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				target.enchant(new HStoneEnchantment((HStoneCard) source, attack, health));
-			}
-		};
-	}
-
-	public static HSFilter minionIsMurloc() {
-		return new HSFilter() {
-			@Override
-			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-				if (!target.isMinion())
-					return false;
-				HStoneCard card = (HStoneCard) target;
-				return card.getModel().isOfType(HStoneMinionType.MURLOC);
+			public void performEffect(HStoneCard source, final HStoneCard target) {
+				source.getGame().addEnchantment(new HStoneEnchSpecificPT(target, attack, health));
 			}
 		};
 	}
@@ -214,15 +208,6 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.removeAbility(HSAbility.DIVINE_SHIELD);
-			}
-		};
-	}
-
-	public static HSFilter minionWithDivineShield() {
-		return new HSFilter() {
-			@Override
-			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-				return target.isMinion() && target.hasAbility(HSAbility.DIVINE_SHIELD);
 			}
 		};
 	}

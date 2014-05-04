@@ -64,12 +64,12 @@ public class HeartsGame extends ClassicGame {
 	public HeartsGame addPlayer(String playerName) {
 		CardPlayer player = new CardPlayer();
 		player.setName(playerName);
-		ClassicCardZone hand = new ClassicCardZone("Hand-" + playerName);
+		ClassicCardZone hand = new ClassicCardZone("Hand", player);
 		hand.setKnown(player, true);
 		player.setHand(hand);
 		this.addZone(hand);
 		
-		ClassicCardZone board = new ClassicCardZone("GiveAway-" + playerName);
+		ClassicCardZone board = new ClassicCardZone("GiveAway", player);
 		board.setKnown(player, true);
 		player.setBoard(board);
 		this.addZone(board);

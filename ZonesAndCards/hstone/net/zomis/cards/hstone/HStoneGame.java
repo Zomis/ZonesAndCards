@@ -4,24 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.hstone.actions.AttackAction;
+import net.zomis.cards.hstone.ench.HStoneEnchFromModel;
+import net.zomis.cards.hstone.ench.HStoneEnchantment;
+import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
+import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
+import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.hstone.factory.Battlecry;
+import net.zomis.cards.hstone.factory.CardType;
 import net.zomis.cards.hstone.factory.HStoneCardFactory;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.factory.HStoneRarity;
+import net.zomis.cards.model.ActionProvider;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.model.StackAction;
+import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.phases.GamePhase;
+import net.zomis.events.IEvent;
 
 public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
-
-	private HSFilter targets;
-	
-	@Deprecated
+	private HStoneEffect targets;
 	private HStoneCard targetsFor;
 	
-	public void setTargetFilter(HSFilter targets, HStoneCard forWhat) {
+	private final List<HStoneEnchantment> enchantments;
+	
+	private int turnNumber;
+	
+	public void setTargetFilter(HStoneEffect targets, HStoneCard forWhat) {
 		this.targets = targets;
 		this.targetsFor = forWhat;
 	}
@@ -35,6 +46,9 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	}
 	
 	public HStoneGame(HStoneChar playerA, HStoneChar playerB) {
+		enchantments = new ArrayList<HStoneEnchantment>();
+		addEnchantment(new HStoneEnchFromModel());
+		
 		new HStoneCards().addCards(this);
 		
 		HStonePlayer pl1 = new HStonePlayer(this, playerA);
@@ -52,8 +66,18 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 			addZone(player.getSpecialZone());
 		}
 		setActionHandler(new HStoneHandler());
+		addAction(new HStoneCardModel("End Turn", 0, CardType.POWER), new ActionProvider() {
+			@Override
+			public StackAction get() {
+				return new NextTurnAction(HStoneGame.this);
+			}
+		});
 	}
 	
+	public void addEnchantment(HStoneEnchantment enchantment) {
+		enchantments.add(enchantment);
+	}
+
 	public HStonePlayer getFirstPlayer() {
 		return (HStonePlayer) this.getPlayers().get(0);
 	}
@@ -92,9 +116,6 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	public boolean addAndProcessFight(HStoneCard source, HStoneCard target) {
 		AttackAction attackAction = new AttackAction(this, source, target);
 		this.addAndProcessStackAction(attackAction);
-		System.out.println("After fight: " + stackSize());
-//		while (this.stackSize() > 0)
-//			this.processStackAction();
 		return attackAction.actionIsPerformed();
 	}
 
@@ -114,18 +135,33 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	}
 
 	public void cleanup() {
+		this.cleanup(new ArrayList<IEvent>());
+	}
+	
+	public void cleanup(List<IEvent> events) {
+		if (isGameOver())
+			return;
+		
+		while (stackSize() > 0)
+			this.processStackAction();
+		
 		for (HStonePlayer player : this.getPlayers()) {
 			if (player.getHealth() <= 0) {
 				endGame();
 			}
 			
 			for (HStoneCard card : player.getBattlefield()) {
-				card.cleanup();
+				events.addAll(card.cleanup());
 			}
 			for (HStoneCard card : player.getSpecialZone()) {
-				card.cleanup();
+				events.addAll(card.cleanup());
 			}
 		}
+		for (IEvent evt : events)
+			this.executeEvent(evt);
+		
+		if (!events.isEmpty()) // if one or more events was processed, cleanup again with no events to be scheduled
+			cleanup();
 	}
 
 	public HStoneCardModel getCardModel(String minion) {
@@ -147,5 +183,42 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		return results;
 	}
 
+	void increaseTurnCounter() {
+		this.turnNumber++;
+	}
+
+	public int getTurnNumber() {
+		return turnNumber;
+	}
+
+	void executeTurnStartEvent() {
+		executeEvent(new HStoneTurnStartEvent(getCurrentPlayer()));
+	}
+
+	void executeTurnEndEvent() {
+		executeEvent(new HStoneTurnEndEvent(getCurrentPlayer()));
+	}
+
+	public HStoneEffect getTargetsForEffect() {
+		return this.targets;
+	}
+	
+	public int getResources(HStoneCard card, HStoneRes resource) {
+		Integer result = null;
+		for (HStoneEnchantment ench : this.enchantments) {
+			if (!ench.isActive())
+				continue;
+			if (!ench.appliesTo(card))
+				continue;
+			result = ench.getResource(card, resource, result);
+		}
+		if (result == null)
+			throw new NullPointerException("No enchantment affected " + resource + " for " + card);
+		return result;
+	}
+
+	public void callEvent(HStoneCardPlayedEvent hStoneCardPlayedEvent) {
+		this.executeEvent(hStoneCardPlayedEvent);
+	}
 	
 }

@@ -2,7 +2,7 @@ package net.zomis.cards.hstone.actions;
 
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
-import net.zomis.cards.hstone.factory.CardType;
+import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.model.StackAction;
 
 public class BattlefieldAction extends StackAction {
@@ -30,21 +30,29 @@ public class BattlefieldAction extends StackAction {
 
 	@Override
 	protected void onPerform() {
-		if (card.getGame().isTargetSelectionMode()) {
-			if (card.getGame().getTargetsFor() instanceof HStoneCard) {
-				HStoneCard cardSource = (HStoneCard) card.getGame().getTargetsFor();
-				if (cardSource.getModel().isSpell() || cardSource.getModel().isType(CardType.POWER)) {
-					cardSource.getModel().getEffect().performEffect(cardSource, card);
-					card.getGame().setTargetFilter(null, null);
-					return;
-				}
+		HStoneGame game = card.getGame();
+		// TODO: Cleanup this method. If my assertions are correct, the if (effect != null) check is useless.
+		if (game.isTargetSelectionMode()) {
+			HStoneCard cardSource = game.getTargetsFor();
+			HStoneEffect effect = game.getTargetsForEffect();
+			if (effect != null) {
+				effect.performEffect(cardSource, card);
+				game.setTargetFilter(null, null);
+				game.cleanup();
+				return;
+				
+//				if (cardSource.getModel().isSpell() || cardSource.getModel().isType(CardType.POWER)) {
+//					cardSource.getModel().getEffect().performEffect(cardSource, card);
+//					game.setTargetFilter(null, null);
+//					game.cleanup();
+//					return;
+//				}
 			}
-			HStoneGame game = card.getGame();
-			card.getGame().addAndProcessFight(card.getGame().getTargetsFor(), card);
-			game.setTargetFilter(null, null);
+			else throw new AssertionError("Expected isTargetSelectionMode to match getTargetsForEffect != null");
 		}
 		else card.getGame().setTargetFilter(new AttackSelection(card), card);
 		
+		game.cleanup();
 	}
 	
 }

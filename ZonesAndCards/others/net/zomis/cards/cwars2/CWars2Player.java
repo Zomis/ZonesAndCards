@@ -25,11 +25,11 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	
 	public CWars2Player(String name) {
 		this.setName(name);
-		this.deck = new CardZone<Card<CWars2Card>>("Deck-" + getName());
-		this.hand = new CardZone<Card<CWars2Card>>("Hand-" + getName());
+		this.deck = new CardZone<Card<CWars2Card>>("Deck", this);
+		this.hand = new CardZone<Card<CWars2Card>>("Hand", this);
 		this.hand.setKnown(this, true);
 		this.cards = new ArrayList<CWars2Card>();
-		this.discard = new CardZone<Card<CWars2Card>>("Discard-" + getName());
+		this.discard = new CardZone<Card<CWars2Card>>("Discard", this);
 		this.discard.setGloballyKnown(true);
 	}
 	

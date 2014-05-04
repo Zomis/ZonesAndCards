@@ -3,6 +3,7 @@ package net.zomis.cards.hstone.actions;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.model.StackAction;
 
@@ -22,8 +23,9 @@ public class PlayAction extends StackAction {
 	
 	@Override
 	protected void onPerform() {
-		owner.getResources().changeResources(HStoneRes.MANA_AVAILABLE, -model().getManaCost());
 		HStoneCardModel model = model();
+		owner.getResources().changeResources(HStoneRes.MANA_AVAILABLE, -getManaCost());
+		card.getGame().callEvent(new HStoneCardPlayedEvent(card));
 		if (model.isMinion()) {
 			card.zoneMoveOnBottom(owner.getBattlefield());
 		}
@@ -33,10 +35,15 @@ public class PlayAction extends StackAction {
 		}
 	}
 	
+	private int getManaCost() {
+		return card.getGame().getResources(card, HStoneRes.MANA_COST);
+	}
+	
 	@Override
 	public boolean actionIsAllowed() {
-		if (!owner.getResources().hasResources(HStoneRes.MANA_AVAILABLE, model().getManaCost())) {
-			return setErrorMessage("Not enough resources, needs " + model().getManaCost() + " but has " + owner.getResources());
+		int manaCost = model().getManaCost();
+		if (!owner.getResources().hasResources(HStoneRes.MANA_AVAILABLE, manaCost)) {
+			return setErrorMessage("Not enough resources, needs " + manaCost + " but has " + owner.getResources());
 		}
 		// TODO: Make sure that there is at least one available target for the action, if action requires a target
 		return true;
