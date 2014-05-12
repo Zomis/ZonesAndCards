@@ -1,7 +1,6 @@
 package net.zomis.cards.turneight;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.aiscores.ScoreConfigFactory;
@@ -9,7 +8,6 @@ import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
-import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -96,28 +94,6 @@ public class TurnEightController implements ActionHandler {
 			// It's ok if the action is not allowed, because that is checked when processing stack.
 			return new TurnEightPlayAction(realCard);
 		}
-	}
-
-	@Override
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-		List<StackAction> result = new LinkedList<StackAction>();
-		
-		CardPlayer cplayer = (CardPlayer) player;
-		for (Card<ClassicCard> card : cplayer.getHand()) {
-			TurnEightPlayAction action = new TurnEightPlayAction(card);
-			if (action.actionIsAllowed()) {
-				result.add(action);
-			}
-		}
-		TurnEightGame game = (TurnEightGame) player.getGame();
-		result.add(new NextTurnAction(game));
-		result.add(new DrawCardAction(game));
-		
-		for (Suite suite : Suite.values()) {
-			if (!suite.isWildcard())
-				result.add(new SetColorAction(game, suite));
-		}
-		return result;
 	}
 
 	@Override

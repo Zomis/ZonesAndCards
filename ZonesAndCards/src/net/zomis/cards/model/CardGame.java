@@ -34,11 +34,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		}
 		
 		@Override
-		public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-			return new ArrayList<StackAction>(0);
-		}
-
-		@Override
 		public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
 			ArrayList<Card<?>> a = new ArrayList<Card<?>>();
 			return a;
@@ -51,15 +46,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	
 	protected void setActionHandler(ActionHandler aiHandler) {
 		this.actionHandler = aiHandler;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	/**
-	 * @deprecated Use #getUsableCards instead
-	 */
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(Player player) {
-		return this.actionHandler.getAvailableActions((E) this, player);
 	}
 	
 	public List<Card<?>> getUseableCards(Player player) {
@@ -90,6 +76,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		this.started = false;
 	}
 	
+	public M getCardModel(String name) {
+		return getCards().get(name);
+	}
+
 	private final List<CardZone<?>> zones = new ArrayList<CardZone<?>>();
 	private CardReplay replay;
 
@@ -152,6 +142,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		zone.game = this;
 		return zone;
 	}
+	
 	public StackAction callPlayerAI() {
 		return this.callPlayerAI(this.getCurrentPlayer());
 	}
@@ -215,11 +206,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return new HashMap<String, M>(availableCards);
 	}
 	
-	public Player getCurrentPlayer() {
+	@SuppressWarnings("unchecked")
+	public P getCurrentPlayer() {
 		GamePhase phase = getActivePhase();
 		if (phase instanceof IPlayerPhase) {
 			IPlayerPhase phase2 = (IPlayerPhase) phase;
-			return phase2.getPlayer();
+			return (P) phase2.getPlayer();
 		}
 		return null;
 	}

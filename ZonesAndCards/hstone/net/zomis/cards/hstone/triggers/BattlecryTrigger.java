@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.triggers;
 
 import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.events.EventHandlerGWT;
@@ -24,7 +25,8 @@ public class BattlecryTrigger extends HStoneTrigger<ZoneChangeEvent> {
 				HStonePlayer owner = (HStonePlayer) event.getToCardZone().getOwner();
 				if (event.getToCardZone() != owner.getBattlefield())
 					return;
-				owner.getGame().selectOrPerform(effect, card);
+				HStoneGame game = owner.getGame();
+				game.selectOrPerform(effect, card);
 			}
 		};
 	}

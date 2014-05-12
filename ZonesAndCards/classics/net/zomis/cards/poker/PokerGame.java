@@ -30,18 +30,18 @@ public class PokerGame extends ClassicGame {
 	public PokerGame() {
 		super(AceValue.HIGH);
 		this.setActionHandler(new ActionHandler() {
-			@Override
-			public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-				List<StackAction> list = new ArrayList<StackAction>();
-				CardPlayer pl = (CardPlayer) player;
-				list.add(new RedrawAction(pl, 7));
-				list.add(new DrawCardAction(pl));
-				for (Card<ClassicCard> card : pl.getHand().cardList()) {
-//					card.getModel();
-					list.add(new DiscardCardAction(card));
-				}
-				return list;
-			}
+//			@Override
+//			public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
+//				List<StackAction> list = new ArrayList<StackAction>();
+//				CardPlayer pl = (CardPlayer) player;
+//				list.add(new RedrawAction(pl, 7));
+//				list.add(new DrawCardAction(pl));
+//				for (Card<ClassicCard> card : pl.getHand().cardList()) {
+////					card.getModel();
+//					list.add(new DiscardCardAction(card));
+//				}
+//				return list;
+//			} // TODO: Fixa PokerGame ActionHandler
 			
 			@Override
 			public StackAction click(Card<?> card) {

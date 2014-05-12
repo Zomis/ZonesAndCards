@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.zomis.cards.hstone.actions.AbilityAction;
 import net.zomis.cards.hstone.actions.BattlefieldAction;
-import net.zomis.cards.hstone.actions.HeroPowerAction;
 import net.zomis.cards.hstone.actions.PlayAction;
 import net.zomis.cards.hstone.factory.CardType;
 import net.zomis.cards.model.ActionHandler;
@@ -52,25 +51,6 @@ public class HStoneHandler implements ActionHandler {
 			return new BattlefieldAction(hscard);
 		}
 		return new InvalidStackAction("HSTONE_INVALID: " + card + " in zone " + card.getCurrentZone());
-	}
-
-	@Override
-	@Deprecated
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-		List<StackAction> actions = new ArrayList<StackAction>();
-		HStonePlayer currPlayer = (HStonePlayer) player;
-		actions.add(new HeroPowerAction(currPlayer));
-		HStoneGame game = currPlayer.getGame();
-		for (HStoneCard card : currPlayer.getHand()) {
-			actions.add(game.getActionFor(card));
-		}
-		for (HStoneCard card : currPlayer.getBattlefield()) {
-			actions.add(game.getActionFor(card));
-		}
-		for (HStoneCard card : currPlayer.getSpecialZone()) {
-			actions.add(game.getActionFor(card));
-		}
-		return actions;
 	}
 
 	@Override

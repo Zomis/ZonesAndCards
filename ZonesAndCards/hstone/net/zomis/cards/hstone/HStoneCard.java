@@ -2,9 +2,13 @@ package net.zomis.cards.hstone;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchSilence;
+import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneDamagedEvent;
 import net.zomis.cards.hstone.events.HStoneHealEvent;
 import net.zomis.cards.hstone.events.HStoneMinionDiesEvent;
@@ -14,7 +18,10 @@ import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.triggers.HStoneTrigger;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.events.IEvent;
 
@@ -38,7 +45,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		this.triggers = new ArrayList<HStoneTrigger<?>>(model.getTriggers());
 		
 		for (HStoneTrigger<?> trigger : triggers) {
-			this.getGame().registerHandler(trigger.getClazz(), trigger.forCard(this));
+			this.getGame().registerHandler(trigger.getClazz(), trigger.createForCard(this));
 		}
 	}
 
@@ -93,7 +100,11 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	}
 
 	public HStonePlayer getPlayer() {
-		return (HStonePlayer) getCurrentZone().getOwner();
+		CardZone<HStoneCard> zone = getCurrentZone();
+		if (zone == null)
+			throw new NullPointerException("Zone is null for " + this);
+		Player owner = zone.getOwner();
+		return (HStonePlayer) owner;
 	}
 	
 	List<IEvent> cleanup() {
@@ -150,13 +161,15 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	}
 
 	public void silence() {
+		this.abilities.clear();
+		this.triggers.clear();
 		this.getGame().addEnchantment(new HStoneEnchSilence(this));
 	}
 
 	public void destroy() {
 		this.silence();
 		this.getResources().set(HStoneRes.HEALTH, 0);
-		this.zoneMoveOnTop(null);
+		this.zoneMoveOnBottom(getPlayer().getDiscard());
 	}
 
 	public boolean isType(CardType type) {
@@ -177,7 +190,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 
 	public boolean isAlive() {
 		return getHealth() >= 1 
-				&& getCurrentZone() != null; // use || or && ?? Technically, it shouldn't matter.
+				&& currentZone != null && currentZone != getPlayer().getDiscard(); // use || or && ?? Technically, it shouldn't matter.
 	}
 
 	public int getHealth() {
@@ -194,6 +207,65 @@ public class HStoneCard extends Card<HStoneCardModel> {
 
 	public boolean hasTrigger(HStoneTrigger<?> trigger) {
 		return this.triggers.contains(trigger);
+	}
+	
+	public HStoneCard getLeftAdjacent() {
+		LinkedList<HStoneCard> list = getCurrentZone().cardList();
+		int index = list.indexOf(this);
+		if (index == 0)
+			return null;
+		return list.get(index - 1);
+	}
+	
+	public HStoneCard getRightAdjacent() {
+		LinkedList<HStoneCard> list = getCurrentZone().cardList();
+		int index = list.indexOf(this);
+		if (index == list.size() - 1)
+			return null;
+		return list.get(index + 1);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public CardZone<HStoneCard> getCurrentZone() {
+		return (CardZone<HStoneCard>) super.getCurrentZone();
+	}
+	
+	public HStoneCard copyTo(CardZone<HStoneCard> toZone) {
+		final HStoneCard copy = toZone.createCardOnBottom(getModel());
+		for (Entry<IResource, ResourceData> ee : getResources().getData().entrySet())
+			copy.getResources().set(ee.getKey(), ee.getValue().getRealValue());
+		copy.abilities.clear();
+		copy.abilities.addAll(abilities);
+		copy.triggers.clear();
+		copy.triggers.addAll(triggers); // TODO: Create copies of the triggers.
+		
+		for (HStoneEnchantment ench : getGame().getEnchantments()) {
+			if (ench.appliesTo(this) && !ench.appliesTo(copy)) {
+				getGame().addEnchantmentAfter(new HStoneEnchForward(ench) {
+					@Override
+					public boolean appliesTo(HStoneCard card) {
+						return card == copy;
+					}
+				}, ench);
+			}
+		}
+		
+		return copy;
+	}
+
+	public void addTrigger(HStoneTrigger<?> trigger) {
+		this.triggers.add(trigger);
+		this.getGame().registerHandler(trigger.getClazz(), trigger.createForCard(this));
+	}
+
+	public boolean isPlayer() {
+		return this == getPlayer().getPlayerCard();
+	}
+
+	public int getManaCost() {
+		return getModel().getManaCost();
+//		return getResources().getResources(HStoneRes.MANA_COST);
 	}
 	
 }

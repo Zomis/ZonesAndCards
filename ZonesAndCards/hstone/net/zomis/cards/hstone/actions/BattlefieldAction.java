@@ -34,6 +34,8 @@ public class BattlefieldAction extends StackAction {
 		// TODO: Cleanup this method. If my assertions are correct, the if (effect != null) check is useless.
 		if (game.isTargetSelectionMode()) {
 			HStoneCard cardSource = game.getTargetsFor();
+			if (cardSource == null)
+				throw new NullPointerException("Card source is null");
 			HStoneEffect effect = game.getTargetsForEffect();
 			if (effect != null) {
 				effect.performEffect(cardSource, card);

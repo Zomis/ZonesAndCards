@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.factory;
 
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.HStoneClass;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
@@ -36,6 +37,13 @@ public class HStoneCardFactory {
 		return factory;
 	}
 
+	public static HStoneCardFactory weapon(int manaCost, HStoneRarity rarity, int attack, int health, String name) {
+		HStoneCardFactory factory = new HStoneCardFactory(name, manaCost, CardType.WEAPON);
+		factory.card.setRarity(rarity);
+		factory.card.setPT(attack, health);
+		return factory;
+	}
+
 	public HStoneCardModel card() {
 		return card;
 	}
@@ -47,7 +55,7 @@ public class HStoneCardFactory {
 	}
 
 	public HStoneCardFactory effect(HStoneEffect effect) {
-		// Spells
+		// Spells, and Minions when they are at battlefield
 		card.setEffect(effect);
 		return this;
 	}
@@ -151,4 +159,42 @@ public class HStoneCardFactory {
 		});
 	}
 
+	public HStoneCardFactory funText(String string) {
+		return this;
+	}
+
+	public HStoneCardFactory staticEffectOtherFriendlyBeastsBonus(final int attack, final int health) {
+		return battlecry(new HStoneEffect() {
+			@Override
+			public void performEffect(final HStoneCard source, HStoneCard target) {
+				source.getGame().addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificPT(null, attack, health)) {
+					@Override
+					public boolean isActive() {
+						return source.isAlive();
+					}
+					
+					@Override
+					public boolean appliesTo(HStoneCard card) {
+						return card != source && card.isMinion() && card.getPlayer() == source.getPlayer() && card.getModel().isOfType(HStoneMinionType.MURLOC);
+					}
+				});
+			}
+		});
+	}
+
+	public HStoneCardFactory forClass(HStoneClass clazz) {
+		card.forClass(clazz);
+		return this;
+	}
+
+	public HStoneCardFactory shroud() {
+		// TODO: Implement shroud! (Can't be the target of spells or hero powers)
+		return this;
+	}
+
+	public HStoneCardFactory noAttack() {
+		card.addAbility(HSAbility.NO_ATTACK);
+		return this;
+	}
+	
 }

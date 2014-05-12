@@ -11,7 +11,7 @@ public class CardGameEvent implements IEvent {
 		this.game = game;
 	}
 	
-	public final CardGame<?, ?> getGame() {
+	public CardGame<?, ?> getGame() {
 		return game;
 	}
 	

@@ -68,23 +68,6 @@ public class IdiotHandler implements ActionHandler {
 	}
 
 	@Override
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-		IdiotGame game = (IdiotGame) player.getGame();
-		LinkedList<StackAction> result = new LinkedList<StackAction>();
-		result.add(new DealAction(game));
-		
-		for (ClassicCardZone idiots : game.getIdiotZones()) {
-			if (idiots.isEmpty())
-				continue;
-			result.add(new RemoveAction(idiots));
-			for (ClassicCardZone idiot2 : game.getIdiotZones()) {
-				result.add(new MoveAction(idiots.getBottomCard(), idiot2));
-			}
-		}
-		return result;
-	}
-
-	@Override
 	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
 		List<Card<?>> cards = new ArrayList<Card<?>>();
 		

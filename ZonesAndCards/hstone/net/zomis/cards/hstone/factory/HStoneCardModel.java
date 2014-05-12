@@ -2,13 +2,13 @@ package net.zomis.cards.hstone.factory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.HStoneClass;
 import net.zomis.cards.hstone.triggers.HStoneTrigger;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
@@ -22,21 +22,25 @@ public class HStoneCardModel extends CardModel {
 	private int health;
 	private HStoneRarity rarity;
 	private final Set<HSAbility> abilities;
-	private final EnumSet<HStoneMinionType> minionTypes;
+	private HStoneMinionType minionTypes;
 	private HStoneEffect	effect;
 	private final List<HStoneTrigger<?>> triggers;
+	private HStoneClass forClazz;
 	
 	public int getManaCost() {
 		return manaCost;
 	}
 
+	public void forClass(HStoneClass clazz) {
+		forClazz = clazz;
+	}
+	
 	public HStoneCardModel(String name, int manaCost, CardType type) {
 		super(name);
 		this.triggers = new ArrayList<HStoneTrigger<?>>();
 		this.manaCost = manaCost;
 		this.type = type;
 		this.abilities = new HashSet<HSAbility>();
-		this.minionTypes = EnumSet.noneOf(HStoneMinionType.class);
 	}
 	
 	void setRarity(HStoneRarity rarity) {
@@ -110,15 +114,23 @@ public class HStoneCardModel extends CardModel {
 	}
 
 	public boolean isOfType(HStoneMinionType minionType) {
-		return minionTypes.contains(minionType);
+		return minionTypes == minionType;
+	}
+	
+	public HStoneMinionType getMinionType() {
+		return minionTypes;
 	}
 
 	public void addType(HStoneMinionType type) {
-		minionTypes.add(type);
+		minionTypes = type;
 	}
 
 	public boolean isType(CardType type) {
 		return this.type == type;
 	}
 
+	public HStoneClass getForClazz() {
+		return forClazz;
+	}
+	
 }

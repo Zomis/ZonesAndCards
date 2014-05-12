@@ -9,8 +9,5 @@ public interface ActionHandler {
 	
 	StackAction click(Card<?> card);
 	
-	@Deprecated
-	<E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player);
-	
 	List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player);
 }

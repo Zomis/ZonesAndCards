@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.hstone.actions.AttackAction;
+import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchFromModel;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
-import net.zomis.cards.hstone.factory.Battlecry;
 import net.zomis.cards.hstone.factory.CardType;
-import net.zomis.cards.hstone.factory.HStoneCardFactory;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
-import net.zomis.cards.hstone.factory.HStoneRarity;
 import net.zomis.cards.model.ActionProvider;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
@@ -64,6 +63,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 			addZone(player.getHand());
 			addZone(player.getBattlefield());
 			addZone(player.getSpecialZone());
+			addZone(player.getDiscard());
 		}
 		setActionHandler(new HStoneHandler());
 		addAction(new HStoneCardModel("End Turn", 0, CardType.POWER), new ActionProvider() {
@@ -95,9 +95,10 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		GamePhase phase = new GamePhase() { // Empty phase for exchanging some starting cards
 			public void onEnd(CardGame<?, ?> game) {
 				setActivePhaseDirectly(getPhases().get(0));
-				HStoneCardModel ring = HStoneCardFactory.spell(0, HStoneRarity.COMMON, "The Coin").effect(Battlecry.tempMana(1)).card();
-				addCard(ring);
-				getFirstPlayer().getNextPlayer().getHand().createCardOnBottom(ring);
+				HStoneCardModel coin = getCardModel("The Coin");
+				if (coin == null)
+					throw new NullPointerException("The Coin not found");
+				getFirstPlayer().getNextPlayer().getHand().createCardOnBottom(coin);
 			}
 		};
 		this.setActivePhase(phase);
@@ -134,6 +135,14 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		}
 	}
 
+	@Override
+	public boolean click(Card<?> card) {
+		boolean result = super.click(card);
+		if (result)
+			this.cleanup();
+		return result;
+	}
+	
 	public void cleanup() {
 		this.cleanup(new ArrayList<IEvent>());
 	}
@@ -162,10 +171,6 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		
 		if (!events.isEmpty()) // if one or more events was processed, cleanup again with no events to be scheduled
 			cleanup();
-	}
-
-	public HStoneCardModel getCardModel(String minion) {
-		return getCards().get(minion);
 	}
 
 	public List<HStoneCard> findAll(HStoneCard searcher, HSFilter filter) {
@@ -219,6 +224,15 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 
 	public void callEvent(HStoneCardPlayedEvent hStoneCardPlayedEvent) {
 		this.executeEvent(hStoneCardPlayedEvent);
+	}
+
+	public List<HStoneEnchantment> getEnchantments() {
+		return new ArrayList<HStoneEnchantment>(enchantments);
+	}
+
+	public void addEnchantmentAfter(HStoneEnchForward newEnchantment, HStoneEnchantment addAfter) {
+		int index = this.enchantments.indexOf(addAfter);
+		this.enchantments.add(index, newEnchantment);
 	}
 	
 }

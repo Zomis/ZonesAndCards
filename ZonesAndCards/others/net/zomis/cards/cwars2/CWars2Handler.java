@@ -1,7 +1,6 @@
 package net.zomis.cards.cwars2;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.zomis.cards.model.ActionHandler;
@@ -38,24 +37,6 @@ public class CWars2Handler implements ActionHandler {
 		}
 		
 		return new CWars2PlayAction(ccard);
-	}
-
-	@Override
-	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player player) {
-		List<StackAction> list = new LinkedList<StackAction>();
-		CWars2Player pl = (CWars2Player) player;
-		for (Card<CWars2Card> card : pl.getHand()) {
-			list.add(new CWars2PlayAction(card)); // play actions first
-		}
-		
-		for (Card<CWars2Card> card : pl.getHand()) {
-			list.add(new CWars2DiscardAction(card)); // then discard actions
-		}
-		
-		if (pl.getGame().getDiscarded() > 0) {
-			list.add(new NextTurnAction(player.getGame()));
-		}
-		return list;
 	}
 
 	@Override

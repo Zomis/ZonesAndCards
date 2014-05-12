@@ -42,9 +42,12 @@ public class MDJQPermanent extends Card<MDJQCardModel> implements MDJQObject {
 	public MDJQPlayer getController() {
 		return controller;
 	}
+	
+	@Override
 	public MDJQPlayer getOwner() {
 		return owner;
 	}
+	
 	public boolean hasSummoningSickness() {
 		return summoningSickness;
 	}

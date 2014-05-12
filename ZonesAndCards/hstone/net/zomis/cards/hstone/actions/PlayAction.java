@@ -31,7 +31,7 @@ public class PlayAction extends StackAction {
 		}
 		else if (model.isSpell()) {
 			card.getGame().selectOrPerform(model.getEffect(), card);
-			card.zoneMoveOnBottom(null);
+			card.zoneMoveOnBottom(owner.getDiscard());
 		}
 	}
 	
