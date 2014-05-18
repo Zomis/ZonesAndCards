@@ -6,5 +6,10 @@ public class CRUseAction extends StackAction {
 
 	public CRUseAction(CRCard card) {
 	}
+	
+	@Override
+	public boolean actionIsAllowed() {
+		return false;
+	}
 
 }

@@ -42,14 +42,14 @@ public class DeckList {
 		return this;
 	}
 	
-	public List<CardCount> getCount(CardGame<?, ?> game) {
+	public <M extends CardModel> List<CardCount<M>> getCount(CardGame<?, M> game) {
 		Map<String, Integer> cardCopy = new HashMap<String, Integer>(this.cards);
-		List<CardCount> count = new ArrayList<CardCount>(cardCopy.size());
-		Set<CardModel> gameCards = new HashSet<CardModel>(game.getCards().values());
-		for (CardModel ee : gameCards) {
+		List<CardCount<M>> count = new ArrayList<CardCount<M>>(cardCopy.size());
+		Set<M> gameCards = new HashSet<M>(game.getCards().values());
+		for (M ee : gameCards) {
 			Integer cardCount = cardCopy.get(ee.getName());
 			if (cardCount != null) {
-				CardCount cc = new CardCount(ee, null);
+				CardCount<M> cc = new CardCount<M>(ee, null);
 				cc.setCount(cardCount);
 				count.add(cc);
 				cardCopy.remove(ee.getName());
@@ -59,7 +59,7 @@ public class DeckList {
 			throw new IllegalArgumentException("Some cards were not found in game: " + cardCopy.keySet() + ". Game contains " + gameCards.size() + " known cards.");
 		}
 		
-		return new ArrayList<CardCount>(count);
+		return new ArrayList<CardCount<M>>(count);
 	}
 	
 	public DeckList add(int count, String cardName) {
@@ -71,9 +71,19 @@ public class DeckList {
 	}
 	public DeckList add(String countAndName) {
 		// don't use str.split because cardName needs to support spaces
-		String count = ZomisUtils.textBefore(countAndName, " ");
+		String countStr = ZomisUtils.textBefore(countAndName, " ");
 		String cardName = ZomisUtils.textAfter(countAndName, " ");
-		return add(Integer.parseInt(count), cardName);
+		
+		int count;
+		try {
+			count = Integer.parseInt(countStr);
+		}
+		catch (NumberFormatException ex) {
+			count = 1;
+			cardName = countAndName;
+		}
+		
+		return add(count, cardName);
 	}
 
 	@Override
@@ -83,6 +93,16 @@ public class DeckList {
 	
 	public String getName() {
 		return name;
+	}
+	public DeckList addMany(String string) {
+		String[] strings = string.split(";");
+		for (String str : strings) {
+			add(str);
+		}
+		return this;
+	}
+	public DeckList add(int count, CardModel card) {
+		return this.add(count, card.getName());
 	}
 	
 }

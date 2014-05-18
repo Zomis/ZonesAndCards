@@ -5,21 +5,13 @@ import static net.zomis.cards.hstone.factory.HSFilters.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneMinionType.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
-
-import java.util.LinkedList;
-
-import net.zomis.cards.hstone.FightModule;
-import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
-import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.events.HStoneHealEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.hstone.factory.HSFilters;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
-import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.util.CardSet;
-import net.zomis.utils.ZomisList;
 
 public class ManaOneCards implements CardSet<HStoneGame> {
 
@@ -71,49 +63,9 @@ public class ManaOneCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 1,      RARE, 1, 2, "Murloc Tidecaller").effect("Whenever a Murloc is summoned, gain +1 Attack").card());
 //		game.addCard(minion( 1,      RARE, 1, 2, "Secretkeeper").effect("Whenever a").effect("<b>Secret</b>").effect("is played, gain +1/+1").card());
 		game.addCard(minion( 1,      RARE, 2, 1, "Young Priestess").on(HStoneTurnEndEvent.class, randomFriendlyMinion(otherPT(0, 1)), HSFilters.samePlayer()).card());
-		game.addCard(minion( 1,      EPIC, 1, 2, "Hungry Crab").battlecry(to(minionIs(MURLOC), selfPT(2, 2))).card()); // TODO: Only perform battlecry if there is a target available
+		game.addCard(minion( 1,      EPIC, 1, 2, "Hungry Crab").battlecry(to(minionIs(MURLOC), combined(destroyTarget(), selfPT(2, 2)))).card()); // TODO: Only perform battlecry if there is a target available
 		game.addCard(spell( 1,      NONE, "Bananas").effect(toMinion(otherPT(1, 1))).card());
 	}
 
-	private HStoneEffect transform(final String cardName) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				// TODO Auto-generated method stub
-			}
-		};
-	}
-
-	private HStoneEffect selfDestruct() {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.destroy();
-			}
-		};
-	}
-
-	private HStoneEffect randomFriendlyMinion(final HStoneEffect effect) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				LinkedList<HStoneCard> list = source.getPlayer().getBattlefield().cardList();
-				list.remove(source);
-				HStoneCard random = ZomisList.getRandom(list, source.getGame().getRandom());
-				effect.performEffect(source, random);
-			}
-		};
-	}
-
-	private HStoneEffect damageToEnemyHero(final int damage) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStonePlayer player = source.getPlayer();
-				HStonePlayer opponent = player.getNextPlayer();
-				FightModule.damage(opponent.getPlayerCard(), damage);
-			}
-		};
-	}
 
 }

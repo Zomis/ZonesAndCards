@@ -3,17 +3,15 @@ package net.zomis.cards.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.zomis.cards.model.ai.CardAI;
+import net.zomis.cards.model.ai.CardAIGeneric;
 import net.zomis.cards.resources.ResourceMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-public class Player implements Comparable<Player>, HasResources {
+public class Player implements HasResources { // Comparable<Player>, 
 
 	CardGame<? extends Player, ?> game;
 	
 	private String name;
-	private CardAI ai;
+	private CardAIGeneric<? extends Player, ? extends Card<?>> ai;
 	private final ResourceMap resources = new ResourceMap(true);
 	
 	public CardGame<?, ?> getGame() {
@@ -56,20 +54,19 @@ public class Player implements Comparable<Player>, HasResources {
 		return "Player-" + this.getName();
 	}
 
-	@Override
-	public int compareTo(Player o) {
-		return this.name.compareTo(o.name);
-	}
+//	@Override
+//	public int compareTo(Player o) {
+//		return this.name.compareTo(o.name);
+//	}
 
-	public CardAI getAI() {
+	public CardAIGeneric<? extends Player, ? extends Card<?>> getAI() {
 		return this.ai;
 	}
 	
-	public void setAI(CardAI ai) {
+	public void setAI(CardAIGeneric<? extends Player, ? extends Card<?>> ai) {
 		this.ai = ai;
 	}
 	
-	@JsonIgnore
 	public int getIndex() {
 		List<?> players = new ArrayList<Object>(this.getGame().getPlayers());
 		for (int i = 0; i < players.size(); i++) {

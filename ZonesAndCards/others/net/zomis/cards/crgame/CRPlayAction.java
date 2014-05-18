@@ -37,6 +37,7 @@ public class CRPlayAction extends ZoneMoveAction {
 	@Override
 	protected void onPerform() {
 		CRCardModel model = card.getModel();
+		card.getPlayer().getResources().changeResources(CRRes.HOURS_AVAILABLE, -card.getModel().getCost());
 		if (model.isSpell()) {
 			if (needsTargets()) {
 				card.getGame().setTargets(card, model.getTargets(), model.getEffect());

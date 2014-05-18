@@ -28,9 +28,6 @@ public class HStoneCards implements CardSet<HStoneGame> {
 
 	@Override
 	public void addCards(HStoneGame game) {
-		// TODO: Page 45 and forward. Or rather: Make method HStoneLoad work.
-		
-		@SuppressWarnings("unchecked")
 		List<CardSet<HStoneGame>> list = Arrays.asList(
 			new ManaZeroCards(), new ManaOneCards(), new ManaTwoCards(), 
 			new ManaThreeCards(), new ManaFourCards(), new ManaFiveCards(), 

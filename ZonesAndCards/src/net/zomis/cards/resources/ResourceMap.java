@@ -84,6 +84,10 @@ public final class ResourceMap {
 	}
 	
 	public int getResources(IResource type) {
+		return get(type);
+	}
+	
+	public int get(IResource type) {
 		return dataFor(type).getValueWithStrategy(this);
 	}
 	

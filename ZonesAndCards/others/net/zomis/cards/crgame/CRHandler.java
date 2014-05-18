@@ -27,7 +27,7 @@ public class CRHandler implements ActionHandler {
 			return new CRUseAction(card);
 		}
 		
-		if (card.getCurrentZone() == card.getPlayer().getHand())
+		if (card.getCurrentZone() == card.getPlayer().getHand() && card.getGame().getCurrentPlayer() == card.getPlayer())
 			return new CRPlayAction(card);
 		
 		return INVALID_ZONE;

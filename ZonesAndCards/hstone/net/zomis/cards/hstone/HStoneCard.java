@@ -37,6 +37,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		this.res = new ResourceMap();
 		this.res.set(HStoneRes.ATTACK, model.getAttack());
 		this.res.set(HStoneRes.HEALTH, model.getHealth());
+		this.res.set(HStoneRes.SPELL_DAMAGE, model.getSpellDamage());
 		this.abilities = EnumSet.noneOf(HSAbility.class);
 		abilities.addAll(model.getAbilities());
 		if (abilities.contains(HSAbility.CHARGE))
@@ -89,14 +90,6 @@ public class HStoneCard extends Card<HStoneCardModel> {
 
 	public void addAbility(HSAbility abilityn) {
 		abilities.add(abilityn);
-	}
-
-	public void damage(int damage) {
-		FightModule.damage(this, damage);
-	}
-
-	public void heal(int healing) {
-		FightModule.heal(this, healing);
 	}
 
 	public HStonePlayer getPlayer() {

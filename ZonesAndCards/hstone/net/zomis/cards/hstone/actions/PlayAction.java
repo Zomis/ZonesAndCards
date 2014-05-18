@@ -33,6 +33,9 @@ public class PlayAction extends StackAction {
 			card.getGame().selectOrPerform(model.getEffect(), card);
 			card.zoneMoveOnBottom(owner.getDiscard());
 		}
+		else if (model.isWeapon()) {
+			card.getPlayer().equip(card);
+		}
 	}
 	
 	private int getManaCost() {

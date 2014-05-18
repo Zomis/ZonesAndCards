@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.util.DeckBuilder;
 
 public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
 
 	private static final int START_CARDS	= 6;
-	private static final int QUALITY_TARGET	= 1000;
+	private static final int QUALITY_TARGET	= 100;
 	private CRTargetParameters	targetParameters;
 
 	public CRCardGame() {
@@ -30,6 +31,14 @@ public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
 		this.getPlayers().get(1).drawCards(START_CARDS);
 		this.setActionHandler(new CRHandler());
 		getCurrentPlayer().newTurn();
+		addAction(new CRCardModel("End Turn", CRCardType.SPELL, 0), () -> new NextTurnAction(this));
+	}
+	
+	@Override
+	public boolean isNextPhaseAllowed() {
+		if (this.isTargetSelectionMode())
+			return false;
+		return super.isNextPhaseAllowed();
 	}
 	
 	@Override
@@ -81,5 +90,5 @@ public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
 	public boolean isTargetSelectionMode() {
 		return targetParameters != null;
 	}
-	
+
 }

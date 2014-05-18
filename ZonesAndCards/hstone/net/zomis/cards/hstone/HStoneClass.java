@@ -47,7 +47,7 @@ public enum HStoneClass {
 			case ROGUE:
 				return factory().effect(equip("Rogue Weapon")).card();
 			case WARLOCK:
-				return factory().effect(combined(selfPlayerDamage(2), drawCard())).card();
+				return factory().effect(combined(damageMyHero(2), drawCard())).card();
 			default:
 				throw new UnsupportedOperationException();
 		}

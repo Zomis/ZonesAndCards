@@ -234,5 +234,9 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		int index = this.enchantments.indexOf(addAfter);
 		this.enchantments.add(index, newEnchantment);
 	}
+
+	public HStonePlayer getOpponent() {
+		return getCurrentPlayer().getNextPlayer();
+	}
 	
 }

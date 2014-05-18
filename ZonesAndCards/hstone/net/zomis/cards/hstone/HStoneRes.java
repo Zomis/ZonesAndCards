@@ -10,6 +10,9 @@ public enum HStoneRes implements IResource {
 	ACTION_POINTS,
 	AWAITING_DAMAGE, AWAITING_HEAL, 
 	
+	// Minions only
+	SPELL_DAMAGE,
+	
 	// Players only
 	MANA_AVAILABLE,
 	MANA_TOTAL,

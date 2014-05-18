@@ -18,6 +18,7 @@ import net.zomis.cards.hstone.ench.HStoneEnchSetTo;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
+import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.events.EventHandlerGWT;
@@ -58,10 +59,7 @@ public class Battlecry {
 		return new HStoneEffect(combined(targetType)) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				if (source.getModel().isSpell()) {
-					// TODO: Calculate spell damage bonus
-				}
-				target.damage(damage);
+				FightModule.damage(source, target, damage);
 			}
 		};
 	}
@@ -74,7 +72,7 @@ public class Battlecry {
 		return new HStoneEffect(combined(target)) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				target.heal(healing);
+				FightModule.heal(target, healing);
 			}
 		};
 	}
@@ -93,7 +91,7 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				if (target.hasAbility(HSAbility.FROZEN))
-					target.damage(damage);
+					FightModule.damage(source, target, damage);
 				else target.addAbility(HSAbility.FROZEN);
 			}
 		};
@@ -144,7 +142,8 @@ public class Battlecry {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				HStoneCard weapon = source.getPlayer().getNextPlayer().getWeapon();
 				if (weapon != null) {
-					weapon.damage(durabilityToRemove);
+					// TODO: A weapon should not count as a character!
+					FightModule.damage(source, weapon, durabilityToRemove);
 					weapon.getGame().cleanup();
 				}
 			}
@@ -281,7 +280,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getPlayer().getNextPlayer().getPlayerCard().damage(damage);
+				FightModule.damage(source, source.getPlayer().getNextPlayer().getPlayerCard(), damage);
 			}
 		};
 	}
@@ -300,15 +299,6 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				// TODO Auto-generated method stub
-			}
-		};
-	}
-
-	public static HStoneEffect selfPlayerDamage(final int damage) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getPlayer().getPlayerCard().damage(damage);
 			}
 		};
 	}
@@ -428,11 +418,21 @@ public class Battlecry {
 		};
 	}
 
+	@Deprecated
+	public static HStoneEffect selfPlayerDamage(final int damage) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				FightModule.damage(source, source.getPlayer().getPlayerCard(), damage);
+			}
+		};
+	}
+
 	public static HStoneEffect damageMyHero(final int damage) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				FightModule.damage(source.getPlayer().getPlayerCard(), damage);
+				FightModule.damage(source, source.getPlayer().getPlayerCard(), damage);
 			}
 		};
 	}
@@ -685,6 +685,84 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.destroy();
+			}
+		};
+	}
+	
+	public static HStoneEffect toMultipleRandom(HSGetCount getCount, HSFilter filter, HStoneEffect effect) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				int count = getCount.determineCount(source, target);
+				List<HStoneCard> all = source.getGame().findAll(source, filter);
+				for (int i = 0; i < count; i++) {
+					HStoneCard random = ZomisList.getRandom(all, source.getGame().getRandom());
+					all.remove(random);
+					effect.performEffect(source, random);
+				}
+			}
+		};
+	}
+
+	public static HStoneEffect transform(final String cardName) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				// TODO Auto-generated method stub
+			}
+		};
+	}
+
+	public static HStoneEffect selfDestruct() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.destroy();
+			}
+		};
+	}
+
+	public static HStoneEffect randomFriendlyMinion(final HStoneEffect effect) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				LinkedList<HStoneCard> list = source.getPlayer().getBattlefield().cardList();
+				list.remove(source);
+				HStoneCard random = ZomisList.getRandom(list, source.getGame().getRandom());
+				effect.performEffect(source, random);
+			}
+		};
+	}
+
+	public static HStoneEffect damageToEnemyHero(final int damage) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				HStonePlayer player = source.getPlayer();
+				HStonePlayer opponent = player.getNextPlayer();
+				FightModule.damage(source, opponent.getPlayerCard(), damage);
+			}
+		};
+	}
+	public static HStoneEffect untilMyNextTurn(HSFilter filter, HStoneEffect nowEffect, HStoneEffect laterEffect) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				final int currentTurn = source.getGame().getTurnNumber();
+				List<HStoneCard> performOn = source.getGame().findAll(source, filter);
+				for (HStoneCard card : performOn) {
+					nowEffect.performEffect(source, card);
+				}
+				source.getGame().registerHandler(HStoneTurnStartEvent.class, new EventHandlerGWT<HStoneTurnStartEvent>() {
+					@Override
+					public void executeEvent(HStoneTurnStartEvent event) {
+						if (event.getGame().getTurnNumber() == currentTurn + 2) {
+							for (HStoneCard card : performOn) {
+								laterEffect.performEffect(source, card);
+							}
+						}
+					}
+				});
 			}
 		};
 	}

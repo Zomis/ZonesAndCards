@@ -22,7 +22,7 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 2,    COMMON, 2, 3, "Amani Berserker").effect("<b>Enrage:</b>").effect("+3 Attack").card());
 //		game.addCard(minion( 2,    COMMON, 2, 3, "Bloodsail Raider").effect("<b>Battlecry:</b>").effect("Gain Attack equal to the Attack of your weapon").card());
 		game.addCard(minion( 2,    COMMON, 2, 1, "Bluegill Warrior").charge().card());
-//		game.addCard(minion( 2,    COMMON, 2, 2, "Dire Wolf Alpha").effect("Adjacent minions have +1 Attack").card()); // TODO: Think about the order of this enchantment!
+//		game.addCard(minion( 2,    COMMON, 2, 2, "Dire Wolf Alpha").effect("Adjacent minions have +1 Attack").card());
 		game.addCard(minion( 2,    COMMON, 3, 2, "Faerie Dragon").shroud().card());
 		game.addCard(minion( 2,    COMMON, 2, 2, "Frostwolf Grunt").taunt().card());
 		game.addCard(minion( 2,    COMMON, 2, 1, "Ironbeak Owl").battlecry(silencer()).card());

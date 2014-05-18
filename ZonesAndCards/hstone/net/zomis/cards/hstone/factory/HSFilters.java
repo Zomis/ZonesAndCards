@@ -155,4 +155,8 @@ public class HSFilters {
 		};
 	}
 
+	public static HSFilter enemy() {
+		return not(samePlayer());
+	}
+
 }

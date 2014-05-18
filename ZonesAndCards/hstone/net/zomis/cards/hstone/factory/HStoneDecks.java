@@ -28,4 +28,10 @@ public class HStoneDecks {
 			.add(1, "Ice Lance");
 	}
 
+	public static DeckList shamanDeck() {
+		return DeckList.newInstance().addMany("Earth Shock;2 Forked Lightning;2 Frost Shock;Stormforged Axe;Acidic Swamp Ooze;2 Flametongue Totem;Knife Juggler;Mana Juggler;Mana Addict;" +
+				"Feral Spirit;2 Hex;2 Lightning Storm;Flesheating Ghoul;Mana Tide Totem;2 Unbound Elemental;Ogre Magi;2 Sin'jin Shieldmasta;Spellbreaker;Bloodlust;Earth Elemental;" +
+				"Gadgetzan Auctioneer;Stranglethorn Tiger;2 Fire Elemental");
+	}
+	
 }

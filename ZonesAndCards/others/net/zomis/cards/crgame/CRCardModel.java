@@ -30,6 +30,10 @@ public class CRCardModel extends CardModel {
 		return resMap.getResources(CRRes.HOURS_AVAILABLE);
 	}
 
+	public CRCardType getType() {
+		return type;
+	}
+	
 	public boolean isUser() {
 		return type == CRCardType.USER;
 	}

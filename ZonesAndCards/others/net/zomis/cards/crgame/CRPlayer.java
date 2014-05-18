@@ -1,17 +1,22 @@
 package net.zomis.cards.crgame;
 
+import java.util.List;
+
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.HasBattlefield;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.util.CardCount;
+import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckList;
 import net.zomis.cards.util.DeckPlayer;
+import net.zomis.utils.ZomisList;
 
 public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPlayer, HasBattlefield {
 
 	private static final int	MAX_HAND_SIZE	= 7;
 	private static final int	BASE_HOURS = 2;
-	private static final int	START_QUALITY = 100;
+	private static final int	START_QUALITY = 50;
 	
 	private final CardZone<CRCard> deck;
 	private final CardZone<CRCard> hand;
@@ -27,6 +32,10 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 		this.battlefield = new CardZone<CRCard>("Battlefield", this);
 		this.discard = new CardZone<CRCard>("Discard", this);
 		this.deckList = deckList;
+		
+		this.hand.setKnown(this, true);
+		this.battlefield.setGloballyKnown(true);
+		this.getResources().set(CRRes.HOURS_AVAILABLE, 0);
 		this.getResources().set(CRRes.QUALITY, START_QUALITY);
 	}
 	
@@ -69,12 +78,28 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 			return null;
 		
 		CRCard card = this.deck.getTopCard();
-		if (card == null)
-			return null;
+		if (card == null) {
+			List<CardCount<CRCardModel>> cards = this.getCards().getCount(getGame());
+			ZomisList.filter(cards, cm -> !this.hasCard(cm));
+			DeckBuilder.createExact(this, cards);
+			card = deck.getTopCard();
+		}
 		card.zoneMoveOnBottom(hand);
 		return card;
 	}
 
+	private boolean hasCard(CardCount<CRCardModel> cardCount) {
+		for (CRCard card : getBattlefield()) {
+			if (card.getModel() == cardCount.getModel())
+				return true;
+		}
+		for (CRCard card : getHand()) {
+			if (card.getModel() == cardCount.getModel())
+				return true;
+		}
+		return false;
+	}
+	
 	public void drawCards(int startCards) {
 		for (int i = 0; i < startCards; i++)
 			drawCard();
@@ -86,7 +111,7 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 	
 	void newTurn() {
 		drawCard();
-		getResources().set(CRRes.HOURS_AVAILABLE, BASE_HOURS);
+		getResources().changeResources(CRRes.HOURS_AVAILABLE, BASE_HOURS);
 		for (CRCard card : this.battlefield) {
 			card.newTurn();
 		}

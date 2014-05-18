@@ -119,7 +119,7 @@ public class HStoneCardFactory {
 	}
 
 	public HStoneCardFactory spellDamage(int i) {
-		// TODO Auto-generated method stub
+		this.card.spellDamage = i;
 		return this;
 	}
 
@@ -132,6 +132,7 @@ public class HStoneCardFactory {
 	}
 
 	public HStoneCardFactory overload(final int overload) {
+		this.card.overload = overload;
 		return on(HStoneCardPlayedEvent.class, new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {

@@ -3,16 +3,16 @@ package net.zomis.cards.util;
 import net.zomis.cards.model.CardModel;
 
 
-public class CardCount {
+public class CardCount<M extends CardModel> {
 
 	public static interface Callback {
 		void onChanged(int oldValue, int newValue);
 	}
-	private final CardModel model;
+	private final M model;
 	private int count;
 	private Callback onChange;
 	
-	public CardCount(CardModel model, Callback callback) {
+	public CardCount(M model, Callback callback) {
 		this.model = model;
 		this.onChange = callback;
 	}
@@ -21,7 +21,7 @@ public class CardCount {
 		return count;
 	}
 	
-	public CardModel getModel() {
+	public M getModel() {
 		return model;
 	}
 	

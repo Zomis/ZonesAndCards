@@ -82,11 +82,11 @@ public class CWars2Setup {
 		}
 		return this;
 	}
-	private void setDeck(int player, Collection<CardCount> cards) {
+	private void setDeck(int player, Collection<CardCount<CWars2Card>> cards) {
 		CWars2Player pl = (CWars2Player) this.game.getPlayers().get(player);
 		DeckBuilder.createExact(pl, cards);
 	}
-	public void setDecks(Collection<CardCount> cardsPlayer1, Collection<CardCount> cardsPlayer2) {
+	public void setDecks(Collection<CardCount<CWars2Card>> cardsPlayer1, Collection<CardCount<CWars2Card>> cardsPlayer2) {
 		this.setDeck(0, cardsPlayer1);
 		this.setDeck(1, cardsPlayer2);
 	}

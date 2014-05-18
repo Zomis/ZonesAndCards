@@ -186,5 +186,12 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	public CardZone<HStoneCard> getDiscard() {
 		return this.discard;
 	}
+
+	public void equip(HStoneCard card) {
+		if (this.weapon != null)
+			this.weapon.zoneMoveOnBottom(getDiscard());
+		this.weapon = card;
+		card.zoneMoveOnBottom(this.specialZone);
+	}
 	
 }

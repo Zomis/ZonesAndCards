@@ -18,8 +18,8 @@ public class CRTargetChosenAction extends StackAction {
 	@Override
 	protected void onPerform() {
 		CRTargetParameters targetData = card.getGame().getTargetParameters();
-		targetData.apply(card);
 		card.getGame().clearTargets();
+		targetData.apply(card);
 	}
 	
 }

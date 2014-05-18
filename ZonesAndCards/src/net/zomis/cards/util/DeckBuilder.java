@@ -48,13 +48,13 @@ public abstract class DeckBuilder<PlayerType extends DeckPlayer<CardModelType>, 
 		return map;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static <E extends CardModel> void createExact(DeckPlayer<E> player, Collection<? extends CardCount> cards) {
+	public static <E extends CardModel> void createExact(DeckPlayer<E> player, Collection<? extends CardCount<E>> cards) {
 		player.clearCards();
-		for (CardCount cc : cards) {
+		for (CardCount<E> cc : cards) {
 			for (int i = 0; i < cc.getCount(); ++i)
 				player.addCard((E) cc.getModel());
 		}
+		player.getDeck().shuffle();
 	}
 	
 }

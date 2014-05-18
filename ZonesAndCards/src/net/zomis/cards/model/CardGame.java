@@ -16,6 +16,7 @@ import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.ai.CardAI;
+import net.zomis.cards.model.ai.CardAIGeneric;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.custommap.CustomFacade;
@@ -159,7 +160,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			return action;
 		}
 		else {
-			return this.callPlayerAI(player, player.getAI());
+			return this.callPlayerAI(player, (CardAI) player.getAI());
 		}
 	}
 	
@@ -168,6 +169,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			return new InvalidStackAction("No AI specified to use for " + player);
 		ParamAndField<Player, Card<?>> action = ai.play(player);
 		Card<?> field = action.getField();
+		if (field == null)
+			throw new NullPointerException("AI returned null card");
 		StackAction sa = field.clickAction();
 		if (sa.actionIsAllowed())
 			this.replay.addMove(field);
@@ -358,7 +361,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			this.setActivePhase(this.phases.get(0));
 		}
 	}
-	public void setAI(int playerIndex, CardAI ai) {
+	public void setAI(int playerIndex, CardAIGeneric<? extends Player, ? extends Card<?>> ai) {
 		this.getPlayers().get(playerIndex).setAI(ai);
 	}
 	public void autoplay() {
@@ -399,4 +402,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return this.actionZone;
 	}
 
+	public Player getFirstPlayer() {
+		if (players.isEmpty())
+			return null;
+		return players.get(0);
+	}
+	
 }

@@ -131,7 +131,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 				Player player = game.getCurrentPlayer();
 				if (player == null)
 					JOptionPane.showMessageDialog(null, "There is no current player");
-				CardAI ai = player.getAI();
+				CardAI ai = (CardAI) player.getAI();
 				if (ai == null)
 					JOptionPane.showMessageDialog(null, "There is no AI");
 				

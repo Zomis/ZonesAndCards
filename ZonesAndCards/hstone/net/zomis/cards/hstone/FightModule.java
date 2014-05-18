@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.hstone.events.HStoneDamageDealtEvent;
+import net.zomis.cards.hstone.factory.CardType;
 import net.zomis.events.IEvent;
 
 public class FightModule {
@@ -12,8 +13,8 @@ public class FightModule {
 		int attack = source.getAttack();
 		int counterAttack = target.getAttack();
 		
-		damage(target, attack);
-		damage(source, counterAttack);
+		damage(source, target, attack);
+		damage(target, source, counterAttack);
 		source.getResources().changeResources(HStoneRes.ACTION_POINTS, -1);
 		
 		List<IEvent> events = new ArrayList<IEvent>();
@@ -25,8 +26,22 @@ public class FightModule {
 		game.cleanup(events);
 	}
 
-	public static void damage(HStoneCard target, int damage) {
+	public static void damage(HStoneCard source, HStoneCard target, int damage) {
+		if (source.getModel().isType(CardType.SPELL)) {
+			int spellDamage = calcSpellDamageFor(source.getPlayer());
+			damage += spellDamage;
+		}
+		
 		target.getResources().changeResources(HStoneRes.AWAITING_DAMAGE, damage);
+	}
+	
+	private static int calcSpellDamageFor(HStonePlayer player) {
+		int spellDamage = 0;
+		for (HStoneCard card : player.getBattlefield()) {
+			spellDamage += card.getResources().getResources(HStoneRes.SPELL_DAMAGE);
+		}
+		
+		return spellDamage;
 	}
 
 	public static void heal(HStoneCard target, int healing) {

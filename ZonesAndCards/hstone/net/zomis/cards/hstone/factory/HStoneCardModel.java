@@ -26,6 +26,8 @@ public class HStoneCardModel extends CardModel {
 	private HStoneEffect	effect;
 	private final List<HStoneTrigger<?>> triggers;
 	private HStoneClass forClazz;
+	int overload;
+	int spellDamage;
 	
 	public int getManaCost() {
 		return manaCost;
@@ -132,5 +134,12 @@ public class HStoneCardModel extends CardModel {
 	public HStoneClass getForClazz() {
 		return forClazz;
 	}
+
+	public int getOverload() {
+		return overload;
+	}
 	
+	public int getSpellDamage() {
+		return spellDamage;
+	}
 }
