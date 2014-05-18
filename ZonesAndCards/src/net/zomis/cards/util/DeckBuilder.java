@@ -54,7 +54,7 @@ public abstract class DeckBuilder<PlayerType extends DeckPlayer<CardModelType>, 
 			for (int i = 0; i < cc.getCount(); ++i)
 				player.addCard((E) cc.getModel());
 		}
-		player.getDeck().shuffle();
+//		player.getDeck().shuffle();
 	}
 	
 }

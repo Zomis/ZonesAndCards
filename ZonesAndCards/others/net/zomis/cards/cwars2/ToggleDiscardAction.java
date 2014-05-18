@@ -20,4 +20,9 @@ public class ToggleDiscardAction extends StackAction {
 		game.toggleDiscardMode();
 	}
 
+	@Override
+	public String toString() {
+		return "ToggleDiscard";
+	}
+	
 }

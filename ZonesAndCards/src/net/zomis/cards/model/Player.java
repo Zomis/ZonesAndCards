@@ -11,7 +11,6 @@ public class Player implements HasResources { // Comparable<Player>,
 	CardGame<? extends Player, ?> game;
 	
 	private String name;
-	private CardAIGeneric<? extends Player, ? extends Card<?>> ai;
 	private final ResourceMap resources = new ResourceMap(true);
 	
 	public CardGame<?, ?> getGame() {
@@ -54,19 +53,6 @@ public class Player implements HasResources { // Comparable<Player>,
 		return "Player-" + this.getName();
 	}
 
-//	@Override
-//	public int compareTo(Player o) {
-//		return this.name.compareTo(o.name);
-//	}
-
-	public CardAIGeneric<? extends Player, ? extends Card<?>> getAI() {
-		return this.ai;
-	}
-	
-	public void setAI(CardAIGeneric<? extends Player, ? extends Card<?>> ai) {
-		this.ai = ai;
-	}
-	
 	public int getIndex() {
 		List<?> players = new ArrayList<Object>(this.getGame().getPlayers());
 		for (int i = 0; i < players.size(); i++) {
@@ -76,4 +62,13 @@ public class Player implements HasResources { // Comparable<Player>,
 		return -1;
 	}
 	
+	@Deprecated
+	public CardAIGeneric<?, ?> getAI() {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Deprecated
+	public void setAI(CardAIGeneric<?, ?> ai) {
+		throw new UnsupportedOperationException();
+	}
 }

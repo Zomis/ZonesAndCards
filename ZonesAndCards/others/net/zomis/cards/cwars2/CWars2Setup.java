@@ -107,6 +107,8 @@ public class CWars2Setup {
 		this.setDecks(deckA.getCount(game), deckB.getCount(game));
 		return this;
 	}
+	
+	@Deprecated
 	public CWars2Setup setAIs(CardAI ai1, CardAI ai2) {
 		game.getPlayers().get(0).setAI(ai1);
 		game.getPlayers().get(1).setAI(ai2);

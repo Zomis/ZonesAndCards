@@ -64,7 +64,7 @@ import net.zomis.custommap.view.swing.ZomisSwingLog4j;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
 
-
+@Deprecated
 public class CardFrame extends JFrame implements EventListener, CardViewClickListener {
 //	private final CardGame<? extends Player, ? extends CardModel> game;
 	private final CardGame<?, ?> game;

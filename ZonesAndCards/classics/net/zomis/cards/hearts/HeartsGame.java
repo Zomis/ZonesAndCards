@@ -122,12 +122,16 @@ public class HeartsGame extends ClassicGame {
 	
 	@Override
 	public boolean isNextPhaseAllowed() {
-		if (this.giveDirection.isGive() && this.getCurrentPlayer() == null) {
+		boolean hasCurrentPlayer = getCurrentPlayer() != null;
+		if (this.giveDirection.isGive() && !hasCurrentPlayer) {
 			for (Player pl : this.getPlayers()) {
 				CardPlayer player = (CardPlayer) pl;
 				if (HeartsGiveAction.GIVE_COUNT != player.getBoard().size())
 					return false;
 			}
+		}
+		if (hasCurrentPlayer && !lastPlayed.containsValue(getCurrentPlayer())) {
+			return false;
 		}
 		return super.isNextPhaseAllowed();
 	}
@@ -135,7 +139,7 @@ public class HeartsGame extends ClassicGame {
 	@Override
 	public boolean nextPhase() {
 		if (!pile.isEmpty()) {
-			ClassicCard model = (ClassicCard) pile.getTopCard().getModel();
+			ClassicCard model = pile.getTopCard().getModel();
 			lastPlayed.put(pile.getTopCard(), getCurrentPlayer());
 			if (model.getSuite() == Suite.HEARTS)
 				this.heartsBroken = true;

@@ -3,6 +3,7 @@ package net.zomis.cards.hearts;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
@@ -13,6 +14,7 @@ import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
+import net.zomis.custommap.view.ZomisLog;
 
 public class HeartsHandler implements ActionHandler {
 
@@ -28,8 +30,6 @@ public class HeartsHandler implements ActionHandler {
 		if (player == null)
 			player = game.findPlayerWithBoard(zone);
 		
-		
-		
 		if (card.getGame().getCurrentPlayer() == null) {
 			// give phase
 			return new HeartsGiveAction(cardM);
@@ -41,43 +41,36 @@ public class HeartsHandler implements ActionHandler {
 		}
 	}
 
-//	@Override
-//	public <E extends CardGame<Player, CardModel>> List<StackAction> getAvailableActions(E cardGame, Player pl) {
-//		CardPlayer player = (CardPlayer) pl;
-//		List<StackAction> list = new LinkedList<StackAction>();
-//		if (pl == null) {
-//			for (Player cplayer : cardGame.getPlayers())
-//				list.addAll(getAvailableActions(cardGame, cplayer));
-//			return list;
-//		}
-//		CardPlayer currentPlayer = player.getGame().getCurrentPlayer();
-//		if (currentPlayer == null) {
-//			for (Card<ClassicCard> card : player.getHand()) {
-//				list.add(new HeartsGiveAction(card));
-//			}
-//			for (Card<ClassicCard> card : player.getBoard()) {
-//				list.add(new HeartsGiveAction(card));
-//			}
-//		}
-//		else if (player.getGame().getCurrentPlayer() == player) {
-//			for (Card<ClassicCard> card : player.getHand()) {
-//				list.add(new HeartsPlayAction(card));
-//			}
-//		}
-//		else {
-//			CustomFacade.getLog().i("I can do nothing! It is not my turn!");
-//			// Player is not current player and it's not the give cards phase: There's nothing you can do!
-//		}
-//		if (list.isEmpty())
-//			CustomFacade.getLog().i("Player " + player + " with hand " + player.getHand() + " can do " + list);
-//		return list;
-//	}
-
 	@Override
-	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
+	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player pl) {
 		List<Card<?>> cards = new ArrayList<Card<?>>();
 		
-		
+		CardPlayer player = (CardPlayer) pl;
+//		HeartsGame ga = (HeartsGame) game;
+//		ZomisLog.info("Cards " + ga.getGiveDirection() + ga.getActivePhase());
+//		ZomisLog.info("Cards " + game + pl + " hand " + player.getHand().cardList());
+		if (pl == null) {
+			for (Player cplayer : game.getPlayers())
+				cards.addAll(getUseableCards(game, cplayer));
+			return cards;
+		}
+		CardPlayer currentPlayer = player.getGame().getCurrentPlayer();
+		if (currentPlayer == null) {
+//			ZomisLog.info("Curr player null");
+			cards.addAll(player.getHand().cardList());
+			cards.addAll(player.getBoard().cardList());
+		}
+		else if (player.getGame().getCurrentPlayer() == player) {
+//			ZomisLog.info("Curr player player");
+			cards.addAll(player.getHand().cardList());
+		}
+		else {
+			ZomisLog.info("I can do nothing! It is not my turn!");
+			// Player is not current player and it's not the give cards phase: There's nothing you can do!
+		}
+		if (cards.isEmpty())
+			ZomisLog.info("Player " + player + " with hand " + player.getHand() + " can do nothing");
+
 		return cards;
 	}
 

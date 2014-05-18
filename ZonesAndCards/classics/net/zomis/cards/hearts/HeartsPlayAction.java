@@ -9,7 +9,6 @@ import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
-import net.zomis.custommap.CustomFacade;
 import net.zomis.utils.ZomisList;
 
 public class HeartsPlayAction extends ZoneMoveAction {
@@ -56,7 +55,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		}
 		if (player.getHand().size() == 13) {
 			// Not allowed to play point cards on the first round
-			CustomFacade.getLog().i("First hand, is point card? " + cardModel + isPoints());
+//			CustomFacade.getLog().d("First hand, is point card? " + cardModel + isPoints());
 			return !isPoints();
 		}
 		return true;

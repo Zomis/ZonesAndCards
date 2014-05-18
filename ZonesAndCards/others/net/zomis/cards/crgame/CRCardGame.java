@@ -25,6 +25,7 @@ public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
 			this.addZone(player.getBattlefield());
 			this.addZone(player.getDeck());
 			DeckBuilder.createExact(player, player.getCards().getCount(this));
+			player.getDeck().shuffle();
 		}
 		this.setActivePhase(getPhases().get(0));
 		this.getCurrentPlayer().drawCards(START_CARDS - 1);

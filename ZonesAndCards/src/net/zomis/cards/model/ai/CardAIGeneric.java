@@ -11,10 +11,12 @@ import net.zomis.aiscores.ScoreStrategy;
 import net.zomis.aiscores.extra.BufferedScoreProducer;
 import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.aiscores.extra.ScoreUtils;
+import net.zomis.cards.ai.CGController.AI;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.model.StackAction;
 
-public class CardAIGeneric<P extends Player, C extends Card<?>> implements ScoreStrategy<P, C> {
+public class CardAIGeneric<P extends Player, C extends Card<?>> implements ScoreStrategy<P, C>, AI {
 
 	private ScoreConfig<P, C> mConfig;
 	private double minScore = Integer.MIN_VALUE;
@@ -71,11 +73,21 @@ public class CardAIGeneric<P extends Player, C extends Card<?>> implements Score
 
 	@Override
 	public boolean canScoreField(ScoreParameters<P> parameters, C field) {
+		StackAction act = field.clickAction();
+		if (act == null)
+			throw new NullPointerException("Action is null for " + field);
 		return field.clickAction().actionIsAllowed();
 	}
 
-	protected FieldScore<C> nullAction(Player player) {
+	@Deprecated
+	protected FieldScore<C> nullAction(Player player) { // TODO: Avoid using nullAction in CardAIs
 		return new FieldScore<C>(null);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Card<?> decideMove(Player player) {
+		return play((P) player).getField();
 	}
 	
 }

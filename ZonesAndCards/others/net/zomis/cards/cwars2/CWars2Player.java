@@ -17,7 +17,7 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	private final CardZone<Card<CWars2Card>> hand;
 	
 	private List<CWars2Card> cards;
-	private CardZone<Card<CWars2Card>> discard;
+	private final CardZone<Card<CWars2Card>> discard;
 	
 	CWars2Player() {
 		this(null);
@@ -103,5 +103,6 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	public CardZone<Card<CWars2Card>> getDiscard() {
 		return this.discard;
 	}
+
 	
 }

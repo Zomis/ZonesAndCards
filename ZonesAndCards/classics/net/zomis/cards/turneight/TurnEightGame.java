@@ -7,9 +7,9 @@ import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
+import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
@@ -30,8 +30,10 @@ public class TurnEightGame extends ClassicGame {
 		return playerChoice;
 	}
 	private boolean hasPlayed;
-	CardModel drawCard;
-	CardModel nextTurn;
+	
+	ClassicCard drawCard;
+	ClassicCard nextTurn;
+	
 	private int	drawnCards = 0;
 	public int getDrawnCards() {
 		return drawnCards;
@@ -63,14 +65,11 @@ public class TurnEightGame extends ClassicGame {
 		this.addZone(discard);
 		this.deck.addDeck(this, 0);
 		
-		this.drawCard = new CardModel("Draw card");
-		this.nextTurn = new CardModel("Next turn");
+		this.drawCard = new ClassicCard(Suite.EXTRA, 1); // "Draw card");
+		this.nextTurn = new ClassicCard(Suite.EXTRA, 2); // new CardModel("Next turn");
 		
-		CardZone<Card<ClassicCard>> actions = new CardZone<Card<ClassicCard>>("Actions");
-		this.addZone(actions);
-		actions.createCardOnBottom(drawCard);
-		actions.createCardOnBottom(nextTurn);
-		actions.setGloballyKnown(true);
+		this.addAction(drawCard, () -> new DrawCardAction(this));
+		this.addAction(nextTurn, () -> new NextTurnAction(this));
 		
 		CardZone<Card<SuiteModel>> colorPickZone = new CardZone<Card<SuiteModel>>("ChosenSuite");
 		this.addZone(colorPickZone);
@@ -118,6 +117,7 @@ public class TurnEightGame extends ClassicGame {
 		return discard;
 	}
 	
+	@Deprecated
 	public TurnEightGame addPlayer(String name, CardAI ai) {
 		this.addPlayer(name);
 		this.getPlayers().get(this.getPlayers().size() - 1).setAI(ai);

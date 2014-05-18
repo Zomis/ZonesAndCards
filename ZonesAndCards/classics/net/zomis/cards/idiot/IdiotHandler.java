@@ -42,6 +42,8 @@ public class IdiotHandler implements ActionHandler {
 		}
 	}
 	
+	private static final StackAction NOT_LAST = new InvalidStackAction("Not last card");
+	
 	@Override
 	public StackAction click(Card<?> card) {
 		IdiotGame game = (IdiotGame) card.getGame();
@@ -50,7 +52,7 @@ public class IdiotHandler implements ActionHandler {
 		}
 		
 		if (card.getCurrentZone().getBottomCard() != card)
-			return new InvalidStackAction("Not last card");
+			return NOT_LAST;
 		
 		RemoveAction remove = new RemoveAction((ClassicCardZone) card.getCurrentZone());
 		if (remove.actionIsAllowed())
@@ -64,13 +66,21 @@ public class IdiotHandler implements ActionHandler {
 		}
 		if (random.isEmpty())
 			return new InvalidStackAction("Nowhere to move");
-		return ZomisList.getRandom(random);
+		return ZomisList.getRandom(random, game.getRandom());
 	}
 
 	@Override
 	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
 		List<Card<?>> cards = new ArrayList<Card<?>>();
 		
+		IdiotGame gm = (IdiotGame) game;
+		if (!gm.getDeck().isEmpty())
+			cards.add(gm.getDeck().getTopCard());
+		
+		for (ClassicCardZone zone : gm.getIdiotZones()) {
+			if (!zone.isEmpty())
+				cards.add(zone.getBottomCard());
+		}
 		
 		return cards;
 	}

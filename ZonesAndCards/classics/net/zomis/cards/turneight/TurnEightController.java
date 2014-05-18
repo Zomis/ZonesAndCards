@@ -99,8 +99,8 @@ public class TurnEightController implements ActionHandler {
 	@Override
 	public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
 		List<Card<?>> cards = new ArrayList<Card<?>>();
-		
-		
+		CardPlayer pl = (CardPlayer) player;
+		cards.addAll(pl.getHand().cardList());
 		return cards;
 	}
 

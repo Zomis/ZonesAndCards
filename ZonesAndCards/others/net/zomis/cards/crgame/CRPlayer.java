@@ -82,6 +82,7 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 			List<CardCount<CRCardModel>> cards = this.getCards().getCount(getGame());
 			ZomisList.filter(cards, cm -> !this.hasCard(cm));
 			DeckBuilder.createExact(this, cards);
+			deck.shuffle();
 			card = deck.getTopCard();
 		}
 		card.zoneMoveOnBottom(hand);

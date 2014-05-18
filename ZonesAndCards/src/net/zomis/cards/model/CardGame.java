@@ -20,6 +20,7 @@ import net.zomis.cards.model.ai.CardAIGeneric;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.custommap.CustomFacade;
+import net.zomis.events.EventConsumer;
 import net.zomis.events.EventExecutor;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
@@ -144,15 +145,20 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return zone;
 	}
 	
+	@Deprecated
 	public StackAction callPlayerAI() {
 		return this.callPlayerAI(this.getCurrentPlayer());
 	}
+	
+	@Deprecated
 	public StackAction callPlayerAI(CardAI ai) {
 		return this.callPlayerAI(getCurrentPlayer(), ai);
 	}
+	
+	@Deprecated
 	public StackAction callPlayerAI(Player player) {
 		if (player == null) {
-			// TODO: Codecrap for callPlayerAI when there is no current player. The returned stackaction here is used to determine if something has happened in CardGame.autoplay.
+			// TODO: Codecrap when no current player. returned stackaction here is used to determine if something has happened in CardGame.autoplay. Probably only used in Hearts
 			StackMultiAction action = new StackMultiAction();
 			for (Player pl : this.getPlayers()) {
 				action.addAction(this.callPlayerAI(pl));
@@ -160,10 +166,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			return action;
 		}
 		else {
-			return this.callPlayerAI(player, (CardAI) player.getAI());
+			throw new UnsupportedOperationException();
+//			return this.callPlayerAI(player, (CardAI) player.getAI());
 		}
 	}
 	
+	@Deprecated
 	public StackAction callPlayerAI(Player player, CardAI ai) {
 		if (ai == null)
 			return new InvalidStackAction("No AI specified to use for " + player);
@@ -315,6 +323,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		getEvents().registerHandler(eventType, handler);
 	}
 	
+	public <T extends IEvent> void registerHandler(Class<? extends T> eventType, EventConsumer<T> handler) {
+		getEvents().registerHandler(eventType, handler);
+	}
+	
 	public void registerListener(EventListener listener) {
 		getEvents().registerListener(listener);
 	}
@@ -361,9 +373,14 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			this.setActivePhase(this.phases.get(0));
 		}
 	}
+	
+	@Deprecated
 	public void setAI(int playerIndex, CardAIGeneric<? extends Player, ? extends Card<?>> ai) {
-		this.getPlayers().get(playerIndex).setAI(ai);
+		throw new UnsupportedOperationException();
+//		this.getPlayers().get(playerIndex).setAI(ai);
 	}
+	
+	@Deprecated
 	public void autoplay() {
 		
 		while (!this.isGameOver()) {
@@ -379,12 +396,18 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 	
 	public boolean click(Card<?> card) {
+		return clickPerform(card).actionIsPerformed();
+	}
+	
+	public StackAction clickPerform(Card<?> card) {
+		if (card == null)
+			throw new NullPointerException("Card cannot be null");
 		StackAction action = card.clickAction();
 		if (action.actionIsAllowed()) {
 			replay.addMove(card);
 		}
 		addAndProcessStackAction(action);
-		return action.actionIsPerformed();
+		return action;
 	}
 	
 	public CardReplay getReplay() {
