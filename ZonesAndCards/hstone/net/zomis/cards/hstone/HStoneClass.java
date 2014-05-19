@@ -41,7 +41,7 @@ public enum HStoneClass {
 			case SHAMAN:
 				return factory().effect(randomTotem()).card();
 			case PALADIN:
-				return factory().effect(summon("Soldier")).card();
+				return factory().effect(summon("Silver Hand Recruit")).card();
 			case PRIEST:
 				return factory().effect(heal(2)).card();
 			case ROGUE:

@@ -1,9 +1,10 @@
 package net.zomis.cards.crgame;
 
+@FunctionalInterface
 public interface CRFilter {
-	public boolean test(CRCard source, CRCard target);
+	boolean test(CRCard source, CRCard target);
 
-	public default CRFilter and(CRFilter other) {
+	default CRFilter and(CRFilter other) {
 		return new CRFilter() {
 			@Override
 			public boolean test(CRCard src, CRCard dest) {

@@ -29,6 +29,9 @@ public class PlayAction extends StackAction {
 		if (model.isMinion()) {
 			card.zoneMoveOnBottom(owner.getBattlefield());
 		}
+		else if (model.isSecret()) {
+			throw new UnsupportedOperationException();
+		}
 		else if (model.isSpell()) {
 			card.getGame().selectOrPerform(model.getEffect(), card);
 			card.zoneMoveOnBottom(owner.getDiscard());
@@ -47,6 +50,9 @@ public class PlayAction extends StackAction {
 		int manaCost = model().getManaCost();
 		if (!owner.getResources().hasResources(HStoneRes.MANA_AVAILABLE, manaCost)) {
 			return setErrorMessage("Not enough resources, needs " + manaCost + " but has " + owner.getResources());
+		}
+		if (model().isMinion() && owner.getBattlefield().size() == HStonePlayer.MAX_BATTLEFIELD_SIZE) {
+			return setErrorMessage("Battlefield is full");
 		}
 		// TODO: Make sure that there is at least one available target for the action, if action requires a target
 		return true;

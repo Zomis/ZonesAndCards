@@ -22,8 +22,7 @@ public class HStoneEnchFromModel extends HStoneEnchantment {
 	}
 
 	@Override
-	@Deprecated
-	public Boolean hasAbility(HStoneCard card, HSAbility ability, Boolean hasAbility) {
+	public boolean hasAbility(HStoneCard card, HSAbility ability, boolean hasAbility) {
 		return card.getModel().getAbilities().contains(ability);
 	}
 }

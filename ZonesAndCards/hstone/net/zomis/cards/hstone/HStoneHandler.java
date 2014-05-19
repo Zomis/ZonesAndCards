@@ -27,7 +27,7 @@ public class HStoneHandler implements ActionHandler {
 		
 		if (game.isTargetSelectionMode()) {
 			CardZone<?> zone = hscard.getCurrentZone();
-			if (zone != hscard.getPlayer().getBattlefield() && zone != hscard.getPlayer().getSpecialZone())
+			if (zone != hscard.getPlayer().getBattlefield() && hscard != hscard.getPlayer().getPlayerCard())
 				return new InvalidStackAction("Illegal zone");
 			return new BattlefieldAction(hscard);
 		}
@@ -44,10 +44,10 @@ public class HStoneHandler implements ActionHandler {
 		if (hscard.getCurrentZone() == player.getBattlefield()) {
 			return new BattlefieldAction(hscard);
 		}
-		if (hscard.getModel().isType(CardType.POWER)) {
+		if (hscard.getModel().isType(CardType.POWER) && player == hscard.getPlayer()) {
 			return new AbilityAction(hscard);
 		}
-		if (hscard.getModel().isType(CardType.PLAYER)) {
+		if (hscard.getModel().isType(CardType.PLAYER) && player == hscard.getPlayer()) {
 			return new BattlefieldAction(hscard);
 		}
 		return new InvalidStackAction("HSTONE_INVALID: " + card + " in zone " + card.getCurrentZone());

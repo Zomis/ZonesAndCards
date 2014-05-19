@@ -27,18 +27,18 @@ import net.zomis.events.IEvent;
 
 public class HStoneCard extends Card<HStoneCardModel> {
 	
-	private final ResourceMap res;
-	private final EnumSet<HSAbility> abilities;
+	private final ResourceMap res = new ResourceMap();
+	private final EnumSet<HSAbility> abilities = EnumSet.noneOf(HSAbility.class);
 	private final List<HStoneTrigger<?>> triggers;
+	private final List<HStoneEnchantment> enchantmentResponsibles = new ArrayList<>();
 	
 	public HStoneCard(HStoneCardModel model, CardZone<?> initialZone) {
 		super(model);
-		this.currentZone = initialZone;
-		this.res = new ResourceMap();
-		this.res.set(HStoneRes.ATTACK, model.getAttack());
-		this.res.set(HStoneRes.HEALTH, model.getHealth());
-		this.res.set(HStoneRes.SPELL_DAMAGE, model.getSpellDamage());
-		this.abilities = EnumSet.noneOf(HSAbility.class);
+		currentZone = initialZone;
+		res.set(HStoneRes.ATTACK, model.getAttack());
+		res.set(HStoneRes.HEALTH, model.getHealth());
+		res.set(HStoneRes.SPELL_DAMAGE, model.getSpellDamage());
+		
 		abilities.addAll(model.getAbilities());
 		if (abilities.contains(HSAbility.CHARGE))
 			this.res.set(HStoneRes.ACTION_POINTS, 1);
@@ -67,7 +67,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	public boolean isAttackPossible() {
 		boolean hasAttack = this.getModel().isType(CardType.POWER) || getResources().hasResources(HStoneRes.ATTACK, 1);
 		return hasAttack && getResources().hasResources(HStoneRes.ACTION_POINTS, 1)
-				&& !hasAbility(HSAbility.FROZEN);
+				&& !hasAbility(HSAbility.FROZEN) && !hasAbility(HSAbility.NO_ATTACK);
 	}
 
 	void onEndTurn() {
@@ -259,6 +259,10 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	public int getManaCost() {
 		return getModel().getManaCost();
 //		return getResources().getResources(HStoneRes.MANA_COST);
+	}
+
+	public void addEnchantment(HStoneEnchantment enchantment) {
+		this.enchantmentResponsibles.add(enchantment);
 	}
 	
 }

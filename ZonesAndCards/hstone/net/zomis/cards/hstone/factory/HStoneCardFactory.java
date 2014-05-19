@@ -5,6 +5,7 @@ import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneClass;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
+import net.zomis.cards.hstone.ench.HStoneEnchSpecificAbility;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneCardEvent;
@@ -196,6 +197,34 @@ public class HStoneCardFactory {
 	public HStoneCardFactory noAttack() {
 		card.addAbility(HSAbility.NO_ATTACK);
 		return this;
+	}
+
+	public HStoneCardFactory staticPT(final HSFilter who, final int attack, final int health) {
+		return battlecry(new HStoneEffect() {
+			@Override
+			public void performEffect(final HStoneCard source, HStoneCard target) {
+				source.addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificPT(null, attack, health)) {
+					@Override
+					public boolean isActive() {
+						return source.isAlive();
+					}
+					
+					@Override
+					public boolean appliesTo(HStoneCard card) {
+						return card != source && card.isMinion() && who.shouldKeep(source, target);
+					}
+				});
+			}
+		});
+	}
+
+	public HStoneCardFactory staticAbility(HSFilter enrage, HSAbility windfury) {
+		return battlecry(new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificAbility(target, windfury)));
+			}
+		});
 	}
 	
 }

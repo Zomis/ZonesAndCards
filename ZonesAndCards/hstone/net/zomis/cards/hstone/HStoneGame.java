@@ -171,6 +171,9 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		
 		if (!events.isEmpty()) // if one or more events was processed, cleanup again with no events to be scheduled
 			cleanup();
+		
+		if (stackSize() > 0)
+			cleanup();
 	}
 
 	public List<HStoneCard> findAll(HStoneCard searcher, HSFilter filter) {

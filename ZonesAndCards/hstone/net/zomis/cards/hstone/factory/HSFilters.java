@@ -159,4 +159,17 @@ public class HSFilters {
 		return not(samePlayer());
 	}
 
+	public static HSFilter enrage() {
+		return thisCard().and(isDamaged());
+	}
+
+	public static HSFilter isDamaged() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				return target.getHealth() < target.getHealthMax();
+			}
+		};
+	}
+
 }

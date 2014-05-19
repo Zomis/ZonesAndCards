@@ -23,6 +23,8 @@ public class AbilityAction extends StackAction {
 	
 	@Override
 	protected void onPerform() {
+		source.getResources().changeResources(HStoneRes.ACTION_POINTS, -1);
+		source.getPlayer().getResources().changeResources(HStoneRes.MANA_AVAILABLE, -2);
 		source.getGame().selectOrPerform(source.getModel().getEffect(), source);
 	}
 	

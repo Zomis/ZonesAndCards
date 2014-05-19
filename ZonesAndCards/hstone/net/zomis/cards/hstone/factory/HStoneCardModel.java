@@ -142,4 +142,8 @@ public class HStoneCardModel extends CardModel {
 	public int getSpellDamage() {
 		return spellDamage;
 	}
+
+	public boolean isSecret() {
+		return false;
+	}
 }

@@ -14,8 +14,7 @@ public class HStoneEnchantment {
 		return false;
 	}
 	
-	@Deprecated
-	public Boolean hasAbility(HStoneCard card, HSAbility ability, Boolean hasAbility) {
+	public boolean hasAbility(HStoneCard card, HSAbility ability, boolean hasAbility) {
 		return hasAbility;
 	}
 	
