@@ -12,7 +12,6 @@ import net.zomis.cards.cwars2.cards.SinglePlayerCards;
 import net.zomis.cards.cwars2.cards.UnlockableGlobal;
 import net.zomis.cards.cwars2.cards.WeaponCards;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.util.CardCount;
 import net.zomis.cards.util.CardSet;
 import net.zomis.cards.util.DeckBuilder;
@@ -108,12 +107,6 @@ public class CWars2Setup {
 		return this;
 	}
 	
-	@Deprecated
-	public CWars2Setup setAIs(CardAI ai1, CardAI ai2) {
-		game.getPlayers().get(0).setAI(ai1);
-		game.getPlayers().get(1).setAI(ai2);
-		return this;
-	}
 	public CWars2Game start() {
 		game.startGame();
 		return game;

@@ -35,6 +35,7 @@ import javax.swing.event.ChangeListener;
 import net.zomis.aiscores.FieldScore;
 import net.zomis.aiscores.FieldScoreProducer;
 import net.zomis.aiscores.FieldScores;
+import net.zomis.cards.ai.CGController;
 import net.zomis.cards.cwars2.CWars2Setup;
 import net.zomis.cards.cwars2.ais.CWars2AI_Better;
 import net.zomis.cards.cwars2.ais.CWars2Decks;
@@ -64,7 +65,6 @@ import net.zomis.custommap.view.swing.ZomisSwingLog4j;
 import net.zomis.events.Event;
 import net.zomis.events.EventListener;
 
-@Deprecated
 public class CardFrame extends JFrame implements EventListener, CardViewClickListener {
 //	private final CardGame<? extends Player, ? extends CardModel> game;
 	private final CardGame<?, ?> game;
@@ -83,6 +83,8 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 
 	private JTextArea	log;
 
+	private CGController	controller;
+
 	public CardFrame() {
 		ZomisSwingLog4j.addConsoleAppender(Log4jLog.DETAILED_LAYOUT);
 		new CustomFacade(new Log4jLog("Cards"));
@@ -95,7 +97,8 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 //			this.game = new HeartsSuperGame(new String[]{ "BUBU", "Minken", "Tejpbit", "Zomis"});
 //			this.game = new PokerGame();
 //		game = CWars2Setup.newMultiplayerGame().setDecks(CWars2Decks.zomisMultiplayerDeck(), CWars2Decks.zomisMultiplayerDeck()).setAIs(null, new CWars2AI_Better()).build();
-		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).setAIs(null, new CWars2AI_Better()).build();
+		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).build();
+		controller = new CGController(game).setAIs(null, new CWars2AI_Better());
 
 		CustomFacade.getLog().i("Game created");
 		
@@ -115,7 +118,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		menuA.add(new MenuItemBuilder("Let AI Play", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				game.callPlayerAI();
+				controller.play();
 			}
 		}).setShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK)).getItem());
 		menuA.add(new JCheckBoxMenuItem(new SimpleAction("AI AutoPlay", new ActionListener() {
@@ -131,7 +134,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 				Player player = game.getCurrentPlayer();
 				if (player == null)
 					JOptionPane.showMessageDialog(null, "There is no current player");
-				CardAI ai = (CardAI) player.getAI();
+				CardAI ai = (CardAI) controller.getAI(player);
 				if (ai == null)
 					JOptionPane.showMessageDialog(null, "There is no AI");
 				
@@ -301,9 +304,9 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	public void evAfterAction(AfterActionEvent event) {
 		updateViews();
 		this.playerSummary.updateStatus();
-		if (game.getCurrentPlayer() != null && game.getCurrentPlayer().getAI() != null) {
+		if (game.getCurrentPlayer() != null && controller.getAI(game.getCurrentPlayer()) != null) {
 			if (aiAutoplay && !game.isGameOver())
-				game.callPlayerAI();
+				controller.play();
 		}
 	}
 	

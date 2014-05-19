@@ -3,7 +3,6 @@ package net.zomis.cards.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.zomis.cards.model.ai.CardAIGeneric;
 import net.zomis.cards.resources.ResourceMap;
 
 public class Player implements HasResources { // Comparable<Player>, 
@@ -60,15 +59,5 @@ public class Player implements HasResources { // Comparable<Player>,
 				return i;
 		}
 		return -1;
-	}
-	
-	@Deprecated
-	public CardAIGeneric<?, ?> getAI() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Deprecated
-	public void setAI(CardAIGeneric<?, ?> ai) {
-		throw new UnsupportedOperationException();
 	}
 }

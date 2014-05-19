@@ -115,8 +115,9 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 //		return action;
 	}
 	@Override
-	public void executeEvent(IEvent ev) {
+	protected <T extends IEvent> T executeEvent(T evnt) {
 //		CustomFacade.getLog().d("Execute event: " + ev);
+		IEvent ev = evnt;
 		if (ev instanceof ZoneChangeEvent) {
 			ZoneChangeEvent eev = (ZoneChangeEvent) ev;
 			ev = new MDJQZoneChangeEvent((MDJQPermanent) eev.getCard(), (MDJQZone) eev.getFromCardZone(), (MDJQZone) eev.getToCardZone());
@@ -126,7 +127,7 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 		}
 		if (!(ev instanceof MDJQEvent)) {
 			super.executeEvent(ev);
-			return;
+			return null;
 		}
 		MDJQEvent event = (MDJQEvent) ev;
 		this.getBattlefield().trigger(event);
@@ -137,6 +138,7 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 		}
 		
 		super.executeEvent(event);
+		return evnt;
 	}
 	
 	public LinkedList<MDJQStackAction> getStackZone() {

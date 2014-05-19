@@ -10,13 +10,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.cards.model.ai.CardAI;
-import net.zomis.cards.model.ai.CardAIGeneric;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.custommap.CustomFacade;
@@ -145,60 +142,19 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return zone;
 	}
 	
-	@Deprecated
-	public StackAction callPlayerAI() {
-		return this.callPlayerAI(this.getCurrentPlayer());
-	}
-	
-	@Deprecated
-	public StackAction callPlayerAI(CardAI ai) {
-		return this.callPlayerAI(getCurrentPlayer(), ai);
-	}
-	
-	@Deprecated
-	public StackAction callPlayerAI(Player player) {
-		if (player == null) {
-			// TODO: Codecrap when no current player. returned stackaction here is used to determine if something has happened in CardGame.autoplay. Probably only used in Hearts
-			StackMultiAction action = new StackMultiAction();
-			for (Player pl : this.getPlayers()) {
-				action.addAction(this.callPlayerAI(pl));
-			}
-			return action;
-		}
-		else {
-			throw new UnsupportedOperationException();
-//			return this.callPlayerAI(player, (CardAI) player.getAI());
-		}
-	}
-	
-	@Deprecated
-	public StackAction callPlayerAI(Player player, CardAI ai) {
-		if (ai == null)
-			return new InvalidStackAction("No AI specified to use for " + player);
-		ParamAndField<Player, Card<?>> action = ai.play(player);
-		Card<?> field = action.getField();
-		if (field == null)
-			throw new NullPointerException("AI returned null card");
-		StackAction sa = field.clickAction();
-		if (sa.actionIsAllowed())
-			this.replay.addMove(field);
-		this.addAndProcessStackAction(sa);
-		return sa;
-	}
-
 	protected final void endGame() {
 		if (this.isGameOver()) {
 			exc.printStackTrace();
 			throw new IllegalStateException("Game is already finished, previously called at ", exc);
 		}
-		if (!this.getEvents().executeEvent(new GameOverEvent(this)).isCancelled()) {
+		if (!this.executeEvent(new GameOverEvent(this)).isCancelled()) {
 			exc = new Exception("End game called");
 			this.gameOver = true;
 		}
 	}
 
-	protected void executeEvent(IEvent event) {
-		getEvents().executeEvent(event);
+	protected <T extends IEvent> T executeEvent(T event) {
+		return getEvents().executeEvent(event);
 	}
 	protected void executeEvent(IEvent event, int i) {
 		getEvents().executeEvent(event, i);
@@ -372,23 +328,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		if (this.getActivePhase() == null) {
 			this.setActivePhase(this.phases.get(0));
 		}
-	}
-	
-	@Deprecated
-	public void setAI(int playerIndex, CardAIGeneric<? extends Player, ? extends Card<?>> ai) {
-		throw new UnsupportedOperationException();
-//		this.getPlayers().get(playerIndex).setAI(ai);
-	}
-	
-	@Deprecated
-	public void autoplay() {
-		
-		while (!this.isGameOver()) {
-			StackAction action = this.callPlayerAI();
-			if (!action.actionIsPerformed())
-				return;
-		}
-		
 	}
 	
 	public int stackSize() {

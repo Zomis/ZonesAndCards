@@ -10,7 +10,6 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.actions.NextTurnAction;
-import net.zomis.cards.model.ai.CardAI;
 import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
 
@@ -117,12 +116,6 @@ public class TurnEightGame extends ClassicGame {
 		return discard;
 	}
 	
-	@Deprecated
-	public TurnEightGame addPlayer(String name, CardAI ai) {
-		this.addPlayer(name);
-		this.getPlayers().get(this.getPlayers().size() - 1).setAI(ai);
-		return this;
-	}
 	public TurnEightGame addPlayer(String name) {
 		final CardPlayer player = new CardPlayer();
 		player.setName(name);
