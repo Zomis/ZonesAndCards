@@ -211,4 +211,12 @@ public class HSFilters {
 		};
 	}
 
+	public static HSFilter haveWeapon() {
+		return (src, dst) -> src.getPlayer().getWeapon() != null;
+	}
+
+	public static HSFilter isTargetAlive() {
+		return (src, dst) -> dst.isAlive();
+	}
+
 }

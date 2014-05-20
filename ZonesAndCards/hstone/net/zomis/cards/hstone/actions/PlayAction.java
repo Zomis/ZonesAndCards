@@ -26,6 +26,7 @@ public class PlayAction extends StackAction {
 	protected void onPerform() {
 		HStoneCardModel model = model();
 		owner.getResources().changeResources(HStoneRes.MANA_AVAILABLE, -getManaCost());
+		owner.getResources().changeResources(HStoneRes.CARDS_PLAYED, 1);
 		card.getGame().callEvent(new HStoneCardPlayedEvent(card));
 		
 		switch (model.getType()) {
@@ -43,6 +44,7 @@ public class PlayAction extends StackAction {
 			default:
 				break;
 		}
+		card.getGame().cleanup();
 	}
 	
 	private int getManaCost() {

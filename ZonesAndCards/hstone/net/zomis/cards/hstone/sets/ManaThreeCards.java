@@ -44,7 +44,7 @@ public class ManaThreeCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 3,      RARE, 2, 2, "Coldlight Oracle").battlecry(allDraw(2)).card());
 		game.addCard(minion( 3,      RARE, 2, 3, "Coldlight Seer").battlecry(forEach(minionIsMurloc().and(not(thisCard())), null, otherPT(0, 2))).card());
 		game.addCard(minion( 3,      RARE, 1, 4, "Demolisher").on(HStoneTurnStartEvent.class, toRandom(enemy(), damage(2)), samePlayer()).card());
-//		game.addCard(minion( 3,      RARE, 2, 3, "Emperor Cobra").effect("Destroy any minion damaged by this minion").card());
+		game.addCard(minion( 3,      RARE, 2, 3, "Emperor Cobra").poison().card());
 		game.addCard(minion( 3,      RARE, 1, 5, "Imp Master").on(HStoneTurnEndEvent.class, combined(damageSelf(1), summon("Imp")), samePlayer()).card());
 		game.addCard(minion( 3,      RARE, 4, 7, "Injured Blademaster").battlecry(damageSelf(4)).card());
 //		game.addCard(minion( 3,      RARE, 3, 3, "Mind Control Tech").effect("<b>Battlecry:</b>").effect("If your opponent has 4 or more minions, take control of one at random").card());

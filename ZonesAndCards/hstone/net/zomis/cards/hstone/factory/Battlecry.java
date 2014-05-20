@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.zomis.cards.hstone.FightModule;
+import net.zomis.cards.hstone.HSAction;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
@@ -45,6 +46,15 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				FightModule.damage(source, target, damage);
+			}
+		};
+	}
+
+	public static HStoneEffect damage(final HSGetCount damage, HSFilter targetType) {
+		return new HStoneEffect(targetType) {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				FightModule.damage(source, target, damage.determineCount(source, target));
 			}
 		};
 	}
@@ -112,6 +122,15 @@ public class Battlecry {
 		};
 	}
 
+	public static HStoneEffect selfPT(final HSGetCount attack, final HSGetCount health) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				selfPT(attack.determineCount(source, target), health.determineCount(source, target)).performEffect(source, target);
+			}
+		};
+	}
+	
 	public static HStoneEffect selfPT(final int attack, final int health) {
 		if (attack < 0 || health < 0)
 			throw new IllegalArgumentException("Attack and health must be >= 0");
@@ -813,7 +832,17 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect changeMyManaTotal(final int mana) {
+	public static HStoneEffect manaPermanentFilled(final int mana) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.getPlayer().getResources().changeResources(HStoneRes.MANA_TOTAL, mana);
+				source.getPlayer().getResources().changeResources(HStoneRes.MANA_AVAILABLE, mana);
+			}
+		};
+	}
+	
+	public static HStoneEffect manaPermanentEmpty(final int mana) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -859,4 +888,27 @@ public class Battlecry {
 	public static HStoneEffect toFriendlyBeast(final HStoneEffect combined) {
 		return to(allMinions().and(minionIs(HStoneMinionType.BEAST)).and(samePlayer()), combined);
 	}
+	
+	public static HStoneEffect weaponBonus(int attack, int durability) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				selfPT(attack, durability).performEffect(source.getPlayer().getWeapon(), null);
+			}
+		};
+	}
+
+	public static HStoneEffect iff(HSFilter condition, HSAction action) {
+		return new HStoneConditionalEffect(condition, action);
+	}
+
+	public static HStoneEffect unsummon() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				target.unsummon();
+			}
+		};
+	}
+
 }

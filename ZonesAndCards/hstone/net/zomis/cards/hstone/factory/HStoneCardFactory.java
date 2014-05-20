@@ -16,6 +16,7 @@ import net.zomis.cards.hstone.events.HStoneSecretRevealedEvent;
 import net.zomis.cards.hstone.triggers.BattlecryTrigger;
 import net.zomis.cards.hstone.triggers.CardEventDoubleTrigger;
 import net.zomis.cards.hstone.triggers.CardEventTrigger;
+import net.zomis.cards.hstone.triggers.DealDamageTrigger;
 import net.zomis.cards.hstone.triggers.HStoneTrigger;
 
 
@@ -281,6 +282,11 @@ public class HStoneCardFactory {
 				Battlecry.selfDestruct().performEffect(source, target);
 			}
 		};
+	}
+
+	public HStoneCardFactory poison() {
+//		"Destroy any minion damaged by this minion"
+		return on(new DealDamageTrigger(Battlecry.destroyTarget(), HSFilters.thisCard()));
 	}
 	
 }

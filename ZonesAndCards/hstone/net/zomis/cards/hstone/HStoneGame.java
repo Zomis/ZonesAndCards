@@ -15,6 +15,7 @@ import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
+import net.zomis.cards.hstone.sets.HStoneOption;
 import net.zomis.cards.model.ActionProvider;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -32,7 +33,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	private final List<HStoneEnchantment> enchantments;
 	
 	private int turnNumber;
-	private final CardZone<HStoneCard> temporaryZone;
+	private final CardZone<HStoneOption> temporaryZone;
 	
 	public void setTargetFilter(HStoneEffect targets, HStoneCard forWhat) {
 		this.targets = targets;
@@ -264,7 +265,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		this.enchantments.remove(ench);
 	}
 
-	public CardZone<HStoneCard> getTemporaryZone() {
+	public CardZone<HStoneOption> getTemporaryZone() {
 		return temporaryZone;
 	}
 	

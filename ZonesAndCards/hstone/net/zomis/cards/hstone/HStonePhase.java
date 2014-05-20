@@ -24,6 +24,7 @@ public class HStonePhase extends PlayerPhase {
 		
 		res.set(HStoneRes.MANA_AVAILABLE, res.getResources(HStoneRes.MANA_TOTAL) - res.getResources(HStoneRes.MANA_OVERLOAD));
 		res.set(HStoneRes.MANA_OVERLOAD, 0);
+		res.set(HStoneRes.CARDS_PLAYED, 0);
 		
 		HStoneGame game = getPlayer().getGame();
 		getPlayer().drawCard();

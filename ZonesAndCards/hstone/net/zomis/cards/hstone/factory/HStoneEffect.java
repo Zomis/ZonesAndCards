@@ -1,9 +1,10 @@
 package net.zomis.cards.hstone.factory;
 
+import net.zomis.cards.hstone.HSAction;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 
-public abstract class HStoneEffect implements HSFilter {
+public abstract class HStoneEffect implements HSFilter, HSAction {
 	private HSFilter filters;
 
 	public HStoneEffect() {
@@ -21,15 +22,12 @@ public abstract class HStoneEffect implements HSFilter {
 		return needsTarget() ? searcher.getGame().findAll(searcher, filters).size() > 0 : true;
 	}
 	
-	public boolean isValidTarget(HStoneCard searcher, HStoneCard target) {
-		return filters.shouldKeep(searcher, target);
-	}
-	
 	@Override
 	public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-		return isValidTarget(searcher, target);
+		return filters.shouldKeep(searcher, target);
 	}
 
+	@Override
 	public abstract void performEffect(HStoneCard source, HStoneCard target);
 	
 	

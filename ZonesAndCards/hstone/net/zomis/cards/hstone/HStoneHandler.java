@@ -7,6 +7,7 @@ import net.zomis.cards.hstone.actions.AbilityAction;
 import net.zomis.cards.hstone.actions.BattlefieldAction;
 import net.zomis.cards.hstone.actions.PlayAction;
 import net.zomis.cards.hstone.factory.CardType;
+import net.zomis.cards.hstone.sets.HStoneOption;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -21,8 +22,16 @@ public class HStoneHandler implements ActionHandler {
 
 	@Override
 	public StackAction click(Card<?> card) {
+		HStoneGame game = (HStoneGame) card.getGame();
+		
+		if (!game.getTemporaryZone().isEmpty()) {
+			CardZone<?> zone = card.getCurrentZone();
+			if (zone != game.getTemporaryZone())
+				return new InvalidStackAction("We're in temporary-zone state");
+			return new OptionAction((HStoneOption) card);
+		}
+		
 		HStoneCard hscard = (HStoneCard) card;
-		HStoneGame game = hscard.getGame();
 		HStonePlayer player = game.getCurrentPlayer();
 		
 		if (game.isTargetSelectionMode()) {
@@ -31,6 +40,7 @@ public class HStoneHandler implements ActionHandler {
 				return new InvalidStackAction("Illegal zone");
 			return new BattlefieldAction(hscard);
 		}
+		
 		if (player == null) {
 			if (hscard.getCurrentZone() == hscard.getPlayer().getHand()) {
 				return new NextTurnAction(game); // TODO: Implement switching cards

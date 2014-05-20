@@ -286,4 +286,9 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		addAbility(HSAbility.FROZEN_2);		
 	}
 
+	public void unsummon() {
+		this.zoneMoveOnBottom(getPlayer().getHand());
+		// TODO: When unsummoning: Restore triggers! Restore attack/health! Restore abilities!
+	}
+
 }
