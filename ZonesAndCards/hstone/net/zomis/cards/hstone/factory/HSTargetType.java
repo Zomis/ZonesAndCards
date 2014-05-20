@@ -3,7 +3,7 @@ package net.zomis.cards.hstone.factory;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 
-public enum HSTargetType implements HSFilter {
+public enum HSTargetType implements HSFilter { // TODO: Deprecate HSTargetType class, use HSFilters instead
 	PLAYER, MINION;
 
 	@Override

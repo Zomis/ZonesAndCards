@@ -14,8 +14,8 @@ public class AbilityAction extends StackAction {
 	
 	@Override
 	public boolean actionIsAllowed() {
-		if (!source.getResources().hasResources(HStoneRes.ACTION_POINTS, 1))
-			return setErrorMessage("No Action Points");
+		if (!source.hasActionPoints())
+			return setErrorMessage("Not enough action points");
 		if (!source.getPlayer().getResources().hasResources(HStoneRes.MANA_AVAILABLE, 2))
 			return setErrorMessage("Not enough mana: " + source.getPlayer());
 		return setOKMessage("All OK");
@@ -23,9 +23,10 @@ public class AbilityAction extends StackAction {
 	
 	@Override
 	protected void onPerform() {
-		source.getResources().changeResources(HStoneRes.ACTION_POINTS, -1);
+		source.getResources().changeResources(HStoneRes.ACTION_POINTS_USED, 1);
 		source.getPlayer().getResources().changeResources(HStoneRes.MANA_AVAILABLE, -2);
 		source.getGame().selectOrPerform(source.getModel().getEffect(), source);
+		source.getGame().cleanup();
 	}
 	
 }

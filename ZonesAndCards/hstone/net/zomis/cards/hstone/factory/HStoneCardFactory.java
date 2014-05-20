@@ -5,7 +5,6 @@ import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneClass;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
-import net.zomis.cards.hstone.ench.HStoneEnchSpecificAbility;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneCardEvent;
@@ -211,20 +210,43 @@ public class HStoneCardFactory {
 					
 					@Override
 					public boolean appliesTo(HStoneCard card) {
-						return card != source && card.isMinion() && who.shouldKeep(source, target);
+						return who.shouldKeep(source, card); // card.isMinion() && 
 					}
 				});
 			}
 		});
 	}
 
-	public HStoneCardFactory staticAbility(HSFilter enrage, HSAbility windfury) {
+	public HStoneCardFactory staticAbility(HSFilter who, HSAbility abilityGive) {
 		return battlecry(new HStoneEffect() {
 			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificAbility(target, windfury)));
+			public void performEffect(final HStoneCard source, HStoneCard target) {
+				source.addEnchantment(new HStoneEnchantment() {
+					@Override
+					public boolean isActive() {
+						return source.isAlive();
+					}
+					
+					@Override
+					public boolean appliesTo(HStoneCard card) {
+						return who.shouldKeep(source, card); // card.isMinion() && 
+					}
+					
+					@Override
+					public boolean hasAbility(HStoneCard card, HSAbility ability, boolean hasAbility) {
+						if (ability == abilityGive)
+							return true;
+						return hasAbility;
+					}
+				});
 			}
 		});
+//		new HStoneEffect() {
+//			@Override
+//			public void performEffect(HStoneCard source, HStoneCard target) {
+//				source.addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificAbility(source, windfury)));
+//			}
+//		});
 	}
 	
 }

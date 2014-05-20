@@ -5,6 +5,8 @@ import static net.zomis.cards.hstone.factory.HSFilters.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
 import net.zomis.cards.hstone.HStoneGame;
+import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
+import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.hstone.factory.HSAbility;
@@ -19,10 +21,10 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 2,      FREE, 1, 1, "Novice Engineer").battlecry(drawCard()).card());
 		game.addCard(minion( 2,      FREE, 2, 3, "River Crocolisk").card());
 		game.addCard(minion( 2,    COMMON, 3, 2, "Acidic Swamp Ooze").battlecry(destroyOppWeapon()).card());
-//		game.addCard(minion( 2,    COMMON, 2, 3, "Amani Berserker").effect("<b>Enrage:</b>").effect("+3 Attack").card());
+		game.addCard(minion( 2,    COMMON, 2, 3, "Amani Berserker").staticPT(enrage(), 3, 0).card());
 //		game.addCard(minion( 2,    COMMON, 2, 3, "Bloodsail Raider").effect("<b>Battlecry:</b>").effect("Gain Attack equal to the Attack of your weapon").card());
 		game.addCard(minion( 2,    COMMON, 2, 1, "Bluegill Warrior").charge().card());
-//		game.addCard(minion( 2,    COMMON, 2, 2, "Dire Wolf Alpha").effect("Adjacent minions have +1 Attack").card());
+		game.addCard(minion( 2,    COMMON, 2, 2, "Dire Wolf Alpha").staticPT(adjacents(), 1, 0).card());
 		game.addCard(minion( 2,    COMMON, 3, 2, "Faerie Dragon").shroud().card());
 		game.addCard(minion( 2,    COMMON, 2, 2, "Frostwolf Grunt").taunt().card());
 		game.addCard(minion( 2,    COMMON, 2, 1, "Ironbeak Owl").battlecry(silencer()).card());
@@ -33,8 +35,8 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 2,    COMMON, 3, 2, "Youthful Brewmaster").battlecry("Return a friendly minion from the battlefield to your hand").card());
 		game.addCard(minion( 2,      RARE, 4, 5, "Ancient Watcher").noAttack().card());
 //		game.addCard(minion( 2,      RARE, 2, 2, "Crazed Alchemist").battlecry("Swap the Attack and Health of a minion").card());
-//		game.addCard(minion( 2,      RARE, 3, 2, "Knife Juggler").effect("After you summon a minion, deal 1 damage to a random enemy").card());
-//		game.addCard(minion( 2,      RARE, 1, 3, "Mana Addict").effect("Whenever you cast a spell, gain +2 Attack this turn").card());
+		game.addCard(minion( 2,      RARE, 3, 2, "Knife Juggler").on(HStoneMinionSummonedEvent.class, toRandom(all().and(not(samePlayer())), damage(1)), samePlayer()).card());
+		game.addCard(minion( 2,      RARE, 1, 3, "Mana Addict").on(HStoneCardPlayedEvent.class, tempBoost(thisCard(), 2, 0), samePlayer().and(isSpell())).card());
 //		game.addCard(minion( 2,      RARE, 2, 2, "Mana Wraith").effect("ALL minions cost (1) more").card());
 		game.addCard(minion( 2,      RARE, 1, 3, "Master Swordsmith").on(HStoneTurnEndEvent.class, toRandom(and(allMinions(), samePlayer()), otherPT(1, 0)), samePlayer()).card());
 //		game.addCard(minion( 2,      RARE, 2, 2, "Pint-Sized Summoner").effect("The first minion you play each turn costs (1) less").card());
@@ -48,6 +50,7 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 2, LEGENDARY, 4, 4, "Millhouse Manastorm").effect("<b>Battlecry:</b>").effect("Enemy spells cost (0) next turn").card());
 		game.addCard(minion( 2, LEGENDARY, 0, 4, "Nat Pagle").on(HStoneTurnStartEvent.class, evenChance(drawCard(), doNothing()), samePlayer()).card());
 	}
+
 
 
 }

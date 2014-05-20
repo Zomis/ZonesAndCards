@@ -7,7 +7,8 @@ public enum HStoneRes implements IResource {
 	// both minions and players
 	HEALTH, MAX_HEALTH,
 	ATTACK,
-	ACTION_POINTS,
+	@Deprecated ACTION_POINTS,
+	ACTION_POINTS_USED,
 	AWAITING_DAMAGE, AWAITING_HEAL, 
 	
 	// Minions only

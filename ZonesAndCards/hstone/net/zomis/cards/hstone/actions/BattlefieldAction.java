@@ -2,6 +2,9 @@ package net.zomis.cards.hstone.actions;
 
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
+import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.factory.CardType;
+import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.model.StackAction;
 
@@ -20,7 +23,19 @@ public class BattlefieldAction extends StackAction {
 				return setErrorMessage("Target not allowed: " + card);
 			return true;
 		}
-		return card.isAttackPossible();
+		
+		boolean hasAttack = card.getModel().isType(CardType.POWER) || card.getResources().hasResources(HStoneRes.ATTACK, 1);
+		if (!hasAttack)
+			return setErrorMessage("No attack value");
+		
+		if (!card.hasActionPoints())
+			return setErrorMessage("No action points available");
+		
+		if (card.hasAbility(HSAbility.FROZEN))
+			return setErrorMessage("Frozen");
+		if (card.hasAbility(HSAbility.NO_ATTACK))
+			return setErrorMessage("Has ability NO_ATTACK");
+		return true;
 	}
 	
 	@Override

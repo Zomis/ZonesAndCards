@@ -167,9 +167,17 @@ public class HSFilters {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-				return target.getHealth() < target.getHealthMax();
+				return target.getHealth() < target.getResources().get(HStoneRes.MAX_HEALTH);
 			}
 		};
 	}
 
+	public static HSFilter isSpell() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				return target.isType(CardType.SPELL);
+			}
+		};
+	}
 }

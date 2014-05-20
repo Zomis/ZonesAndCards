@@ -13,16 +13,16 @@ public class HStoneEnchFromModel extends HStoneEnchantment {
 	@Override
 	public Integer getResource(HStoneCard card, HStoneRes resource, Integer resources) {
 		if (resource == HStoneRes.ATTACK)
-			return card.getModel().getAttack();
+			return card.getResources().get(resource);
 		if (resource == HStoneRes.MAX_HEALTH)
-			return card.getModel().getHealth();
+			return card.getResources().get(resource);
 		if (resource == HStoneRes.MANA_COST)
-			return card.getModel().getManaCost();
+			return card.getResources().get(resource);
 		return resources;
 	}
 
 	@Override
 	public boolean hasAbility(HStoneCard card, HSAbility ability, boolean hasAbility) {
-		return card.getModel().getAbilities().contains(ability);
+		return card.hasOwnAbility(ability);
 	}
 }

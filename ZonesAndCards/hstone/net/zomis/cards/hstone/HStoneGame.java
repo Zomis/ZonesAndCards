@@ -8,9 +8,11 @@ import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchFromModel;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
+import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.hstone.factory.CardType;
+import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneChar;
 import net.zomis.cards.hstone.factory.HStoneEffect;
@@ -240,6 +242,26 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 
 	public HStonePlayer getOpponent() {
 		return getCurrentPlayer().getNextPlayer();
+	}
+
+	public boolean getAbility(HStoneCard card, HSAbility ability) {
+		boolean result = false;
+		for (HStoneEnchantment ench : this.enchantments) {
+			if (!ench.isActive())
+				continue;
+			if (!ench.appliesTo(card))
+				continue;
+			result = ench.hasAbility(card, ability, result);
+		}
+		return result;
+	}
+
+	public void removeEnchantment(HStoneEnchantment ench) {
+		this.enchantments.remove(ench);
+	}
+
+	public void callEvent(HStoneMinionSummonedEvent event) {
+		this.executeEvent(event);
 	}
 	
 }

@@ -193,5 +193,9 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		this.weapon = card;
 		card.zoneMoveOnBottom(this.specialZone);
 	}
+
+	void onStartTurn() {
+		
+	}
 	
 }

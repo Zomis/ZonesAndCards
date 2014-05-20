@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
-import net.zomis.cards.hstone.ench.HStoneEnchSilence;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneDamagedEvent;
 import net.zomis.cards.hstone.events.HStoneHealEvent;
@@ -36,12 +35,17 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		super(model);
 		currentZone = initialZone;
 		res.set(HStoneRes.ATTACK, model.getAttack());
+		res.set(HStoneRes.MANA_COST, model.getManaCost());
 		res.set(HStoneRes.HEALTH, model.getHealth());
+		res.set(HStoneRes.MAX_HEALTH, model.getHealth());
 		res.set(HStoneRes.SPELL_DAMAGE, model.getSpellDamage());
 		
 		abilities.addAll(model.getAbilities());
-		if (abilities.contains(HSAbility.CHARGE))
-			this.res.set(HStoneRes.ACTION_POINTS, 1);
+		if (!abilities.contains(HSAbility.CHARGE)) {
+			// TODO: Check when minion appears on battlefield if it should have charge or not, especially for Beasts
+			// cannot check that here because of zone not being added yet
+			this.res.set(HStoneRes.ACTION_POINTS_USED, 255);
+		}
 		
 		this.triggers = new ArrayList<HStoneTrigger<?>>(model.getTriggers());
 		
@@ -64,28 +68,9 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		return res;
 	}
 
-	public boolean isAttackPossible() {
-		boolean hasAttack = this.getModel().isType(CardType.POWER) || getResources().hasResources(HStoneRes.ATTACK, 1);
-		return hasAttack && getResources().hasResources(HStoneRes.ACTION_POINTS, 1)
-				&& !hasAbility(HSAbility.FROZEN) && !hasAbility(HSAbility.NO_ATTACK);
-	}
-
-	void onEndTurn() {
-		if (!hasAbility(HSAbility.FROZEN)) {
-			int actions = hasAbility(HSAbility.WINDFURY) ? 2 : 1;
-			res.set(HStoneRes.ACTION_POINTS, actions);
-		}
-		abilities.remove(HSAbility.FROZEN);
-	}
-
 	public boolean hasAbility(HSAbility ability) {
-		
-		return abilities.contains(ability);
-	}
-
-	@Deprecated
-	public boolean isFrozen() {
-		return hasAbility(HSAbility.FROZEN);
+		return getGame().getAbility(this, ability);
+//		return abilities.contains(ability);
 	}
 
 	public void addAbility(HSAbility abilityn) {
@@ -156,7 +141,16 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	public void silence() {
 		this.abilities.clear();
 		this.triggers.clear();
-		this.getGame().addEnchantment(new HStoneEnchSilence(this));
+		for (HStoneEnchantment ench : this.enchantmentResponsibles) {
+			getGame().removeEnchantment(ench);
+		}
+		this.enchantmentResponsibles.clear();
+		
+		this.getResources().set(HStoneRes.ATTACK, getModel().getAttack());
+		this.getResources().set(HStoneRes.MAX_HEALTH, getModel().getHealth());
+		if (getHealth() > getHealthMax())
+			this.getResources().set(HStoneRes.HEALTH, getModel().getHealth());
+//		this.getGame().addEnchantment(new HStoneEnchSilence(this));
 	}
 
 	public void destroy() {
@@ -234,7 +228,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		copy.triggers.addAll(triggers); // TODO: Create copies of the triggers.
 		
 		for (HStoneEnchantment ench : getGame().getEnchantments()) {
-			if (ench.appliesTo(this) && !ench.appliesTo(copy)) {
+			if (ench.appliesTo(this) && !ench.appliesTo(copy)) { // TODO: Test enchantment logic when copying a card
 				getGame().addEnchantmentAfter(new HStoneEnchForward(ench) {
 					@Override
 					public boolean appliesTo(HStoneCard card) {
@@ -257,12 +251,42 @@ public class HStoneCard extends Card<HStoneCardModel> {
 	}
 
 	public int getManaCost() {
-		return getModel().getManaCost();
+		return getGame().getResources(this, HStoneRes.MANA_COST);
+//		return getModel().getManaCost();
 //		return getResources().getResources(HStoneRes.MANA_COST);
 	}
 
 	public void addEnchantment(HStoneEnchantment enchantment) {
+		getGame().addEnchantment(enchantment);
 		this.enchantmentResponsibles.add(enchantment);
 	}
+
+	public boolean hasOwnAbility(HSAbility ability) {
+		return this.abilities.contains(ability);
+	}
+
+	public boolean hasActionPoints() {
+		int actionPointsUsed = this.getResources().get(HStoneRes.ACTION_POINTS_USED);
+		int actionPointsMax = this.hasAbility(HSAbility.WINDFURY) ? 2 : 1;
+		
+		return actionPointsUsed < actionPointsMax;
+	}
+
+	void onEndTurnOpponent() {
+		removeAbility(HSAbility.FROZEN_2);
+	}
 	
+	void onEndTurn() {
+		res.set(HStoneRes.ACTION_POINTS_USED, 0);
+		
+		if (!hasAbility(HSAbility.FROZEN_2)) {
+			abilities.remove(HSAbility.FROZEN);
+		}
+	}
+
+	public void freeze() {
+		addAbility(HSAbility.FROZEN);		
+		addAbility(HSAbility.FROZEN_2);		
+	}
+
 }

@@ -15,13 +15,13 @@ public class FightModule {
 		
 		damage(source, target, attack);
 		damage(target, source, counterAttack);
-		source.getResources().changeResources(HStoneRes.ACTION_POINTS, -1);
+		source.getResources().changeResources(HStoneRes.ACTION_POINTS_USED, 1);
 		
 		List<IEvent> events = new ArrayList<IEvent>();
 		if (attack > 0)
-			events.add(new HStoneDamageDealtEvent(source));
+			events.add(new HStoneDamageDealtEvent(source, target));
 		if (counterAttack > 0)
-			events.add(new HStoneDamageDealtEvent(target));
+			events.add(new HStoneDamageDealtEvent(target, source));
 		
 		game.cleanup(events);
 	}

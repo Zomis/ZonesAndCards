@@ -27,6 +27,7 @@ public class HStonePhase extends PlayerPhase {
 		
 		HStoneGame game = getPlayer().getGame();
 		getPlayer().drawCard();
+		getPlayer().onStartTurn();
 		game.increaseTurnCounter();
 		game.executeTurnStartEvent();
 		game.cleanup();
@@ -35,6 +36,9 @@ public class HStonePhase extends PlayerPhase {
 	@Override
 	public void onEnd(CardGame<?, ?> gm) {
 		HStonePlayer pl = (HStonePlayer) getPlayer();
+		for (HStoneCard card : pl.getNextPlayer().getBattlefield()) {
+			card.onEndTurnOpponent();
+		}
 		for (HStoneCard card : pl.getBattlefield()) {
 			card.onEndTurn();
 		}

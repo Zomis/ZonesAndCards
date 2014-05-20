@@ -17,6 +17,7 @@ import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchSetTo;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
+import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.model.CardZone;
@@ -92,7 +93,7 @@ public class Battlecry {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				if (target.hasAbility(HSAbility.FROZEN))
 					FightModule.damage(source, target, damage);
-				else target.addAbility(HSAbility.FROZEN);
+				else target.freeze();
 			}
 		};
 	}
@@ -128,10 +129,15 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect selfPT(final int attack, final int health) {
+		if (attack < 0 || health < 0)
+			throw new IllegalArgumentException("Attack and health must be >= 0");
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getGame().addEnchantment(new HStoneEnchSpecificPT(source, attack, health));
+//				source.getGame().addEnchantment(new HStoneEnchSpecificPT(source, attack, health));
+				source.getResources().changeResources(HStoneRes.ATTACK, attack);
+				source.getResources().changeResources(HStoneRes.HEALTH, health);
+				source.getResources().changeResources(HStoneRes.MAX_HEALTH, health);
 			}
 		};
 	}
@@ -172,8 +178,10 @@ public class Battlecry {
 					protected void onPerform() {
 						for (int i = 0; i < count; i++) {
 							CardZone<HStoneCard> zone = source.getPlayer().getBattlefield();
-							if (zone.size() < HStonePlayer.MAX_BATTLEFIELD_SIZE)
-								zone.createCardOnBottom(model);
+							if (zone.size() < HStonePlayer.MAX_BATTLEFIELD_SIZE) {
+								HStoneCard card = zone.createCardOnBottom(model);
+								source.getGame().callEvent(new HStoneMinionSummonedEvent(card));
+							}
 						}
 					}
 				};
@@ -224,11 +232,16 @@ public class Battlecry {
 	}
 	
 	public static HStoneEffect otherPT(final int attack, final int health) {
+		if (attack < 0 || health < 0)
+			throw new IllegalArgumentException("Attack and health must be >= 0");
 		return new HStoneEffect() {
 			@Override
-			public void performEffect(HStoneCard source, final HStoneCard target) {
+			public void performEffect(HStoneCard source, HStoneCard target) {
 				requireOnBattlefield(target);
-				source.getGame().addEnchantment(new HStoneEnchSpecificPT(target, attack, health));
+//				source.getGame().addEnchantment(new HStoneEnchSpecificPT(target, attack, health));
+				target.getResources().changeResources(HStoneRes.ATTACK, attack);
+				target.getResources().changeResources(HStoneRes.HEALTH, health);
+				target.getResources().changeResources(HStoneRes.MAX_HEALTH, health);
 			}
 		};
 	}
@@ -406,7 +419,13 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect freeze() {
-		return giveAbility(HSAbility.FROZEN);
+		return new HStoneEffect() {
+			
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				target.freeze();
+			}
+		}; 
 	}
 
 	public static HStoneEffect destroyManaCrystal() {

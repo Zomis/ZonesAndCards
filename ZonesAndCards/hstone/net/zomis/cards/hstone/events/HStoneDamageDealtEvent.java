@@ -4,8 +4,14 @@ import net.zomis.cards.hstone.HStoneCard;
 
 public class HStoneDamageDealtEvent extends HStoneCardEvent {
 
-	public HStoneDamageDealtEvent(HStoneCard source) {
+	private final HStoneCard	target;
+
+	public HStoneDamageDealtEvent(HStoneCard source, HStoneCard target) {
 		super(source);
+		this.target = target;
 	}
 	
+	public HStoneCard getTarget() {
+		return target;
+	}
 }
