@@ -7,14 +7,13 @@ import static net.zomis.cards.hstone.factory.HStoneRarity.*;
 import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.events.HStoneHealEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
-import net.zomis.cards.hstone.factory.HSTargetType;
 import net.zomis.cards.util.CardSet;
 
 public class PriestCards implements CardSet<HStoneGame> {
 
 	@Override
 	public void addCards(HStoneGame game) {
-		game.addCard(minion( 1,      FREE, 1, 3, "Northshire Cleric").on(HStoneHealEvent.class, drawCard(), HSTargetType.MINION).card());
+		game.addCard(minion( 1,      FREE, 1, 3, "Northshire Cleric").on(HStoneHealEvent.class, drawCard(), allMinions()).card());
 		game.addCard(minion( 4,    COMMON, 0, 5, "Lightspawn").battlecry(enchantSelfWithAttackEqualsHealth()).card());
 		game.addCard(minion( 6,    COMMON, 6, 6, "Temple Enforcer").battlecry(otherPT(0, 3)).card());
 //		game.addCard(minion( 4,      RARE, 3, 5, "Auchenai Soulpriest").effect("Your cards and powers that restore Health now deal damage instead").card());
@@ -28,7 +27,7 @@ public class PriestCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 2,      FREE, "Shadow Word: Pain").effect(destroyMinion(withAttackLess(3))).card());
 		game.addCard(spell( 0,    COMMON, "Circle of Healing").effect(healAll(4, all())).card());
 		game.addCard(spell( 2,    COMMON, "Divine Spirit").effect(doubleHealth()).card());
-		game.addCard(spell( 5,    COMMON, "Holy Nova").effect(combined(forEach(not(samePlayer()), null, damage(2)), forEach(samePlayer(), heal(2), null))).card());
+		game.addCard(spell( 5,    COMMON, "Holy Nova").effect(combined(forEach(opponentPlayer(), null, damage(2)), forEach(samePlayer(), heal(2), null))).card());
 		game.addCard(spell( 1,    COMMON, "Inner Fire").effect(setOtherAttackEqualsHealth()).card());
 		game.addCard(spell(10,    COMMON, "Mind Control").effect(stealMinion(all())).card());
 		game.addCard(spell( 1,    COMMON, "Mind Vision").effect(copyOppCardInHand()).card());

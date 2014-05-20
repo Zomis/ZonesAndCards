@@ -14,12 +14,12 @@ import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
-import net.zomis.cards.hstone.ench.HStoneEnchSetTo;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
+import net.zomis.cards.hstone.triggers.CardEventTrigger;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
 import net.zomis.events.EventHandlerGWT;
@@ -37,20 +37,6 @@ public class Battlecry {
 			public int determineCount(HStoneCard source, HStoneCard target) {
 				return count;
 			}
-		};
-	}
-	
-	public static HSFilter combined(final HSTargetType... target) {
-		return new HSFilter() {
-			@Override
-			public boolean shouldKeep(HStoneCard searcher, HStoneCard obj) {
-				for (HSTargetType tar : target) {
-					if (tar.shouldKeep(searcher, obj))
-						return true;
-				}
-				return false;
-			}
-			
 		};
 	}
 	
@@ -80,7 +66,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getPlayer().getNextPlayer().removeWeapon();
+				source.getPlayer().getNextPlayer().destroyWeapon();
 			}
 		};
 	}
@@ -155,7 +141,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect silencer() {
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				requireOnBattlefield(target);
@@ -309,7 +295,8 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				// TODO Auto-generated method stub
+				HStoneCard card = source.getPlayer().getSpecialZone().createCardOnBottom(source.getGame().getCardModel(name));
+				source.getPlayer().equip(card);
 			}
 		};
 	}
@@ -346,7 +333,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect giveAbility(final HSAbility ability) {
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				requireOnBattlefield(target);
@@ -378,10 +365,10 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect set(final HStoneRes resource, final int value) {
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				target.getGame().addEnchantment(new HStoneEnchSetTo(target, HStoneRes.ATTACK, value));
+				target.getResources().set(resource, value);
 			}
 		};
 	}
@@ -399,7 +386,7 @@ public class Battlecry {
 	}
 	
 	public static HStoneEffect destroyTarget() {
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.destroy();
@@ -604,7 +591,7 @@ public class Battlecry {
 
 	public static HStoneEffect stealMinionUntilEndOfTurn(HSFilter filter) {
 //		 "Gain control of an enemy minion with 3 or less Attack until end of turn"
-		return new HStoneEffect(allMinions().and(opponentPlayer()), filter) {
+		return new HStoneEffect(opponentMinions().and(filter)) {
 			@Override
 			public void performEffect(HStoneCard source, final HStoneCard target) {
 				final int turn = target.getGame().getTurnNumber();
@@ -642,7 +629,8 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getGame().addEnchantment(new HStoneEnchForward(new HStoneEnchSetTo(target, HStoneRes.ATTACK, target.getHealth())));
+//				source.getGame().addEnchantment(new HStoneEnchForward(new HStoneEnchSetTo(target, HStoneRes.ATTACK, target.getHealth())));
+				target.getResources().set(HStoneRes.ATTACK, target.getHealth());
 			}
 		};
 	}
@@ -674,7 +662,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect doubleHealth() {
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				int moreHealth = target.getHealth();
@@ -713,7 +701,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect transform(final String cardName) {
-		return new HStoneEffect() {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				// TODO Auto-generated method stub
@@ -773,5 +761,102 @@ public class Battlecry {
 				});
 			}
 		};
+	}
+	public static HStoneEffect oppSummon(final String cardName, final int count) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				summon(cardName, count).performEffect(source.getPlayer().getNextPlayer().getPlayerCard(), target);
+			}
+		};
+	}
+
+	public static HStoneEffect destroyAtEndOfTurn() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				final int turn = source.getGame().getTurnNumber();
+				source.addTrigger(new CardEventTrigger(HStoneTurnEndEvent.class, destroy(source), new HSFilter() {
+					@Override
+					public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+						return searcher.getGame().getTurnNumber() == turn;
+					}
+				}));
+			}
+		};
+	}
+
+	public static HStoneEffect destroy(final HStoneCard card) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				card.destroy();
+			}
+		};
+	}
+	public static HStoneEffect tempBoostToMyHero(int attack, int health) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				tempBoost(null, attack, health).performEffect(source, source.getPlayer().getPlayerCard());
+			}
+		};
+	}
+
+	public static HStoneEffect oppDraw(final int i) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				final HStoneCard opp = source.getPlayer().getNextPlayer().getPlayerCard();
+				drawCards(i).performEffect(opp, opp);
+			}
+		};
+	}
+
+	public static HStoneEffect changeMyManaTotal(final int mana) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.getPlayer().getResources().changeResources(HStoneRes.MANA_TOTAL, mana);
+			}
+		};
+	}
+
+	public static HStoneEffect toTargetAndAdjacents(HSFilter filter, HStoneEffect toTarget, HStoneEffect toAdjacents) {
+//		  "Deal 5 damage to a minion and 2 damage to adjacent ones"
+		return new HStoneEffect(allMinions().and(filter)) {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				toTarget.performEffect(source, target);
+				adjacents(toAdjacents).performEffect(source, target);
+			}
+		};
+	}
+
+	public static HStoneEffect ifElse(HSFilter condition, HStoneEffect ifTrue, HStoneEffect ifFalse) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				if (condition.shouldKeep(source, target)) {
+					ifTrue.performEffect(source, target);
+					return;
+				}
+				ifFalse.performEffect(source, target);
+			}
+		};
+	}
+
+	public static HStoneEffect destroyEnemySecrets() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				HStonePlayer player = source.getPlayer().getNextPlayer();
+				player.getSecrets().moveToBottomOf(player.getDiscard());
+			}
+		};
+	}
+
+	public static HStoneEffect toFriendlyBeast(final HStoneEffect combined) {
+		return to(allMinions().and(minionIs(HStoneMinionType.BEAST)).and(samePlayer()), combined);
 	}
 }

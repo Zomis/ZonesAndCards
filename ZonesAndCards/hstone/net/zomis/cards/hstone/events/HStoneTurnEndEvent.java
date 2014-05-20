@@ -8,8 +8,4 @@ public class HStoneTurnEndEvent extends HStoneCardEvent {
 		super(card.getPlayerCard());
 	}
 	
-	public HStonePlayer getPlayer() {
-		return getCard().getPlayer();
-	}
-
 }

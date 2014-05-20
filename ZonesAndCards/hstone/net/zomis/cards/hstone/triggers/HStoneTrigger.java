@@ -10,6 +10,10 @@ public abstract class HStoneTrigger<T extends IEvent> {
 	private Class<? extends T> clazz;
 	protected final HStoneEffect	effect;
 
+	public HStoneTrigger(Class<? extends T> eventClass) {
+		this(eventClass, null);
+	}
+	
 	public HStoneTrigger(Class<? extends T> eventClass, HStoneEffect effect) {
 		this.clazz = eventClass;
 		this.effect = effect;

@@ -18,7 +18,7 @@ public class ManaFiveCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 5,    COMMON, 4, 5, "Darkscale Healer").battlecry(forEach(samePlayer(), null, heal(2))).card());
 		game.addCard(minion( 5,    COMMON, 5, 5, "Devilsaur").card());
 		game.addCard(minion( 5,    COMMON, 3, 6, "Fen Creeper").taunt().card());
-		game.addCard(minion( 5,    COMMON, 4, 4, "Frostwolf Warlord").battlecry(forEach(allMinions().and(not(thisCard())), selfPT(1, 1), null)).card());
+		game.addCard(minion( 5,    COMMON, 4, 4, "Frostwolf Warlord").battlecry(forEach(allMinions().and(anotherCard()), selfPT(1, 1), null)).card());
 		game.addCard(minion( 5,    COMMON, 2, 7, "Gurubashi Berserker").on(HStoneDamagedEvent.class, selfPT(3, 0), thisCard()).card());
 		game.addCard(minion( 5,    COMMON, 4, 4, "Silver Hand Knight").battlecry(summon("Squire")).card());
 //		game.addCard(minion( 5,    COMMON, 4, 6, "Spiteful Smith").effect("<b>Enrage:</b>").effect("Your weapon has +2 Attack").card());

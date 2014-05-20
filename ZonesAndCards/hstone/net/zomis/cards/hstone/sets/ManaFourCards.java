@@ -23,7 +23,7 @@ public class ManaFourCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 4,      FREE, 3, 5, "Sen'jin Shieldmasta").taunt().card());
 //		game.addCard(minion( 4,    COMMON, 5, 4, "Ancient Brewmaster").battlecry("Return a friendly minion from the battlefield to your hand").card());
 		game.addCard(minion( 4,    COMMON, 4, 5, "Chillwind Yeti").card());
-		game.addCard(minion( 4,    COMMON, 4, 2, "Cult Master").on(HStoneMinionDiesEvent.class, drawCard(), samePlayer().and(allMinions()).and(not(thisCard()))).card());
+		game.addCard(minion( 4,    COMMON, 4, 2, "Cult Master").on(HStoneMinionDiesEvent.class, drawCard(), samePlayer().and(allMinions()).and(anotherCard())).card());
 		game.addCard(minion( 4,    COMMON, 4, 4, "Dark Iron Dwarf").battlecry(tempBoost(allMinions(), 2, 0)).card());
 		game.addCard(minion( 4,    COMMON, 2, 4, "Dragonling Mechanic").battlecry(summon("Mechanical Dragonling")).card());
 //		game.addCard(minion( 4,    COMMON, 3, 3, "Dread Corsair").taunt().effect("Costs (1) less per Attack of your weapon").card());
@@ -50,15 +50,6 @@ public class ManaFourCards implements CardSet<HStoneGame> {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.getResources().changeResources(HStoneRes.SPELL_DAMAGE, spellDamageBonus);
-			}
-		};
-	}
-
-	private HStoneEffect oppSummon(final String cardName, final int count) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				summon(cardName, count).performEffect(source.getPlayer().getNextPlayer().getPlayerCard(), target);
 			}
 		};
 	}

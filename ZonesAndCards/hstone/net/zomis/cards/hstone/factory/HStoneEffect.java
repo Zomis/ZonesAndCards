@@ -4,25 +4,25 @@ import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 
 public abstract class HStoneEffect implements HSFilter {
-	private HSFilter[]	filters;
+	private HSFilter filters;
 
 	public HStoneEffect() {
 		this((HSFilter) null);
 	}
-	public HStoneEffect(HSFilter... filters) {
+	public HStoneEffect(HSFilter filters) {
 		this.filters = filters;
 	}
 	
 	public boolean needsTarget() {
-		return filters != null && filters.length > 0 && filters[0] != null;
+		return filters != null;
+	}
+	
+	public boolean hasAnyAvailableTargets(HStoneCard searcher) {
+		return needsTarget() ? searcher.getGame().findAll(searcher, filters).size() > 0 : true;
 	}
 	
 	public boolean isValidTarget(HStoneCard searcher, HStoneCard target) {
-		for (HSFilter filter : filters) {
-			if (filter != null && !filter.shouldKeep(searcher, target))
-				return false;
-		}
-		return true;
+		return filters.shouldKeep(searcher, target);
 	}
 	
 	@Override

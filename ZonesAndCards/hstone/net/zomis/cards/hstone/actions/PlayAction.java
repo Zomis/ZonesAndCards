@@ -5,6 +5,7 @@ import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
+import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.model.StackAction;
 
 public class PlayAction extends StackAction {
@@ -26,23 +27,26 @@ public class PlayAction extends StackAction {
 		HStoneCardModel model = model();
 		owner.getResources().changeResources(HStoneRes.MANA_AVAILABLE, -getManaCost());
 		card.getGame().callEvent(new HStoneCardPlayedEvent(card));
-		if (model.isMinion()) {
-			card.zoneMoveOnBottom(owner.getBattlefield());
-		}
-		else if (model.isSecret()) {
-			throw new UnsupportedOperationException();
-		}
-		else if (model.isSpell()) {
-			card.getGame().selectOrPerform(model.getEffect(), card);
-			card.zoneMoveOnBottom(owner.getDiscard());
-		}
-		else if (model.isWeapon()) {
-			card.getPlayer().equip(card);
+		
+		switch (model.getType()) {
+			case MINION:
+				card.zoneMoveOnBottom(owner.getBattlefield());
+				break;
+			case SPELL:
+				card.getGame().selectOrPerform(model.getEffect(), card);
+				if (card.getCurrentZone() == owner.getHand()) // if the card is a secret it should have been placed in a different zone already
+					card.zoneMoveOnBottom(owner.getDiscard());
+				break;
+			case WEAPON:
+				card.getPlayer().equip(card);
+				break;
+			default:
+				break;
 		}
 	}
 	
 	private int getManaCost() {
-		return card.getGame().getResources(card, HStoneRes.MANA_COST);
+		return card.getManaCost();
 	}
 	
 	@Override
@@ -54,7 +58,10 @@ public class PlayAction extends StackAction {
 		if (model().isMinion() && owner.getBattlefield().size() == HStonePlayer.MAX_BATTLEFIELD_SIZE) {
 			return setErrorMessage("Battlefield is full");
 		}
-		// TODO: Make sure that there is at least one available target for the action, if action requires a target
+		HStoneEffect effect = card.getModel().getEffect();
+		if (effect != null) {
+			return effect.hasAnyAvailableTargets(card);
+		}
 		return true;
 	}
 	

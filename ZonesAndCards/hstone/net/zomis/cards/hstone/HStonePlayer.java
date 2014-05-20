@@ -30,7 +30,8 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	private HStoneCard heroPower;
 	private final HStoneCard playerCard;
 	private final CardZone<HStoneCard> specialZone;
-	private final CardZone<HStoneCard>	discard;
+	private final CardZone<HStoneCard> discard;
+	private final CardZone<HStoneCard> secrets;
 	
 	public HStonePlayer(HStoneGame game, HStoneChar character) {
 		this.setName(character.getName());
@@ -38,6 +39,7 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		this.library     = new CardZone<HStoneCard>("Deck", this);
 		this.battlefield = new CardZone<HStoneCard>("Battlefield", this);
 		this.discard	 = new CardZone<HStoneCard>("Discard", this);
+		this.secrets	 = new CardZone<HStoneCard>("Secrets", this);
 		
 		this.hand.setKnown(this, true);
 		this.battlefield.setGloballyKnown(true);
@@ -161,11 +163,6 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		return false;
 	}
 
-	public void removeWeapon() {
-		if (weapon != null)
-			weapon.zoneMoveOnBottom(null);
-	}
-
 	public HStoneCard getWeapon() {
 		return this.weapon;
 	}
@@ -186,16 +183,24 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	public CardZone<HStoneCard> getDiscard() {
 		return this.discard;
 	}
+	
+	public CardZone<HStoneCard> getSecrets() {
+		return secrets;
+	}
 
 	public void equip(HStoneCard card) {
+		if (!card.getModel().isWeapon())
+			throw new IllegalArgumentException("Card is not a weapon: " + card);
 		if (this.weapon != null)
 			this.weapon.zoneMoveOnBottom(getDiscard());
 		this.weapon = card;
 		card.zoneMoveOnBottom(this.specialZone);
 	}
 
-	void onStartTurn() {
-		
+	public void destroyWeapon() {
+		if (this.weapon != null)
+			this.weapon.zoneMoveOnBottom(null);
+		this.weapon = null;
 	}
 	
 }

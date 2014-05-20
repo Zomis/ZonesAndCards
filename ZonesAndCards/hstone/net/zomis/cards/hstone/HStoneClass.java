@@ -51,7 +51,7 @@ public enum HStoneClass {
 			case PRIEST:
 				return factory().effect(heal(2)).card();
 			case ROGUE:
-				return factory().effect(equip("Rogue Weapon")).card();
+				return factory().effect(equip("Wicked Knife")).card();
 			case WARLOCK:
 				return factory().effect(combined(damageMyHero(2), drawCard())).card();
 			default:

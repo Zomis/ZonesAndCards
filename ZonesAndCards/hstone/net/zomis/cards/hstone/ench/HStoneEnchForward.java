@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.ench;
 
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.factory.HSAbility;
 
 public class HStoneEnchForward extends HStoneEnchantment {
 	
@@ -19,6 +20,11 @@ public class HStoneEnchForward extends HStoneEnchantment {
 	@Override
 	public Integer getResource(HStoneCard card, HStoneRes resource, Integer resources) {
 		return forward.getResource(card, resource, resources);
+	}
+	
+	@Override
+	public boolean hasAbility(HStoneCard card, HSAbility ability, boolean hasAbility) {
+		return forward.hasAbility(card, ability, hasAbility);
 	}
 	
 	@Override

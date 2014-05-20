@@ -9,26 +9,12 @@ import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.events.HStoneHealEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
+import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HSFilters;
-import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.util.CardSet;
 
 public class ManaOneCards implements CardSet<HStoneGame> {
 
-	public enum CardEnumTest {
-		FLAME_OF_AZZINOTH(minion( 1,      NONE, 2, 1, "Flame of Azzinoth").card());
-		
-		private final HStoneCardModel model;
-
-		private CardEnumTest(HStoneCardModel model) {
-			this.model = model;
-		}
-		
-		public HStoneCardModel getModel() {
-			return model;
-		}
-	}
-	
 	@Override
 	public void addCards(HStoneGame game) {
 		game.addCard(minion( 1,      NONE, 2, 1, "Flame of Azzinoth").card());
@@ -49,14 +35,14 @@ public class ManaOneCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 1,    COMMON, 2, 1, "Leper Gnome").deathrattle(damageToEnemyHero(2)).card());
 		game.addCard(minion( 1,    COMMON, 2, 1, "Mechanical Dragonling").card());
 		game.addCard(minion( 1,    COMMON, 0, 3, "Poultryizer").on(HStoneTurnStartEvent.class, toRandom(allMinions(), transform("Chicken")), samePlayer()).card());
-		game.addCard(minion( 1,    COMMON, 0, 3, "Repair Bot").on(HStoneTurnEndEvent.class, toRandom(not(undamaged()), heal(6)), samePlayer()).card());
+		game.addCard(minion( 1,    COMMON, 0, 3, "Repair Bot").on(HStoneTurnEndEvent.class, toRandom(isDamaged(), heal(6)), samePlayer()).card());
 		game.addCard(minion( 1,    COMMON, 0, 4, "Shieldbearer").taunt().card());
-//		game.addCard(minion( 1,    COMMON, 2, 1, "Southsea Deckhand").effect("Has").effect("<b>Charge</b>").effect("while you have a weapon equipped").card());
+		game.addCard(minion( 1,    COMMON, 2, 1, "Southsea Deckhand").staticAbility(samePlayer().and(targetPlayerHasWeapon()), HSAbility.CHARGE).card());
 		game.addCard(minion( 1,    COMMON, 2, 2, "Squire").card());
 		game.addCard(minion( 1,    COMMON, 1, 1, "Squirrel").card());
 		game.addCard(minion( 1,    COMMON, 2, 1, "Worgen Infiltrator").stealth().card());
 		game.addCard(minion( 1,    COMMON, 1, 1, "Young Dragonhawk").windfury().card());
-//		game.addCard(minion( 1,      RARE, 1, 1, "Angry Chicken").effect("<b>Enrage:</b>").effect("+5 Attack").card());
+		game.addCard(minion( 1,      RARE, 1, 1, "Angry Chicken").staticPT(enrage(), 5, 0).card());
 		game.addCard(minion( 1,      RARE, 1, 2, "Bloodsail Corsair").battlecry(removeDurabilityOppWeapon(1)).card());
 		game.addCard(minion( 1,      RARE, 1, 1, "Imp").card());
 		game.addCard(minion( 1,      RARE, 1, 2, "Lightwarden").on(HStoneHealEvent.class, selfPT(2, 0), all()).card());
@@ -66,6 +52,7 @@ public class ManaOneCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 1,      EPIC, 1, 2, "Hungry Crab").battlecry(to(minionIs(MURLOC), combined(destroyTarget(), selfPT(2, 2)))).card()); // TODO: Only perform battlecry if there is a target available
 		game.addCard(spell( 1,      NONE, "Bananas").effect(toMinion(otherPT(1, 1))).card());
 	}
+
 
 
 }

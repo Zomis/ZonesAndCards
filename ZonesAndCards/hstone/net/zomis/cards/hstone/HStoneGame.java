@@ -7,8 +7,7 @@ import net.zomis.cards.hstone.actions.AttackAction;
 import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchFromModel;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
-import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
-import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
+import net.zomis.cards.hstone.events.HStoneCardEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
 import net.zomis.cards.hstone.factory.CardType;
@@ -19,6 +18,7 @@ import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.model.ActionProvider;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
@@ -32,6 +32,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	private final List<HStoneEnchantment> enchantments;
 	
 	private int turnNumber;
+	private final CardZone<HStoneCard> temporaryZone;
 	
 	public void setTargetFilter(HStoneEffect targets, HStoneCard forWhat) {
 		this.targets = targets;
@@ -66,7 +67,10 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 			addZone(player.getBattlefield());
 			addZone(player.getSpecialZone());
 			addZone(player.getDiscard());
+			addZone(player.getSecrets());
 		}
+		temporaryZone = new CardZone<>("Temporary");
+		addZone(temporaryZone);
 		setActionHandler(new HStoneHandler());
 		addAction(new HStoneCardModel("End Turn", 0, CardType.POWER), new ActionProvider() {
 			@Override
@@ -227,8 +231,8 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		return result;
 	}
 
-	public void callEvent(HStoneCardPlayedEvent hStoneCardPlayedEvent) {
-		this.executeEvent(hStoneCardPlayedEvent);
+	public <T extends HStoneCardEvent> T callEvent(T eventEvent) {
+		return this.executeEvent(eventEvent);
 	}
 
 	public List<HStoneEnchantment> getEnchantments() {
@@ -260,8 +264,8 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		this.enchantments.remove(ench);
 	}
 
-	public void callEvent(HStoneMinionSummonedEvent event) {
-		this.executeEvent(event);
+	public CardZone<HStoneCard> getTemporaryZone() {
+		return temporaryZone;
 	}
 	
 }

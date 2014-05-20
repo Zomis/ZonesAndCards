@@ -4,13 +4,22 @@ import static net.zomis.cards.hstone.factory.Battlecry.*;
 import static net.zomis.cards.hstone.factory.HSFilters.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
+
+import java.util.List;
+
+import net.zomis.cards.hstone.FightModule;
+import net.zomis.cards.hstone.HSDoubleEventConsumer;
+import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.events.HStoneDoubleCardEvent;
+import net.zomis.cards.hstone.events.HStonePreAttackEvent;
+import net.zomis.cards.hstone.events.HStoneSecretRevealedEvent;
 import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneEffect;
-import net.zomis.cards.hstone.factory.HStoneMinionType;
 import net.zomis.cards.util.CardSet;
+import net.zomis.utils.ZomisList;
 
 public class HunterCards implements CardSet<HStoneGame> {
 
@@ -20,7 +29,7 @@ public class HunterCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 4,      FREE, 4, 3, "Houndmaster").battlecry(toFriendlyBeast(combined(otherPT(2, 2), giveAbility(HSAbility.TAUNT)))).card());
 		game.addCard(minion( 1,      FREE, 1, 1, "Timber Wolf").staticEffectOtherFriendlyBeastsBonus(1, 0).card());
 		game.addCard(minion( 3,    COMMON, 4, 2, "Huffer").charge().card());
-//		game.addCard(minion( 3,    COMMON, 2, 4, "Leokk").effect("Other friendly minions have +1 Attack").card());
+		game.addCard(minion( 3,    COMMON, 2, 4, "Leokk").staticPT(allMinions().and(samePlayer()).and(anotherCard()), 1, 0).card());
 		game.addCard(minion( 3,    COMMON, 4, 4, "Misha").taunt().card());
 //		game.addCard(minion( 2,    COMMON, 2, 2, "Scavenging Hyena").effect("Whenever a friendly Beast dies, gain +2/+1").card());
 		game.addCard(minion( 0,    COMMON, 1, 1, "Snake").card());
@@ -33,33 +42,51 @@ public class HunterCards implements CardSet<HStoneGame> {
 //		game.addCard(spell( 4,      FREE, "Multi-Shot").effect("Deal 3 damage to two random enemy minions").card());
 //		game.addCard(spell( 1,      FREE, "Tracking").effect("Look at the top three cards of your deck. Draw one and discard the others").card());
 //		game.addCard(spell( 3,    COMMON, "Animal Companion").effect("Summon a random Beast Companion").card());
-//		game.addCard(spell( 3,    COMMON, "Deadly Shot").effect("Destroy a random enemy minion").card());
+		game.addCard(spell( 3,    COMMON, "Deadly Shot").effect(toRandom(opponentMinions(), destroyTarget())).card());
 //		game.addCard(spell( 2,    COMMON, "Explosive Trap").effect("<b>Secret:</b>").effect("When your hero is attacked, deal 2 damage to all enemies").card());
 //		game.addCard(spell( 2,    COMMON, "Freezing Trap").effect("<b>Secret:</b>").effect("When an enemy minion attacks, return it to its owner's hand and it costs (2) more").card());
 		game.addCard(spell( 0,    COMMON, "Hunter's Mark").effect(toMinion(set(HStoneRes.ATTACK, 1))).card());
-//		game.addCard(spell( 3,    COMMON, "Kill Command").effect("Deal 3 damage.  If you have a Beast, deal 5 damage instead").card());
+		game.addCard(spell( 3,    COMMON, "Kill Command").effect(toAny(ifElse(haveBeast(), damage(5), damage(3)))).card());
 //		game.addCard(spell( 2,    COMMON, "Snipe").effect("<b>Secret:</b>").effect("When your opponent plays a minion, deal 4 damage to it").card());
 		game.addCard(spell( 3,    COMMON, "Unleash the Hounds").effect(forEach(opponentMinions(), summon("Hound"), null)).card());
-//		game.addCard(spell( 5,      RARE, "Explosive Shot").effect("Deal 5 damage to a minion and 2 damage to adjacent ones").card());
+		game.addCard(spell( 5,      RARE, "Explosive Shot").effect(toTargetAndAdjacents(all(), damage(5), damage(2))).card());
 		game.addCard(spell( 1,      RARE, "Flare").effect(combined(forEach(allMinions(), null, remove(HSAbility.STEALTH)), destroyEnemySecrets(), drawCard())).card());
-//		game.addCard(spell( 2,      RARE, "Misdirection").effect("<b>Secret:</b>").effect("When a character attacks your hero, instead he attacks another random character").card());
+		game.addCard(spell( 2,      RARE, "Misdirection").secret(HStonePreAttackEvent.class, cancelAndAttackAnotherRandom(), null, targetIsMyHero()).card());
 //		game.addCard(spell( 1,      EPIC, "Bestial Wrath").effect("Give a Beast +2 Attack and").effect("<b>Immune</b>").effect("this turn").card());
-//		game.addCard(spell( 2,      EPIC, "Snake Trap").effect("<b>Secret:</b>").effect("When one of your minions is attacked, summon three 1/1 Snakes").card());
-//		game.addCard(weapon( 3,      RARE, 3, 2, "Eaglehorn Bow").effect("Whenever a").effect("<b>Secret</b>").effect("is revealed, gain +1 Durability").card());
+		game.addCard(spell( 2,      EPIC, "Snake Trap").secret(HStonePreAttackEvent.class, wrap(summon("Snake", 3)), null, samePlayer()).card());
+		game.addCard(weapon( 3,      RARE, 3, 2, "Eaglehorn Bow").on(HStoneSecretRevealedEvent.class, selfPT(0, 1), all()).card()); //  effect("Whenever a").effect("<b>Secret</b>").effect("is revealed, gain +1 Durability"
 //		game.addCard(weapon( 7,      EPIC, 5, 2, "Gladiator's Longbow").effect("Your hero is").effect("<b>Immune</b>").effect("while attacking").card());
 	}
 
-	private HStoneEffect destroyEnemySecrets() {
-		return new HStoneEffect() {
+	private HSFilter targetIsMyHero() {
+		return allPlayers().and(samePlayer());
+	}
+
+	private HSDoubleEventConsumer cancelAndAttackAnotherRandom() {
+		//  effect("<b>Secret:</b>").effect("When a character attacks your hero, instead he attacks another random character"
+		return new HSDoubleEventConsumer() {
 			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				// TODO Auto-generated method stub
+			public void handleEvent(HStoneCard listener, HStoneDoubleCardEvent event) {
+				event.setCancelled(true);
+				List<HStoneCard> newTargetOptions = listener.getGame().findAll(event.getTarget(), all());
+				newTargetOptions.remove(event.getSource());
+				newTargetOptions.remove(event.getTarget());
+				HStoneCard newTarget = ZomisList.getRandom(newTargetOptions, listener.getGame().getRandom());
+				if (newTarget == null)
+					throw new AssertionError("No other characters available: " + listener + " event " + event.getSource() + " on target " + event.getTarget());
+				FightModule.attack(listener.getGame(), event.getSource(), newTarget);
 			}
 		};
 	}
 
-	private HStoneEffect toFriendlyBeast(final HStoneEffect combined) {
-		return to(allMinions().and(minionIs(HStoneMinionType.BEAST)).and(samePlayer()), combined);
+	private HSDoubleEventConsumer wrap(HStoneEffect effect) {
+		return new HSDoubleEventConsumer() {
+			@Override
+			public void handleEvent(HStoneCard listener, HStoneDoubleCardEvent event) {
+				effect.performEffect(listener, event.getSource());
+			}
+		};
 	}
+
 
 }

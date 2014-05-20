@@ -23,7 +23,7 @@ public class ShamanCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 1,      FREE, 0, 2, "Wrath of Air Totem").spellDamage(1).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 1,    COMMON, 3, 1, "Dust Devil").windfury().overload(2).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 6,    COMMON, 6, 5, "Fire Elemental").battlecry(damage(3)).forClass(HStoneClass.SHAMAN).card());
-//		game.addCard(minion( 2,    COMMON, 0, 3, "Flametongue Totem").effect("Adjacent minions have +2 Attack").forClass(HStoneClass.SHAMAN).card());
+		game.addCard(minion( 2,    COMMON, 0, 3, "Flametongue Totem").staticPT(adjacents(), 2, 0).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 3,    COMMON, 2, 4, "Unbound Elemental").on(HStoneCardPlayedEvent.class, selfPT(1, 1), hasOverload()).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 4,    COMMON, 3, 3, "Windspeaker").battlecry(giveAbility(HSAbility.WINDFURY)).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 3,      RARE, 0, 3, "Mana Tide Totem").on(HStoneTurnEndEvent.class, drawCard(), samePlayer()).forClass(HStoneClass.SHAMAN).card());

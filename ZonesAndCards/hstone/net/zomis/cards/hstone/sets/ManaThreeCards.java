@@ -22,12 +22,12 @@ public class ManaThreeCards implements CardSet<HStoneGame> {
 	public void addCards(HStoneGame game) {
 		game.addCard(minion( 3,      NONE, 3, 5, "Laughing Sister").shroud().card());
 		game.addCard(minion( 3,      FREE, 5, 1, "Magma Rager").card());
-		game.addCard(minion( 3,      FREE, 2, 2, "Raid Leader").staticPT(not(thisCard()).and(allMinions()).and(samePlayer()), 1, 0).card());
+		game.addCard(minion( 3,      FREE, 2, 2, "Raid Leader").staticPT(anotherCard().and(allMinions()).and(samePlayer()), 1, 0).card());
 		game.addCard(minion( 3,      FREE, 3, 1, "Wolfrider").charge().card());
 		game.addCard(minion( 3,    COMMON, 1, 3, "Acolyte of Pain").on(HStoneDamagedEvent.class, drawCard(), thisCard()).card());
 		game.addCard(minion( 3,    COMMON, 1, 4, "Dalaran Mage").spellDamage(1).card());
 		game.addCard(minion( 3,    COMMON, 3, 3, "Earthen Ring Farseer").battlecry(heal(3)).card());
-		game.addCard(minion( 3,    COMMON, 2, 3, "Flesheating Ghoul").on(HStoneMinionDiesEvent.class, selfPT(1, 0), allMinions().and(not(thisCard()))).card());
+		game.addCard(minion( 3,    COMMON, 2, 3, "Flesheating Ghoul").on(HStoneMinionDiesEvent.class, selfPT(1, 0), allMinions().and(anotherCard())).card());
 		game.addCard(minion( 3,    COMMON, 2, 3, "Harvest Golem").deathrattle(summon("Damaged Golem")).card());
 		game.addCard(minion( 3,    COMMON, 2, 2, "Ironforge Rifleman").battlecry(damage(1)).card());
 		game.addCard(minion( 3,    COMMON, 3, 3, "Ironfur Grizzly").taunt().card());

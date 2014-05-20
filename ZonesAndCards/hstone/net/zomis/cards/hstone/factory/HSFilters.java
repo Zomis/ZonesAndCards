@@ -177,4 +177,38 @@ public class HSFilters {
 		return allMinions().and(opponentPlayer());
 	}
 
+	public static HSFilter targetPlayerHasWeapon() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				return target.getPlayer().getWeapon() != null;
+			}
+		};
+	}
+
+	public static HSFilter isActiveSecret() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				boolean correctZone = searcher.getCurrentZone() == searcher.getPlayer().getSecrets();
+				boolean opponentsTurn = searcher.getGame().getCurrentPlayer() != searcher.getPlayer();
+				return correctZone && opponentsTurn;
+			}
+		};
+	}
+	
+	public static HSFilter haveBeast() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				for (HStoneCard card : searcher.getPlayer().getBattlefield()) {
+					if (card.getModel().isOfType(HStoneMinionType.BEAST)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+
 }

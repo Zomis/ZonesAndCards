@@ -17,14 +17,14 @@ public class ManaSevenPlusCards implements CardSet<HStoneGame> {
 	@Override
 	public void addCards(HStoneGame game) {
 		game.addCard(minion( 7,    COMMON, 9, 5, "Core Hound").card());
-//		game.addCard(minion( 7,    COMMON, 6, 6, "Stormwind Champion").effect("Your other minions have +1/+1").card());
+		game.addCard(minion( 7,    COMMON, 6, 6, "Stormwind Champion").staticPT(allMinions().and(samePlayer()).and(anotherCard()), 1, 1).card());
 		game.addCard(minion( 7,    COMMON, 7, 7, "War Golem").card());
 		game.addCard(minion( 7,      RARE, 7, 5, "Ravenholdt Assassin").stealth().card());
 //		game.addCard(minion(20,      EPIC, 8, 8, "Molten Giant").effect("Costs (1) less for each damage your hero has taken").card());
 //		game.addCard(minion(12,      EPIC, 8, 8, "Mountain Giant").effect("Costs (1) less for each other card in your hand").card());
 //		game.addCard(minion(10,      EPIC, 8, 8, "Sea Giant").effect("Costs (1) less for each other minion on the battlefield").card());
 		game.addCard(minion( 9, LEGENDARY, 8, 8, "Alexstrasza").battlecry(to(allPlayers(), set(HStoneRes.HEALTH, 15))).card());
-		game.addCard(minion( 7, LEGENDARY, 7, 5, "Baron Geddon").on(HStoneTurnEndEvent.class, forEach(not(thisCard()), null, damage(2)), samePlayer()).card());
+		game.addCard(minion( 7, LEGENDARY, 7, 5, "Baron Geddon").on(HStoneTurnEndEvent.class, forEach(anotherCard(), null, damage(2)), samePlayer()).card());
 		game.addCard(minion(10, LEGENDARY, 12, 12, "Deathwing").battlecry(combined(forEach(allMinions().and(not(thisCard())), null, destroyTarget()), discardAllCards())).card());
 		game.addCard(minion( 8, LEGENDARY, 7, 7, "Gruul").on(HStoneTurnEndEvent.class, selfPT(1, 1), all()).card());
 		game.addCard(minion( 9, LEGENDARY, 4, 12, "Malygos").spellDamage(5).card());

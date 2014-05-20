@@ -1,5 +1,6 @@
 package net.zomis.cards.hstone.factory;
 
+import net.zomis.cards.hstone.HSDoubleEventConsumer;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneClass;
@@ -9,8 +10,11 @@ import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneCardEvent;
 import net.zomis.cards.hstone.events.HStoneCardPlayedEvent;
+import net.zomis.cards.hstone.events.HStoneDoubleCardEvent;
 import net.zomis.cards.hstone.events.HStoneMinionDiesEvent;
+import net.zomis.cards.hstone.events.HStoneSecretRevealedEvent;
 import net.zomis.cards.hstone.triggers.BattlecryTrigger;
+import net.zomis.cards.hstone.triggers.CardEventDoubleTrigger;
 import net.zomis.cards.hstone.triggers.CardEventTrigger;
 import net.zomis.cards.hstone.triggers.HStoneTrigger;
 
@@ -93,15 +97,6 @@ public class HStoneCardFactory {
 
 	public HStoneCardFactory windfury() {
 		card.addAbility(HSAbility.WINDFURY);
-		return this;
-	}
-
-	public HStoneCardFactory defense() {
-		card.addAbility(HSAbility.NO_ATTACK);
-		return this;
-	}
-
-	public HStoneCardFactory enrage(Object selfPT) {
 		return this;
 	}
 
@@ -211,7 +206,7 @@ public class HStoneCardFactory {
 					
 					@Override
 					public boolean appliesTo(HStoneCard card) {
-						return who.shouldKeep(source, card); // card.isMinion() && 
+						return who.shouldKeep(source, card); 
 					}
 				});
 			}
@@ -242,12 +237,50 @@ public class HStoneCardFactory {
 				});
 			}
 		});
-//		new HStoneEffect() {
-//			@Override
-//			public void performEffect(HStoneCard source, HStoneCard target) {
-//				source.addEnchantment(new HStoneEnchForward(new HStoneEnchSpecificAbility(source, windfury)));
-//			}
-//		});
+	}
+
+	public HStoneCardFactory secret(Class<? extends HStoneDoubleCardEvent> clazz, HSDoubleEventConsumer effect, HSFilter triggerSource, HSFilter triggerTarget) {
+		card.addTriggerEffect(new CardEventDoubleTrigger(clazz, combinedConsumer(revealTheSecret(), effect), 
+				HSFilters.isActiveSecret().and(triggerSource), HSFilters.isActiveSecret().and(triggerTarget)));
+		card.setEffect(new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.zoneMoveOnBottom(source.getPlayer().getSecrets());
+			}
+		});
+		return this;
+	}
+	
+	private HSDoubleEventConsumer combinedConsumer(HStoneEffect revealTheSecret, HSDoubleEventConsumer effect) {
+		return new HSDoubleEventConsumer() {
+			@Override
+			public void handleEvent(HStoneCard listener, HStoneDoubleCardEvent event) {
+				revealTheSecret.performEffect(listener, event.getSource());
+				effect.handleEvent(listener, event);
+			}
+		};
+	}
+
+	public HStoneCardFactory secret(Class<? extends HStoneCardEvent> clazz, HStoneEffect effect, HSFilter trigger) {
+		card.addTriggerEffect(new CardEventTrigger(clazz, Battlecry.combined(effect, revealTheSecret()), trigger.and(HSFilters.isActiveSecret())));
+		card.setEffect(new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.zoneMoveOnBottom(source.getPlayer().getSecrets());
+			}
+		});
+		return this;
+	}
+
+	private HStoneEffect revealTheSecret() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				
+				source.getGame().callEvent(new HStoneSecretRevealedEvent(source));
+				Battlecry.selfDestruct().performEffect(source, target);
+			}
+		};
 	}
 	
 }

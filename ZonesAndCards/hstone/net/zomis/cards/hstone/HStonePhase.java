@@ -27,7 +27,6 @@ public class HStonePhase extends PlayerPhase {
 		
 		HStoneGame game = getPlayer().getGame();
 		getPlayer().drawCard();
-		getPlayer().onStartTurn();
 		game.increaseTurnCounter();
 		game.executeTurnStartEvent();
 		game.cleanup();

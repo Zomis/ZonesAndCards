@@ -26,7 +26,9 @@ public class BattlecryTrigger extends HStoneTrigger<ZoneChangeEvent> {
 				if (event.getToCardZone() != owner.getBattlefield())
 					return;
 				HStoneGame game = owner.getGame();
-				game.selectOrPerform(effect, card);
+				
+				if (effect.hasAnyAvailableTargets(card))
+					game.selectOrPerform(effect, card);
 			}
 		};
 	}

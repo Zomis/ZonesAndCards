@@ -150,7 +150,6 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		this.getResources().set(HStoneRes.MAX_HEALTH, getModel().getHealth());
 		if (getHealth() > getHealthMax())
 			this.getResources().set(HStoneRes.HEALTH, getModel().getHealth());
-//		this.getGame().addEnchantment(new HStoneEnchSilence(this));
 	}
 
 	public void destroy() {
@@ -252,8 +251,6 @@ public class HStoneCard extends Card<HStoneCardModel> {
 
 	public int getManaCost() {
 		return getGame().getResources(this, HStoneRes.MANA_COST);
-//		return getModel().getManaCost();
-//		return getResources().getResources(HStoneRes.MANA_COST);
 	}
 
 	public void addEnchantment(HStoneEnchantment enchantment) {

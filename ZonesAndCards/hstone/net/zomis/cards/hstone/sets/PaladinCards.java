@@ -9,7 +9,6 @@ import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.factory.Battlecry.HSGetCount;
 import net.zomis.cards.hstone.factory.HSAbility;
-import net.zomis.cards.hstone.factory.HSTargetType;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.util.CardSet;
 
@@ -30,7 +29,7 @@ public class PaladinCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 2,      FREE, "Holy Light").effect(heal(6)).card());
 		game.addCard(spell( 4,    COMMON, "Blessing of Kings").effect(toMinion(otherPT(4, 4))).card());
 		game.addCard(spell( 1,    COMMON, "Blessing of Wisdom").effect(addEnchantOnAttackDrawCard()).card());
-		game.addCard(spell( 4,    COMMON, "Consecration").effect(forEach(not(samePlayer()), null, damage(2))).card());
+		game.addCard(spell( 4,    COMMON, "Consecration").effect(forEach(opponentPlayer(), null, damage(2))).card());
 //		game.addCard(spell( 1,    COMMON, "Eye for an Eye").effect("<b>Secret:</b>").effect("When your hero takes damage, deal that much damage to the enemy hero").card());
 		game.addCard(spell( 1,    COMMON, "Humility").effect(toMinion(setAttack(1))).card());
 //		game.addCard(spell( 1,    COMMON, "Noble Sacrifice").effect("<b>Secret:</b>").effect("When an enemy attacks, summon a 2/1 Defender as the new target").card());
@@ -73,7 +72,7 @@ public class PaladinCards implements CardSet<HStoneGame> {
 
 	private HStoneEffect addEnchantOnAttackDrawCard() {
 //		 TODO: "Choose a minion.  Whenever it attacks, draw a card"
-		return new HStoneEffect(HSTargetType.MINION) {
+		return new HStoneEffect(allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 //				target.addTrigger(new AttackTrigger());

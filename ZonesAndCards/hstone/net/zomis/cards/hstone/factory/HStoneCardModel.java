@@ -9,6 +9,7 @@ import java.util.Set;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneClass;
+import net.zomis.cards.hstone.triggers.CardEventTrigger;
 import net.zomis.cards.hstone.triggers.HStoneTrigger;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
@@ -28,6 +29,7 @@ public class HStoneCardModel extends CardModel {
 	private HStoneClass forClazz;
 	int overload;
 	int spellDamage;
+	CardEventTrigger secret;
 	
 	public int getManaCost() {
 		return manaCost;
@@ -130,6 +132,10 @@ public class HStoneCardModel extends CardModel {
 	public boolean isType(CardType type) {
 		return this.type == type;
 	}
+	
+	public CardType getType() {
+		return type;
+	}
 
 	public HStoneClass getForClazz() {
 		return forClazz;
@@ -144,6 +150,10 @@ public class HStoneCardModel extends CardModel {
 	}
 
 	public boolean isSecret() {
-		return false;
+		return secret != null;
+	}
+	
+	public CardEventTrigger getSecret() {
+		return secret;
 	}
 }

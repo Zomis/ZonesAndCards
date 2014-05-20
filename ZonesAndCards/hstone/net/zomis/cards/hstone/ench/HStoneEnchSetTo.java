@@ -3,6 +3,7 @@ package net.zomis.cards.hstone.ench;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneRes;
 
+@Deprecated
 public class HStoneEnchSetTo extends HStoneEnchantment {
 	
 	private HStoneRes	resource;
