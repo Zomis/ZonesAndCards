@@ -10,7 +10,6 @@ import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStoneRes;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.factory.HSAbility;
-import net.zomis.cards.hstone.factory.HSTargetType;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.triggers.CardEventTrigger;
 import net.zomis.cards.util.CardSet;
@@ -32,7 +31,7 @@ public class DruidCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 7,      EPIC, 5, 5, "Ancient of War").effect("<b>Choose One</b>").effect("-\n+5 Attack; or +5 Health and").effect("<b>Taunt</b>").effect("").card());
 //		game.addCard(minion( 9, LEGENDARY, 5, 8, "Cenarius").effect("<b>Choose One</b>").effect("- Give your other minions +2/+2; or Summon two 2/2 Treants with").effect("<b>Taunt</b>").effect("").card());
 		game.addCard(spell( 0,      NONE, "Excess Mana").effect(drawCard()).card());
-		game.addCard(spell( 1,      FREE, "Claw").effect(combined(tempBoost(and(HSTargetType.PLAYER, samePlayer()), 2, 0), armor(2))).card());
+		game.addCard(spell( 1,      FREE, "Claw").effect(combined(tempBoost(allPlayers().and(samePlayer()), 2, 0), armor(2))).card());
 		game.addCard(spell( 3,      FREE, "Healing Touch").effect(heal(8)).card());
 		game.addCard(spell( 0,      FREE, "Innervate").effect(tempMana(2)).card());
 		game.addCard(spell( 2,      FREE, "Mark of the Wild").effect(toMinion(combined(giveAbility(HSAbility.TAUNT), otherPT(2, 2)))).card());
@@ -46,7 +45,7 @@ public class DruidCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 6,    COMMON, "Starfire").effect(toAny(combined(damage(5), drawCard()))).card());
 //		game.addCard(spell( 4,    COMMON, "Swipe").effect("Deal 4 damage to an enemy and 1 damage to all other enemies").card());
 //		game.addCard(spell( 2,    COMMON, "Wrath").effect("<b>Choose One</b>").effect("- Deal 3 damage to a minion; or 1 damage and draw a card").card());
-		game.addCard(spell( 4,      RARE, "Bite").effect(combined(tempBoost(and(HSTargetType.PLAYER, samePlayer()), 4, 0), armor(4))).card());
+		game.addCard(spell( 4,      RARE, "Bite").effect(combined(tempBoost(allPlayers().and(samePlayer()), 4, 0), armor(4))).card());
 //		game.addCard(spell( 5,      RARE, "Nourish").effect("<b>Choose One</b>").effect("- Gain 2 Mana Crystals; or Draw 3 cards").card());
 //		game.addCard(spell( 1,      RARE, "Savagery").effect("Deal damage equal to your hero's Attack to a minion").card());
 //		game.addCard(spell( 5,      RARE, "Starfall").effect("<b>Choose One -</b>").effect("Deal 5 damage to a minion; or 2 damage to all enemy minions").card());

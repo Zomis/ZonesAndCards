@@ -16,13 +16,13 @@ public class RogueCards implements CardSet<HStoneGame> {
 	public void addCards(HStoneGame game) {
 		game.addCard(minion( 1,      NONE, 2, 1, "Defias Bandit").card());
 //		game.addCard(minion( 2,    COMMON, 2, 2, "Defias Ringleader").effect("<b>Combo:</b>").effect("Summon a 2/1 Defias Bandit").card());
-		game.addCard(minion( 4,      RARE, 4, 4, "Master of Disguise").battlecry(to(and(samePlayer(), allMinions()), giveAbility(HSAbility.STEALTH))).card());
+		game.addCard(minion( 4,      RARE, 4, 4, "Master of Disguise").battlecry(to(samePlayer().and(allMinions()), giveAbility(HSAbility.STEALTH))).card());
 //		game.addCard(minion( 3,      RARE, 3, 3, "SI:7 Agent").effect("<b>Combo:</b>").effect("Deal 2 damage").card());
 //		game.addCard(minion( 6,      EPIC, 5, 3, "Kidnapper").effect("<b>Combo:</b>").effect("Return a minion to its owner's hand").card());
 //		game.addCard(minion( 2,      EPIC, 1, 1, "Patient Assassin").effect("<b>Stealth</b>").effect("Destroy any minion damaged by this minion").card());
 //		game.addCard(minion( 3, LEGENDARY, 2, 2, "Edwin VanCleef").effect("<b>Combo:</b>").effect("Gain +2/+2 for each card played earlier this turn").card());
-		game.addCard(spell( 5,      FREE, "Assassinate").effect(to(and(allMinions(), not(samePlayer())), destroyTarget())).card());
-		game.addCard(spell( 0,      FREE, "Backstab").effect(to(and(allMinions(), undamaged()), damage(2))).card());
+		game.addCard(spell( 5,      FREE, "Assassinate").effect(to(opponentMinions(), destroyTarget())).card());
+		game.addCard(spell( 0,      FREE, "Backstab").effect(to(allMinions().and(undamaged()), damage(2))).card());
 //		game.addCard(spell( 1,      FREE, "Deadly Poison").effect("Give your weapon +2 Attack").card());
 //		game.addCard(spell( 2,      FREE, "Sap").effect("Return an enemy minion to your opponent's hand").card());
 //		game.addCard(spell( 1,      FREE, "Sinister Strike").effect("Deal 3 damage to the enemy hero").card());

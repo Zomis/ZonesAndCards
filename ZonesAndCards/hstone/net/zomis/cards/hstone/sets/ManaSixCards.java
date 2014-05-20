@@ -27,9 +27,9 @@ public class ManaSixCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 6, LEGENDARY, 6, 6, "Gelbin Mekkatorque").battlecry(evenChance(summon("Emboldener 3000"), summon("Homing Chicken"), summon("Poultryizer"), summon("Repair Bot"))).card());
 		game.addCard(minion( 6, LEGENDARY, 4, 4, "Hogger").on(HStoneTurnEndEvent.class, summon("Gnoll"), samePlayer()).card());
 //		game.addCard(minion( 6, LEGENDARY, 7, 5, "Illidan Stormrage").effect("Whenever you play a card, summon a 2/1 Flame of Azzinoth").card());
-		game.addCard(minion( 6, LEGENDARY, 5, 5, "Sylvanas Windrunner").deathrattle(toRandom(and(allMinions(), not(samePlayer())), stealMinion(allMinions()))).card());
+		game.addCard(minion( 6, LEGENDARY, 5, 5, "Sylvanas Windrunner").deathrattle(toRandom(opponentMinions(), stealMinion(allMinions()))).card());
 //		game.addCard(minion( 6, LEGENDARY, 9, 7, "The Beast").deathrattle("Summon a 3/3 Finkle Einhorn for your opponent").card());
-		game.addCard(minion( 6, LEGENDARY, 4, 5, "The Black Knight").battlecry(to(and(allMinions(), not(samePlayer()), minionHasAbility(HSAbility.TAUNT)), destroyTarget())).card());
+		game.addCard(minion( 6, LEGENDARY, 4, 5, "The Black Knight").battlecry(to(opponentMinions().and(minionHasAbility(HSAbility.TAUNT)), destroyTarget())).card());
 	}
 
 }

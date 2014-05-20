@@ -40,7 +40,7 @@ public class PaladinCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 3,      RARE, "Divine Favor").effect(repeat(oppHandSizeMinusMyHandSize(), drawCard())).card());
 		game.addCard(spell( 2,      RARE, "Equality").effect(forEach(allMinions(), null, set(HStoneRes.HEALTH, 1))).card());
 		game.addCard(spell( 5,      RARE, "Holy Wrath").effect(toAny(drawCardAndDealDamageEqualToCost())).card());
-		game.addCard(spell( 6,      EPIC, "Avenging Wrath").effect(repeat(fixed(8), toRandom(and(canTakeDamage(1), not(samePlayer())), damage(1)))).card());
+		game.addCard(spell( 6,      EPIC, "Avenging Wrath").effect(repeat(fixed(8), toRandom(opponentPlayer().and(canTakeDamage(1)), damage(1)))).card());
 		game.addCard(spell( 8,      EPIC, "Lay on Hands").effect(toAny(combined(heal(8), drawCards(3)))).card());
 		game.addCard(weapon( 1,      FREE, 1, 4, "Light's Justice").card());
 //		game.addCard(weapon( 4,    COMMON, 4, 2, "Truesilver Champion").effect("Whenever your hero attacks, restore 2 Health to it").card());
@@ -72,7 +72,7 @@ public class PaladinCards implements CardSet<HStoneGame> {
 	}
 
 	private HStoneEffect addEnchantOnAttackDrawCard() {
-//		 "Choose a minion.  Whenever it attacks, draw a card"
+//		 TODO: "Choose a minion.  Whenever it attacks, draw a card"
 		return new HStoneEffect(HSTargetType.MINION) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {

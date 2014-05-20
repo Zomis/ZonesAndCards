@@ -1,17 +1,16 @@
 package net.zomis.cards.hstone.sets;
 
-import net.zomis.cards.hstone.HStoneCard;
-import net.zomis.cards.hstone.HStoneGame;
-import net.zomis.cards.hstone.HStoneRes;
-import net.zomis.cards.hstone.factory.HSAbility;
-import net.zomis.cards.hstone.factory.HSFilters;
-import net.zomis.cards.hstone.factory.HStoneEffect;
-import net.zomis.cards.hstone.factory.HStoneMinionType;
-import net.zomis.cards.util.CardSet;
 import static net.zomis.cards.hstone.factory.Battlecry.*;
 import static net.zomis.cards.hstone.factory.HSFilters.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
+import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.HStoneGame;
+import net.zomis.cards.hstone.HStoneRes;
+import net.zomis.cards.hstone.factory.HSAbility;
+import net.zomis.cards.hstone.factory.HStoneEffect;
+import net.zomis.cards.hstone.factory.HStoneMinionType;
+import net.zomis.cards.util.CardSet;
 
 public class HunterCards implements CardSet<HStoneGame> {
 
@@ -40,7 +39,7 @@ public class HunterCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 0,    COMMON, "Hunter's Mark").effect(toMinion(set(HStoneRes.ATTACK, 1))).card());
 //		game.addCard(spell( 3,    COMMON, "Kill Command").effect("Deal 3 damage.  If you have a Beast, deal 5 damage instead").card());
 //		game.addCard(spell( 2,    COMMON, "Snipe").effect("<b>Secret:</b>").effect("When your opponent plays a minion, deal 4 damage to it").card());
-		game.addCard(spell( 3,    COMMON, "Unleash the Hounds").effect(forEach(and(not(samePlayer()), allMinions()), summon("Hound"), null)).card());
+		game.addCard(spell( 3,    COMMON, "Unleash the Hounds").effect(forEach(opponentMinions(), summon("Hound"), null)).card());
 //		game.addCard(spell( 5,      RARE, "Explosive Shot").effect("Deal 5 damage to a minion and 2 damage to adjacent ones").card());
 		game.addCard(spell( 1,      RARE, "Flare").effect(combined(forEach(allMinions(), null, remove(HSAbility.STEALTH)), destroyEnemySecrets(), drawCard())).card());
 //		game.addCard(spell( 2,      RARE, "Misdirection").effect("<b>Secret:</b>").effect("When a character attacks your hero, instead he attacks another random character").card());
@@ -51,17 +50,16 @@ public class HunterCards implements CardSet<HStoneGame> {
 	}
 
 	private HStoneEffect destroyEnemySecrets() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				// TODO Auto-generated method stub
+			}
+		};
 	}
 
 	private HStoneEffect toFriendlyBeast(final HStoneEffect combined) {
-		return new HStoneEffect(and(HSFilters.minionIs(HStoneMinionType.BEAST), samePlayer())) {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				combined.performEffect(source, target);
-			}
-		};
+		return to(allMinions().and(minionIs(HStoneMinionType.BEAST)).and(samePlayer()), combined);
 	}
 
 }

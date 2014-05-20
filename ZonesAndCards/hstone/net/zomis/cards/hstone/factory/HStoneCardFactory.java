@@ -48,6 +48,7 @@ public class HStoneCardFactory {
 		return card;
 	}
 
+	
 	public HStoneCardFactory battlecry(HStoneEffect effect) {
 		// Minions
 		card.addTriggerEffect(new BattlecryTrigger(effect));

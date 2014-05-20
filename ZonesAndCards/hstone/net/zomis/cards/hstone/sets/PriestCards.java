@@ -36,7 +36,7 @@ public class PriestCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 0,    COMMON, "Silence").effect(silencer()).card());
 		game.addCard(spell( 3,    COMMON, "Thoughtsteal").effect(copyTwoCardsInOppDeckToMyHand()).card());
 		game.addCard(spell( 6,      RARE, "Holy Fire").effect(combined(damage(5), healMyHero(5))).card());
-		game.addCard(spell( 4,      RARE, "Mass Dispel").effect(combined(drawCard(), forEach(and(allMinions(), not(samePlayer())), null, silencer()))).card());
+		game.addCard(spell( 4,      RARE, "Mass Dispel").effect(combined(drawCard(), forEach(opponentMinions(), null, silencer()))).card());
 		game.addCard(spell( 4,      RARE, "Shadow Madness").effect(stealMinionUntilEndOfTurn(withAttackLess(3))).card());
 		game.addCard(spell( 4,      EPIC, "Mindgames").effect(copyMinionInOppDeckToMyBattlefield()).card());
 		game.addCard(spell( 3,      EPIC, "Shadowform").effect(shadowform()).card());

@@ -38,7 +38,7 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 2,      RARE, 3, 2, "Knife Juggler").on(HStoneMinionSummonedEvent.class, toRandom(all().and(not(samePlayer())), damage(1)), samePlayer()).card());
 		game.addCard(minion( 2,      RARE, 1, 3, "Mana Addict").on(HStoneCardPlayedEvent.class, tempBoost(thisCard(), 2, 0), samePlayer().and(isSpell())).card());
 //		game.addCard(minion( 2,      RARE, 2, 2, "Mana Wraith").effect("ALL minions cost (1) more").card());
-		game.addCard(minion( 2,      RARE, 1, 3, "Master Swordsmith").on(HStoneTurnEndEvent.class, toRandom(and(allMinions(), samePlayer()), otherPT(1, 0)), samePlayer()).card());
+		game.addCard(minion( 2,      RARE, 1, 3, "Master Swordsmith").on(HStoneTurnEndEvent.class, toRandom(allMinions().and(samePlayer()), otherPT(1, 0)), samePlayer()).card());
 //		game.addCard(minion( 2,      RARE, 2, 2, "Pint-Sized Summoner").effect("The first minion you play each turn costs (1) less").card());
 		game.addCard(minion( 2,      RARE, 2, 3, "Sunfury Protector").battlecry(adjacents(giveAbility(HSAbility.TAUNT))).card());
 //		game.addCard(minion( 2,      RARE, 3, 2, "Wild Pyromancer").effect("After you cast a spell, deal 1 damage to ALL minions").card());

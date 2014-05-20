@@ -23,13 +23,13 @@ public class WarriorCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 2,      RARE, 1, 4, "Armorsmith").effect("Whenever a friendly minion takes damage, gain 1 Armor").forClass(HStoneClass.WARRIOR).card());
 //		game.addCard(minion( 3,      RARE, 2, 4, "Frothing Berserker").effect("Whenever a minion takes damage, gain +1 Attack").forClass(HStoneClass.WARRIOR).card());
 //		game.addCard(minion( 8, LEGENDARY, 4, 9, "Grommash Hellscream").charge().effect("<b>Enrage:</b>").effect("+6 Attack").forClass(HStoneClass.WARRIOR).card());
-		game.addCard(spell( 3,      FREE, "Charge").effect(to(and(samePlayer(), allMinions()), combined(otherPT(2, 0), giveAbility(HSAbility.CHARGE)))).forClass(HStoneClass.WARRIOR).card());
-		game.addCard(spell( 1,      FREE, "Execute").effect(to(and(not(undamaged()), not(samePlayer()), allMinions()), destroyTarget())).forClass(HStoneClass.WARRIOR).card());
+		game.addCard(spell( 3,      FREE, "Charge").effect(to(samePlayer().and(allMinions()), combined(otherPT(2, 0), giveAbility(HSAbility.CHARGE)))).forClass(HStoneClass.WARRIOR).card());
+		game.addCard(spell( 1,      FREE, "Execute").effect(to(opponentPlayer().and(isDamaged()).and(allMinions()), destroyTarget())).forClass(HStoneClass.WARRIOR).card());
 //		game.addCard(spell( 2,      FREE, "Heroic Strike").effect("Give your hero +4 Attack this turn").forClass(HStoneClass.WARRIOR).card());
-		game.addCard(spell( 2,    COMMON, "Battle Rage").effect(forEach(and(samePlayer(), not(undamaged())), drawCard(), null)).forClass(HStoneClass.WARRIOR).card());
+		game.addCard(spell( 2,    COMMON, "Battle Rage").effect(forEach(samePlayer().and(isDamaged()), drawCard(), null)).forClass(HStoneClass.WARRIOR).card());
 //		game.addCard(spell( 2,    COMMON, "Cleave").effect("Deal 2 damage to two random enemy minions").forClass(HStoneClass.WARRIOR).card());
 		game.addCard(spell( 0,    COMMON, "Inner Rage").effect(toMinion(combined(damage(1), otherPT(2, 0)))).forClass(HStoneClass.WARRIOR).card());
-		game.addCard(spell( 2,    COMMON, "Rampage").effect(to(and(not(undamaged()), allMinions()), otherPT(3, 3))).forClass(HStoneClass.WARRIOR).card());
+		game.addCard(spell( 2,    COMMON, "Rampage").effect(to(isDamaged().and(allMinions()), otherPT(3, 3))).forClass(HStoneClass.WARRIOR).card());
 		game.addCard(spell( 3,    COMMON, "Shield Block").effect(combined(armor(5), drawCard())).forClass(HStoneClass.WARRIOR).card());
 //		game.addCard(spell( 2,    COMMON, "Slam").effect("Deal 2 damage to a minion.  If it survives, draw a card").forClass(HStoneClass.WARRIOR).card());
 		game.addCard(spell( 1,    COMMON, "Whirlwind").effect(forEach(allMinions(), null, damage(1))).forClass(HStoneClass.WARRIOR).card());

@@ -5,7 +5,6 @@ import static net.zomis.cards.hstone.factory.HSFilters.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
 import net.zomis.cards.hstone.HStoneGame;
-import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.hstone.triggers.DealDamageTrigger;
 import net.zomis.cards.util.CardSet;
@@ -24,7 +23,7 @@ public class MageCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 7, LEGENDARY, 5, 7, "Archmage Antonidas").effect("Whenever you cast a spell, put a 'Fireball' spell into your hand").card());
 		game.addCard(spell( 2,      FREE, "Arcane Explosion").effect(damageEnemyMinions(1)).card());
 		game.addCard(spell( 3,      FREE, "Arcane Intellect").effect(drawCards(2)).card());
-//		game.addCard(spell( 1,      FREE, "Arcane Missiles").effect("Deal 3 damage randomly split among enemy characters").card());
+		game.addCard(spell( 1,      FREE, "Arcane Missiles").effect(repeat(fixed(3), toRandom(opponentPlayer().and(canTakeDamage(1)), damage(1)))).card());
 		game.addCard(spell( 4,      FREE, "Fireball").effect(damage(6)).card());
 //		game.addCard(spell( 4,      FREE, "Polymorph").effect("Transform a minion into a 1/1 Sheep").card());
 //		game.addCard(spell( 4,    COMMON, "Cone of Cold").effect("<b>Freeze</b>").effect("a minion and the minions next to it, and deal 1 damage to them").card());
@@ -35,7 +34,7 @@ public class MageCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 1,    COMMON, "Ice Lance").effect(freezeOrDamage(4)).card());
 //		game.addCard(spell( 3,    COMMON, "Mirror Entity").effect("<b>Secret:</b>").effect("When your opponent plays a minion, summon a copy of it").card());
 		game.addCard(spell( 1,    COMMON, "Mirror Image").effect(summon("Mirror Image -Minion", 2)).card());
-		game.addCard(spell( 6,      RARE, "Blizzard").effect(forEach(and(not(samePlayer()), allMinions()), null, combined(damage(2), freeze()))).card());
+		game.addCard(spell( 6,      RARE, "Blizzard").effect(forEach(opponentMinions(), null, combined(damage(2), freeze()))).card());
 //		game.addCard(spell( 3,      RARE, "Counterspell").effect("<b>Secret:</b>").effect("When your opponent casts a spell,").effect("<b>Counter</b>").effect("it").card());
 //		game.addCard(spell( 3,      RARE, "Vaporize").effect("<b>Secret:</b>").effect("When a minion attacks your hero, destroy it").card());
 //		game.addCard(spell( 3,      EPIC, "Ice Block").effect("<b>Secret:</b>").effect("When your hero takes fatal damage, prevent it and become").effect("<b>Immune</b>").effect("this turn").card());

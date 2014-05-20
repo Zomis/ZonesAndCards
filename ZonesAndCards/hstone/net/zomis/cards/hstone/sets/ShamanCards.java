@@ -17,7 +17,7 @@ public class ShamanCards implements CardSet<HStoneGame> {
 
 	@Override
 	public void addCards(HStoneGame game) {
-		game.addCard(minion( 1,      FREE, 0, 2, "Healing Totem").on(HStoneTurnEndEvent.class, forEach(and(allMinions(), samePlayer()), null, heal(1)), samePlayer()).forClass(HStoneClass.SHAMAN).card());
+		game.addCard(minion( 1,      FREE, 0, 2, "Healing Totem").on(HStoneTurnEndEvent.class, forEach(allMinions().and(samePlayer()), null, heal(1)), samePlayer()).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 1,      FREE, 1, 1, "Searing Totem").forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 1,      FREE, 0, 2, "Stoneclaw Totem").taunt().forClass(HStoneClass.SHAMAN).card());
 		game.addCard(minion( 1,      FREE, 0, 2, "Wrath of Air Totem").spellDamage(1).forClass(HStoneClass.SHAMAN).card());
@@ -35,11 +35,11 @@ public class ShamanCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 3,      FREE, "Hex").effect(toMinion(transform("Frog"))).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 1,      FREE, "Rockbiter Weapon").effect(to(samePlayer(), tempBoost(samePlayer(), 3, 0))).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 2,      FREE, "Windfury").effect(giveAbility(HSAbility.WINDFURY)).forClass(HStoneClass.SHAMAN).card());
-		game.addCard(spell( 5,    COMMON, "Bloodlust").effect(forEach(and(allMinions(), samePlayer()), null, tempBoost(all(), 3, 0))).forClass(HStoneClass.SHAMAN).card());
+		game.addCard(spell( 5,    COMMON, "Bloodlust").effect(forEach(samePlayer().and(allMinions()), null, tempBoost(all(), 3, 0))).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 1,    COMMON, "Earth Shock").effect(toMinion(combined(silencer(), damage(1)))).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 1,    COMMON, "Forked Lightning").effect(toMultipleRandom(fixed(2), allMinions().and(enemy()), damage(2))).overload(2).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 1,    COMMON, "Lightning Bolt").overload(1).effect(damage(3)).forClass(HStoneClass.SHAMAN).card());
-		game.addCard(spell( 0,    COMMON, "Totemic Might").effect(forEach(and(samePlayer(), minionIs(HStoneMinionType.TOTEM)), null, otherPT(0, 2))).forClass(HStoneClass.SHAMAN).card());
+		game.addCard(spell( 0,    COMMON, "Totemic Might").effect(forEach(samePlayer().and(minionIs(HStoneMinionType.TOTEM)), null, otherPT(0, 2))).forClass(HStoneClass.SHAMAN).card());
 //		game.addCard(spell( 2,      RARE, "Ancestral Spirit").effect("Choose a minion. When that minion is destroyed, return it to the battlefield").forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 3,      RARE, "Feral Spirit").effect(summon("Spirit Wolf", 2)).overload(2).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 3,      RARE, "Lava Burst").effect(damage(5)).overload(2).forClass(HStoneClass.SHAMAN).card());

@@ -32,7 +32,7 @@ public class HSFilters {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-				return true;
+				return target.isMinion() || target.isPlayer();
 			}
 		};
 	}
@@ -104,18 +104,6 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter and(final HSFilter... filters) {
-		return new HSFilter() {
-			@Override
-			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
-				boolean result = true;
-				for (HSFilter filter : filters)
-					result = result && filter.shouldKeep(searcher, target);
-				return result;
-			}
-		};
-	}
-
 	public static HSFilter adjacents() {
 		return new HSFilter() {
 			@Override
@@ -180,4 +168,13 @@ public class HSFilters {
 			}
 		};
 	}
+	
+	public static HSFilter opponentPlayer() {
+		return not(samePlayer());
+	}
+
+	public static HSFilter opponentMinions() {
+		return allMinions().and(opponentPlayer());
+	}
+
 }

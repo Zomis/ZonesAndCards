@@ -27,8 +27,6 @@ import net.zomis.utils.ZomisList;
 
 public class Battlecry {
 
-	private static final HSFilter	ANY_TARGET	= combined(HSTargetType.MINION, HSTargetType.PLAYER);
-
 	public interface HSGetCount {
 		int determineCount(HStoneCard source, HStoneCard target);
 	}
@@ -56,8 +54,8 @@ public class Battlecry {
 		};
 	}
 	
-	public static HStoneEffect damage(final int damage, HSTargetType... targetType) {
-		return new HStoneEffect(combined(targetType)) {
+	public static HStoneEffect damage(final int damage, HSFilter targetType) {
+		return new HStoneEffect(targetType) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				FightModule.damage(source, target, damage);
@@ -66,11 +64,11 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect heal(final int healing) {
-		return heal(healing, HSTargetType.MINION, HSTargetType.PLAYER);
+		return heal(healing, all());
 	}
 	
-	public static HStoneEffect heal(final int healing, HSTargetType... target) {
-		return new HStoneEffect(combined(target)) {
+	public static HStoneEffect heal(final int healing, HSFilter target) {
+		return new HStoneEffect(target) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				FightModule.heal(target, healing);
@@ -88,7 +86,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect freezeOrDamage(final int damage) {
-		return new HStoneEffect(ANY_TARGET) {
+		return new HStoneEffect(all()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				if (target.hasAbility(HSAbility.FROZEN))
@@ -108,7 +106,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect damage(int damage) {
-		return damage(damage, HSTargetType.MINION, HSTargetType.PLAYER);
+		return damage(damage, all());
 	}
 
 	public static HStoneEffect tempBoost(HSFilter targetFilter, final int attack, final int health) {
@@ -367,12 +365,7 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect toMinion(final HStoneEffect effect) {
-		return new HStoneEffect(HSTargetType.MINION) {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				effect.performEffect(source, target);
-			}
-		};
+		return to(allMinions(), effect);
 	}
 
 	public static HStoneEffect to(final HSFilter filter, final HStoneEffect effect) {
@@ -398,17 +391,13 @@ public class Battlecry {
 	}
 
 	public static HStoneEffect toAny(final HStoneEffect effect) {
-		return new HStoneEffect(all()) {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				effect.performEffect(source, target);
-			}
-		};
+		return to(all(), effect);
 	}
 
 	public static HStoneEffect damageEnemyMinions(int damage) {
-		return forEach(and(not(samePlayer()), allMinions()), null, damage(damage));
+		return forEach(allMinions().and(opponentPlayer()), null, damage(damage));
 	}
+	
 	public static HStoneEffect destroyTarget() {
 		return new HStoneEffect(HSTargetType.MINION) {
 			@Override
@@ -615,7 +604,7 @@ public class Battlecry {
 
 	public static HStoneEffect stealMinionUntilEndOfTurn(HSFilter filter) {
 //		 "Gain control of an enemy minion with 3 or less Attack until end of turn"
-		return new HStoneEffect(and(not(samePlayer()), allMinions(), filter)) {
+		return new HStoneEffect(allMinions().and(opponentPlayer()), filter) {
 			@Override
 			public void performEffect(HStoneCard source, final HStoneCard target) {
 				final int turn = target.getGame().getTurnNumber();
@@ -674,8 +663,8 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect stealMinion(HSFilter filter) {
-		return new HStoneEffect(HSFilters.and(HSTargetType.MINION, and(filter, not(HSFilters.samePlayer())))) {
+	public static HStoneEffect stealMinion(final HSFilter filter) {
+		return new HStoneEffect(allMinions().and(opponentPlayer()).and(filter)) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.zoneMoveOnBottom(target.getPlayer().getNextPlayer().getBattlefield());
