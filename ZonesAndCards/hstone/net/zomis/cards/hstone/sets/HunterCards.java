@@ -36,7 +36,7 @@ public class HunterCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 2,    COMMON, 2, 1, "Starving Buzzard").effect("Whenever you summon a Beast, draw a card").card());
 //		game.addCard(minion( 5,    COMMON, 2, 5, "Tundra Rhino").effect("Your Beasts have").effect("<b>Charge</b>").effect("").card());
 		game.addCard(minion( 2,      RARE, 2, 2, "Hyena").card());
-		game.addCard(minion( 6,      RARE, 6, 5, "Savannah Highmane").deathrattle(combined(summon("Hyena"), summon("Hyena"))).card());
+		game.addCard(minion( 6,      RARE, 6, 5, "Savannah Highmane").deathrattle(summon("Hyena", 2)).card());
 		game.addCard(minion( 9, LEGENDARY, 8, 8, "King Krush").charge().card());
 		game.addCard(spell( 1,      FREE, "Arcane Shot").effect(damage(2)).card());
 //		game.addCard(spell( 4,      FREE, "Multi-Shot").effect("Deal 3 damage to two random enemy minions").card());
@@ -48,7 +48,7 @@ public class HunterCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 0,    COMMON, "Hunter's Mark").effect(toMinion(set(HStoneRes.ATTACK, 1))).card());
 		game.addCard(spell( 3,    COMMON, "Kill Command").effect(toAny(ifElse(haveBeast(), damage(5), damage(3)))).card());
 //		game.addCard(spell( 2,    COMMON, "Snipe").effect("<b>Secret:</b>").effect("When your opponent plays a minion, deal 4 damage to it").card());
-		game.addCard(spell( 3,    COMMON, "Unleash the Hounds").effect(forEach(opponentMinions(), summon("Hound"), null)).card());
+		game.addCard(spell( 3,    COMMON, "Unleash the Hounds").effect(iff(haveSpaceOnBattleField(), forEach(opponentMinions(), summon("Hound"), null))).card());
 		game.addCard(spell( 5,      RARE, "Explosive Shot").effect(toTargetAndAdjacents(all(), damage(5), damage(2))).card());
 		game.addCard(spell( 1,      RARE, "Flare").effect(combined(forEach(allMinions(), null, remove(HSAbility.STEALTH)), destroyEnemySecrets(), drawCard())).card());
 		game.addCard(spell( 2,      RARE, "Misdirection").secret(HStonePreAttackEvent.class, cancelAndAttackAnotherRandom(), null, targetIsMyHero()).card());

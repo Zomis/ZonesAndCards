@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.factory;
 
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
+import net.zomis.cards.hstone.HStonePlayer;
 import net.zomis.cards.hstone.HStoneRes;
 
 public class HSFilters {
@@ -215,8 +216,16 @@ public class HSFilters {
 		return (src, dst) -> src.getPlayer().getWeapon() != null;
 	}
 
+	public static HSFilter isWeapon() {
+		return (src, dst) -> dst.getPlayer().getWeapon() == dst;
+	}
+
 	public static HSFilter isTargetAlive() {
 		return (src, dst) -> dst.isAlive();
+	}
+
+	public static HSFilter haveSpaceOnBattleField() {
+		return (src, dst) -> src.getPlayer().getBattlefield().size() < HStonePlayer.MAX_BATTLEFIELD_SIZE;
 	}
 
 }

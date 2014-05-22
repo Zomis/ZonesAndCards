@@ -1,5 +1,6 @@
 package net.zomis.cards.hstone.factory;
 
+import net.zomis.cards.hstone.HSAction;
 import net.zomis.cards.hstone.HSDoubleEventConsumer;
 import net.zomis.cards.hstone.HSFilter;
 import net.zomis.cards.hstone.HStoneCard;
@@ -60,7 +61,12 @@ public class HStoneCardFactory {
 		return this;
 	}
 
-	public HStoneCardFactory effect(HStoneEffect effect) {
+	public HStoneCardFactory toTarget(HSFilter targets, HSAction effect) {
+		card.setEffect(Battlecry.to(targets, effect));
+		return this;
+	}
+	
+	public HStoneCardFactory effect(HStoneEffect effect) { // TODO: Deprecate old style HStoneEffect and 'effect' and 'battlecry' methods
 		// Spells, and Minions when they are at battlefield
 		card.setEffect(effect);
 		return this;

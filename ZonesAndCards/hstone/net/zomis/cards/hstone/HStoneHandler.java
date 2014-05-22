@@ -28,7 +28,7 @@ public class HStoneHandler implements ActionHandler {
 			CardZone<?> zone = card.getCurrentZone();
 			if (zone != game.getTemporaryZone())
 				return new InvalidStackAction("We're in temporary-zone state");
-			return new OptionAction((HStoneOption) card);
+			return new OptionAction(card, (HStoneOption) card.getModel());
 		}
 		
 		HStoneCard hscard = (HStoneCard) card;

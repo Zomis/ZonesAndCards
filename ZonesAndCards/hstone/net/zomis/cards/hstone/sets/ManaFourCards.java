@@ -40,8 +40,8 @@ public class ManaFourCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 4, LEGENDARY, 4, 5, "Baine Bloodhoof").card());
 		game.addCard(minion( 4, LEGENDARY, 6, 2, "Leeroy Jenkins").charge().battlecry(oppSummon("Whelp", 2)).card());
 //		game.addCard(minion( 4, LEGENDARY, 2, 4, "Old Murk-Eye").charge().effect("Has +1 Attack for each other Murloc on the battlefield").card());
-		game.addCard(spell( 4,      NONE, "I Am Murloc").effect(evenChance(summon("Murloc", 3), summon("Murloc", 4), summon("Murloc", 5))).card());
-		game.addCard(spell( 4,      NONE, "Power of the Horde").effect(evenChance(summon("Frostwolf Grunt"), summon("Sen'jin Shieldmasta"), summon("Cairne Bloodhoof"), summon("Tauren Warrior"), summon("Thrallmar Farseer"), summon("Silvermoon Guardian"))).card());
+		game.addCard(spell( 4,      NONE, "I Am Murloc").effect(iff(haveSpaceOnBattleField(), evenChance(summon("Murloc", 3), summon("Murloc", 4), summon("Murloc", 5)))).card());
+		game.addCard(spell( 4,      NONE, "Power of the Horde").effect(iff(haveSpaceOnBattleField(), evenChance(summon("Frostwolf Grunt"), summon("Sen'jin Shieldmasta"), summon("Cairne Bloodhoof"), summon("Tauren Warrior"), summon("Thrallmar Farseer"), summon("Silvermoon Guardian")))).card());
 		game.addCard(spell( 4,      NONE, "Rogues Do It...").effect(toAny(combined(damage(4), drawCard()))).card());
 	}
 

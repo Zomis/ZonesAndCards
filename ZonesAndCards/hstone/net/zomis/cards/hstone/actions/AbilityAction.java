@@ -18,6 +18,8 @@ public class AbilityAction extends StackAction {
 			return setErrorMessage("Not enough action points");
 		if (!source.getPlayer().getResources().hasResources(HStoneRes.MANA_AVAILABLE, 2))
 			return setErrorMessage("Not enough mana: " + source.getPlayer());
+		if (!source.getModel().getEffect().hasAnyAvailableTargets(source))
+			return setErrorMessage("No available targets");
 		return setOKMessage("All OK");
 	}
 	

@@ -1,6 +1,7 @@
 package net.zomis.cards.hstone.factory;
 
 import static net.zomis.cards.hstone.factory.HSFilters.*;
+import static net.zomis.cards.hstone.factory.HSGetCounts.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.Random;
 import net.zomis.cards.hstone.FightModule;
 import net.zomis.cards.hstone.HSAction;
 import net.zomis.cards.hstone.HSFilter;
+import net.zomis.cards.hstone.HSGetCount;
 import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStonePlayer;
@@ -18,8 +20,11 @@ import net.zomis.cards.hstone.ench.HStoneEnchForward;
 import net.zomis.cards.hstone.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.hstone.ench.HStoneEnchantment;
 import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
+import net.zomis.cards.hstone.events.HStonePreAttackEvent;
 import net.zomis.cards.hstone.events.HStoneTurnEndEvent;
 import net.zomis.cards.hstone.events.HStoneTurnStartEvent;
+import net.zomis.cards.hstone.sets.HStoneOption;
+import net.zomis.cards.hstone.triggers.CardEventDoubleTrigger;
 import net.zomis.cards.hstone.triggers.CardEventTrigger;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;
@@ -28,19 +33,6 @@ import net.zomis.utils.ZomisList;
 
 public class Battlecry {
 
-	public interface HSGetCount {
-		int determineCount(HStoneCard source, HStoneCard target);
-	}
-	
-	public static HSGetCount fixed(final int count) {
-		return new HSGetCount() {
-			@Override
-			public int determineCount(HStoneCard source, HStoneCard target) {
-				return count;
-			}
-		};
-	}
-	
 	public static HStoneEffect damage(final int damage, HSFilter targetType) {
 		return new HStoneEffect(targetType) {
 			@Override
@@ -249,12 +241,12 @@ public class Battlecry {
 		};
 	}
 
-	protected static void requireOnBattlefield(HStoneCard card) {
+	public static void requireOnBattlefield(HStoneCard card) {
 		if (card.getCurrentZone() != card.getPlayer().getBattlefield())
 			throw new IllegalStateException("Card is not on the battlefield: " + card + " it is currently in " + card.getCurrentZone() + " with player " + card.getPlayer());
 	}
 
-	public static HStoneEffect forEach(final HSFilter filter, final HStoneEffect myEffect, final HStoneEffect otherEffect) {
+	public static HStoneEffect forEach(final HSFilter filter, final HSAction myEffect, final HSAction otherEffect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -320,18 +312,18 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect combined(final HStoneEffect... effects) {
+	public static HStoneEffect combined(final HSAction... effects) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				for (HStoneEffect eff : effects) {
+				for (HSAction eff : effects) {
 					eff.performEffect(source, target);
 				}
 			}
 		};
 	}
 
-	public static HStoneEffect adjacents(final HStoneEffect effect) {
+	public static HStoneEffect adjacents(final HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(final HStoneCard source, final HStoneCard target) {
@@ -374,7 +366,7 @@ public class Battlecry {
 		return to(allMinions(), effect);
 	}
 
-	public static HStoneEffect to(final HSFilter filter, final HStoneEffect effect) {
+	public static HStoneEffect to(final HSFilter filter, final HSAction effect) {
 		return new HStoneEffect(filter) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -432,16 +424,6 @@ public class Battlecry {
 		};
 	}
 
-	@Deprecated
-	public static HStoneEffect selfPlayerDamage(final int damage) {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				FightModule.damage(source, source.getPlayer().getPlayerCard(), damage);
-			}
-		};
-	}
-
 	public static HStoneEffect damageMyHero(final int damage) {
 		return new HStoneEffect() {
 			@Override
@@ -462,7 +444,7 @@ public class Battlecry {
 		};
 	}
 	
-	public static HStoneEffect toRandom(final HSFilter filter, final HStoneEffect effect) {
+	public static HStoneEffect toRandom(final HSFilter filter, final HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -472,12 +454,12 @@ public class Battlecry {
 			}
 		};
 	}
-	public static HStoneEffect evenChance(final HStoneEffect... effects) {
+	public static HStoneEffect evenChance(final HSAction... effects) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				Random rand = source.getGame().getRandom();
-				HStoneEffect effect = ZomisList.getRandom(effects, rand);
+				HSAction effect = ZomisList.getRandom(effects, rand);
 				effect.performEffect(source, target);
 			}
 		};
@@ -491,7 +473,7 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect repeat(final HSGetCount times, final HStoneEffect effect) {
+	public static HStoneEffect repeat(final HSGetCount times, final HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -523,7 +505,7 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect bothPlayers(final HStoneEffect effect) {
+	public static HStoneEffect bothPlayers(final HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -544,17 +526,6 @@ public class Battlecry {
 		};
 	}
 
-	public static HSGetCount oppWeaponDurability() {
-		return new HSGetCount() {
-			@Override
-			public int determineCount(HStoneCard source, HStoneCard target) {
-				HStoneCard weapon = source.getPlayer().getNextPlayer().getWeapon();
-				if (weapon == null)
-					return 0;
-				return weapon.getHealth();
-			}
-		};
-	}
 	public static HStoneEffect copyMinionInOppDeckToMyBattlefield() {
 //		 "Put a copy of a random minion from your opponent's deck into the battlefield"
 		return new HStoneEffect() {
@@ -704,7 +675,7 @@ public class Battlecry {
 		};
 	}
 	
-	public static HStoneEffect toMultipleRandom(HSGetCount getCount, HSFilter filter, HStoneEffect effect) {
+	public static HStoneEffect toMultipleRandom(HSGetCount getCount, HSFilter filter, HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -737,7 +708,7 @@ public class Battlecry {
 		};
 	}
 
-	public static HStoneEffect randomFriendlyMinion(final HStoneEffect effect) {
+	public static HStoneEffect randomFriendlyMinion(final HSAction effect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -759,7 +730,8 @@ public class Battlecry {
 			}
 		};
 	}
-	public static HStoneEffect untilMyNextTurn(HSFilter filter, HStoneEffect nowEffect, HStoneEffect laterEffect) {
+	
+	public static HStoneEffect untilMyNextTurn(HSFilter filter, HSAction nowEffect, HSAction laterEffect) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -781,6 +753,7 @@ public class Battlecry {
 			}
 		};
 	}
+	
 	public static HStoneEffect oppSummon(final String cardName, final int count) {
 		return new HStoneEffect() {
 			@Override
@@ -907,6 +880,77 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				target.unsummon();
+			}
+		};
+	}
+
+	public static HStoneEffect chooseOne(HStoneOption... options) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				for (HStoneOption option : options) {
+					source.getGame().getTemporaryZone().createCardOnBottom(option);
+				}
+				source.getGame().setTemporaryFor(source);
+			}
+		};
+	}
+
+	public static HStoneEffect fourDamageToAnEnemyAnd1DamageToOtherEnemies() {
+		final HStoneEffect damage4 = damage(4);
+		final HStoneEffect damage1 = damage(1);
+		return new HStoneEffect(opponentPlayer()) {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				damage4.performEffect(source, target);
+				
+				List<HStoneCard> others = target.getGame().findAll(target, samePlayer().and(anotherCard()));
+				for (HStoneCard card : others) {
+					damage1.performEffect(source, card);
+				}
+			}
+		};
+	}
+	
+	public static HStoneEffect toSelf(HStoneEffect effect) {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				effect.performEffect(source, source);
+			}
+		};
+	}
+	
+	public static HStoneEffect comboOrNothing(HStoneEffect effect) {
+		return iff(isCombo(), effect);
+	}
+
+	public static HStoneEffect destroyMyWeapon() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				source.getPlayer().destroyWeapon();
+			}
+		};
+	}
+
+	public static HStoneEffect drawCardAndDealDamageEqualToCost() {
+		return new HStoneEffect() {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				HStoneCard card = source.getPlayer().drawCard();
+				int cost = card.getManaCost();
+				damage(cost).performEffect(source, target);
+			}
+		};
+	}
+
+	public static HStoneEffect addEnchantOnAttackDrawCard() {
+//		 TODO: "Choose a minion.  Whenever it attacks, draw a card"
+		return new HStoneEffect(allMinions()) {
+			@Override
+			public void performEffect(HStoneCard source, HStoneCard target) {
+				target.addTrigger(new CardEventDoubleTrigger(HStonePreAttackEvent.class, (listener, event) -> source.getPlayer().drawCard(), samePlayer(), null));
 			}
 		};
 	}

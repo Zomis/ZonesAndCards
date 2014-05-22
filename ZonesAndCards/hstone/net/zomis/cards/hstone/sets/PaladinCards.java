@@ -2,14 +2,12 @@ package net.zomis.cards.hstone.sets;
 
 import static net.zomis.cards.hstone.factory.Battlecry.*;
 import static net.zomis.cards.hstone.factory.HSFilters.*;
+import static net.zomis.cards.hstone.factory.HSGetCounts.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
-import net.zomis.cards.hstone.HStoneCard;
 import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.HStoneRes;
-import net.zomis.cards.hstone.factory.Battlecry.HSGetCount;
 import net.zomis.cards.hstone.factory.HSAbility;
-import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.util.CardSet;
 
 
@@ -45,39 +43,6 @@ public class PaladinCards implements CardSet<HStoneGame> {
 //		game.addCard(weapon( 4,    COMMON, 4, 2, "Truesilver Champion").effect("Whenever your hero attacks, restore 2 Health to it").card());
 //		game.addCard(weapon( 3,      EPIC, 1, 5, "Sword of Justice").effect("Whenever you summon a minion, give it +1/+1 and this loses 1 Durability").card());
 		game.addCard(weapon( 5, LEGENDARY, 5, 3, "Ashbringer").card());
-	}
-
-	private HStoneEffect drawCardAndDealDamageEqualToCost() {
-		return new HStoneEffect() {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStoneCard card = source.getPlayer().drawCard();
-				int cost = card.getManaCost();
-				damage(cost).performEffect(source, target);
-			}
-		};
-	}
-
-	private HSGetCount oppHandSizeMinusMyHandSize() {
-		//   "Draw cards until you have as many in hand as your opponent"
-		return new HSGetCount() {
-			@Override
-			public int determineCount(HStoneCard source, HStoneCard target) {
-				int myHand = source.getPlayer().getHand().size(); // TODO: Do not count the card itself!
-				int oppHand = source.getPlayer().getNextPlayer().getHand().size();
-				return oppHand - myHand;
-			}
-		};
-	}
-
-	private HStoneEffect addEnchantOnAttackDrawCard() {
-//		 TODO: "Choose a minion.  Whenever it attacks, draw a card"
-		return new HStoneEffect(allMinions()) {
-			@Override
-			public void performEffect(HStoneCard source, HStoneCard target) {
-//				target.addTrigger(new AttackTrigger());
-			}
-		};
 	}
 
 }

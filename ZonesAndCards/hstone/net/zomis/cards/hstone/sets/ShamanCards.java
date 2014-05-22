@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.sets;
 
 import static net.zomis.cards.hstone.factory.Battlecry.*;
 import static net.zomis.cards.hstone.factory.HSFilters.*;
+import static net.zomis.cards.hstone.factory.HSGetCounts.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
 import net.zomis.cards.hstone.HSFilter;
@@ -41,7 +42,7 @@ public class ShamanCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 1,    COMMON, "Lightning Bolt").overload(1).effect(damage(3)).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 0,    COMMON, "Totemic Might").effect(forEach(samePlayer().and(minionIs(HStoneMinionType.TOTEM)), null, otherPT(0, 2))).forClass(HStoneClass.SHAMAN).card());
 //		game.addCard(spell( 2,      RARE, "Ancestral Spirit").effect("Choose a minion. When that minion is destroyed, return it to the battlefield").forClass(HStoneClass.SHAMAN).card());
-		game.addCard(spell( 3,      RARE, "Feral Spirit").effect(summon("Spirit Wolf", 2)).overload(2).forClass(HStoneClass.SHAMAN).card());
+		game.addCard(spell( 3,      RARE, "Feral Spirit").effect(iff(haveSpaceOnBattleField(), summon("Spirit Wolf", 2))).overload(2).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 3,      RARE, "Lava Burst").effect(damage(5)).overload(2).forClass(HStoneClass.SHAMAN).card());
 		game.addCard(spell( 3,      RARE, "Lightning Storm").effect(forEach(allMinions().and(enemy()), null, evenChance(damage(2), damage(3)))).overload(2).forClass(HStoneClass.SHAMAN).card());
 //		game.addCard(spell( 3,      EPIC, "Far Sight").effect("Draw a card. That card costs (3) less").forClass(HStoneClass.SHAMAN).card());

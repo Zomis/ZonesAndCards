@@ -2,6 +2,7 @@ package net.zomis.cards.hstone.sets;
 
 import static net.zomis.cards.hstone.factory.Battlecry.*;
 import static net.zomis.cards.hstone.factory.HSFilters.*;
+import static net.zomis.cards.hstone.factory.HSGetCounts.*;
 import static net.zomis.cards.hstone.factory.HStoneCardFactory.*;
 import static net.zomis.cards.hstone.factory.HStoneRarity.*;
 
@@ -14,7 +15,6 @@ import net.zomis.cards.hstone.HStoneGame;
 import net.zomis.cards.hstone.events.HStoneDamageDealtEvent;
 import net.zomis.cards.hstone.events.HStoneDamagedEvent;
 import net.zomis.cards.hstone.events.HStoneMinionSummonedEvent;
-import net.zomis.cards.hstone.factory.Battlecry.HSGetCount;
 import net.zomis.cards.hstone.factory.HSAbility;
 import net.zomis.cards.hstone.factory.HStoneEffect;
 import net.zomis.cards.util.CardSet;
@@ -71,11 +71,7 @@ public class WarriorCards implements CardSet<HStoneGame> {
 		};
 	}
 
-	public static HSGetCount calcHeroArmor() {
-		return (src, dst) -> src.getPlayer().getArmor();
-	}
-
-	private HStoneEffect performAndPerformIf(HStoneEffect firstEffect, HStoneEffect conditionalEffect, HSFilter condition) {
+	public static HStoneEffect performAndPerformIf(HStoneEffect firstEffect, HStoneEffect conditionalEffect, HSFilter condition) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -86,7 +82,7 @@ public class WarriorCards implements CardSet<HStoneGame> {
 		};
 	}
 
-	private HStoneEffect cost1attackInsteadOf1durability() {
+	public static HStoneEffect cost1attackInsteadOf1durability() {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -97,15 +93,6 @@ public class WarriorCards implements CardSet<HStoneGame> {
 
 	public static HStoneEffect deal4or6damageIfIHaveLessThan12Health() {
 		return ifElse((src, dst) -> src.getPlayer().getHealth() <= 12, damage(6), damage(4));
-		
-//		return new HStoneEffect() {
-//			@Override
-//			public void performEffect(HStoneCard source, HStoneCard target) {
-////			"Deal 4 damage.  If you have 12 or less Health, deal 6 instead"	
-//				int damage = source.getPlayer().getHealth() <= 12 ? 6 : 4;
-//				damage(damage).performEffect(source, target);
-//			}
-//		};
 	}
 
 }

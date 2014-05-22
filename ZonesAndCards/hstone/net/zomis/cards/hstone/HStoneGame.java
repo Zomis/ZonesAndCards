@@ -33,7 +33,8 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 	private final List<HStoneEnchantment> enchantments;
 	
 	private int turnNumber;
-	private final CardZone<HStoneOption> temporaryZone;
+	private final CardZone<Card<HStoneOption>> temporaryZone;
+	private HStoneCard	temporaryFor;
 	
 	public void setTargetFilter(HStoneEffect targets, HStoneCard forWhat) {
 		this.targets = targets;
@@ -265,8 +266,24 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		this.enchantments.remove(ench);
 	}
 
-	public CardZone<HStoneOption> getTemporaryZone() {
+	public CardZone<Card<HStoneOption>> getTemporaryZone() {
 		return temporaryZone;
 	}
+
+	public void setTemporaryFor(HStoneCard source) {
+		this.temporaryFor = source;
+	}
+
+	public boolean choose(HStoneOption option) {
+		for (Card<HStoneOption> card : this.temporaryZone) {
+			if (card.getModel() == option) {
+				return click(card);
+			}
+		}
+		return false;
+	}
 	
+	public HStoneCard getTemporaryFor() {
+		return temporaryFor;
+	}
 }

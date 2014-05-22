@@ -7,7 +7,7 @@ import net.zomis.events.IEvent;
 
 public abstract class HStoneTrigger<T extends IEvent> {
 
-	private Class<? extends T> clazz;
+	private final Class<? extends T> clazz;
 	protected final HStoneEffect	effect;
 
 	public HStoneTrigger(Class<? extends T> eventClass) {

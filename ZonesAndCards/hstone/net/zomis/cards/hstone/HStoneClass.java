@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.zomis.cards.hstone.factory.CardType;
+import net.zomis.cards.hstone.factory.HSFilters;
 import net.zomis.cards.hstone.factory.HStoneCardFactory;
 import net.zomis.cards.hstone.factory.HStoneCardModel;
 import net.zomis.cards.hstone.factory.HStoneEffect;
@@ -45,9 +46,9 @@ public enum HStoneClass {
 			case WARRIOR:
 				return factory().effect(armor(2)).card();
 			case SHAMAN:
-				return factory().effect(randomTotem()).card();
+				return factory().effect(iff(shamanCanPlayTotem(), randomTotem())).card(); // TODO: Is this ever disallowed to use? (when having all possibles, or battlefield full)
 			case PALADIN:
-				return factory().effect(summon("Silver Hand Recruit")).card();
+				return factory().effect(iff(HSFilters.haveSpaceOnBattleField(), summon("Silver Hand Recruit"))).card(); // TODO: Is this ever disallowed to use? (when having all possibles, or battlefield full)
 			case PRIEST:
 				return factory().effect(heal(2)).card();
 			case ROGUE:
@@ -59,21 +60,30 @@ public enum HStoneClass {
 		}
 	}
 	
+	private HSFilter shamanCanPlayTotem() {
+		return (src, dst) -> summonableTotems(src.getPlayer()).size() > 0;
+	}
+
+	public List<HStoneCardModel> summonableTotems(HStonePlayer player) {
+		HStoneCardModel totemA = player.getGame().getCardModel("Healing Totem");
+		HStoneCardModel totemB = player.getGame().getCardModel("Stoneclaw Totem");
+		HStoneCardModel totemC = player.getGame().getCardModel("Searing Totem");
+		HStoneCardModel totemD = player.getGame().getCardModel("Wrath of Air Totem");
+		List<HStoneCardModel> totemsToChooseFrom = new ArrayList<>(Arrays.asList(totemA, totemB, totemC, totemD));
+		
+		for (HStoneCard card : player.getBattlefield()) {
+			if (totemsToChooseFrom.contains(card.getModel())) {
+				totemsToChooseFrom.remove(card.getModel());
+			}
+		}
+		return totemsToChooseFrom;
+	}
+	
 	private HStoneEffect randomTotem() {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				HStoneCardModel totemA = source.getGame().getCardModel("Healing Totem");
-				HStoneCardModel totemB = source.getGame().getCardModel("Stoneclaw Totem");
-				HStoneCardModel totemC = source.getGame().getCardModel("Searing Totem");
-				HStoneCardModel totemD = source.getGame().getCardModel("Wrath of Air Totem");
-				List<HStoneCardModel> totemsToChooseFrom = new ArrayList<>(Arrays.asList(totemA, totemB, totemC, totemD));
-				
-				for (HStoneCard card : source.getPlayer().getBattlefield()) {
-					if (totemsToChooseFrom.contains(card.getModel())) {
-						totemsToChooseFrom.remove(card.getModel());
-					}
-				}
+				List<HStoneCardModel> totemsToChooseFrom = summonableTotems(source.getPlayer());
 				HStoneCardModel totem = ZomisList.getRandom(totemsToChooseFrom, source.getGame().getRandom());
 				if (totem == null)
 					return; // No totem available
