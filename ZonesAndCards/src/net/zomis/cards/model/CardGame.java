@@ -270,7 +270,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		}
 		else {
 			action.onFailedPerform();
-			CustomFacade.getLog().d("StackAction was not allowed: " + action);
+//			CustomFacade.getLog().d("StackAction was not allowed: " + action);
 		}
 		return action;
 	}
