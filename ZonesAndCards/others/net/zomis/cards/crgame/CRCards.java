@@ -27,6 +27,10 @@ public class CRCards {
 	public static final CRCardModel[] CHALLENGE_SUDOKU = { SUDOKU_JAVA, SUDOKU_PYTHON, SUDOKU_RUBY, SUDOKU_SHARP };
 	public static final CRCardModel[] CHALLENGE_UTTT = { UTTT_AS3, UTTT_C, UTTT_JAVA, UTTT_JAVA_WINNER };
 	
+	public static final CRCardModel GOLF_SHORTER = zombie("Hwcnimkthsqstnttleshrtr?", -4);
+	public static final CRCardModel GOLF_PALINDROME = zombie("Palindromic Paldindrome", -3);
+	public static final CRCardModel GOLF_CEPTION = zombie("Golfception", -2);
+	public static final CRCardModel GOLF_PLUS = zombie("Stack the Deck", 2);
 	
 	public static final CRCardModel GIVE_ME_DA_CODEZZZ = zombie("give me da codezzz", -3);
 	public static final CRCardModel EVENT_HANDLER_WITH_LAMBDAS = zombie("Event Handler with lambdas", 4);
@@ -46,6 +50,7 @@ public class CRCards {
 	public static final CRCardModel DOORKNOB = user("Doorknob", 3).giveHours(2);
 	public static final CRCardModel GROVES_NL = user("grovesNL", 3).giveHours(2);
 	public static final CRCardModel THE_DOCTOR = user("TheDoctor", 3).giveHours(2);
+	public static final CRCardModel PLAY_GOLF = spell("Play golf", 2).effect(ef.createGolfQuestion());
 	
 	// Random users:
 	public static final CRCardModel USER = user("userXXXXXXX", 1).giveHours(1);
@@ -74,7 +79,7 @@ public class CRCards {
 	
 	public static final Set<CRCardModel> crCards = new HashSet<>(Arrays.asList(JAMAL, ROLFL, SIMON, MUG, THE_FISH, KONIJN, 
 			THE_MISSION, JAMALIZE, PIMP_QUESTION, WEEKEND_CHALLENGE, USER, TTGTB));
-	public static final Set<CRCardModel> pcgCards = new HashSet<>(Arrays.asList(DOORKNOB, GROVES_NL, THE_DOCTOR, USER));
+	public static final Set<CRCardModel> pcgCards = new HashSet<>(Arrays.asList(DOORKNOB, GROVES_NL, THE_DOCTOR, USER, PLAY_GOLF));
 	
 	private static CRCardModel user(String name, int i) {
 		return new CRCardModel(name, CRCardType.USER, i);
@@ -97,10 +102,9 @@ public class CRCards {
 					TTGTB,
 				CLOSE, EXPLODING_BEAR_TRAP, BTW_WORK, WELCOME,
 		
-				ROLATDMS, TTQW, ASK_A_QUESTION, JAMALIZE, MONKING, PIMP_QUESTION, TAG_NOOOOOOO, THE_MISSION });
-//		for (CRCards cards : CRCards.values()) {
-//			crCardGame.addCard(cards.model);
-//		}
+				ROLATDMS, TTQW, ASK_A_QUESTION, JAMALIZE, MONKING, PIMP_QUESTION, TAG_NOOOOOOO, THE_MISSION,
+				GOLF_CEPTION, GOLF_PALINDROME, GOLF_PLUS, GOLF_SHORTER, PLAY_GOLF });
+		
 		for (CRCardModel model : arr) {
 			crCardGame.addCard(model);
 		}

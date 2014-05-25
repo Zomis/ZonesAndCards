@@ -139,5 +139,9 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 	public CRPlayer getNextPlayer() {
 		return (CRPlayer) super.getNextPlayer();
 	}
+
+	public int getTotalCards() {
+		return this.hand.size() + this.deck.size();
+	}
 	
 }

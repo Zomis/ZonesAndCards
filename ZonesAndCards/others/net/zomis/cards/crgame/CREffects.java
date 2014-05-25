@@ -107,4 +107,11 @@ public class CREffects {
 			throw new IllegalArgumentException();
 		player.getZombieZone().createCardOnBottom(zombie);
 	}
+
+	public CREffect createGolfQuestion() {
+		return (src, dst) -> {
+			CRCardModel[] zombies = { CRCards.GOLF_CEPTION, CRCards.GOLF_PALINDROME, CRCards.GOLF_PLUS, CRCards.GOLF_SHORTER };
+			createQuestion(src.getPlayer(), ZomisList.getRandom(zombies, src.getGame().getRandom()));
+		};
+	}
 }

@@ -9,6 +9,7 @@ public class CRPlayerFactory {
 	public CRPlayer newPlayerPCG(CRCardGame game) {
 		DeckList cards = new DeckList();
 		addCardsNotIn(cards, game, CRCards.crCards);
+		cards.add(9, CRCards.PLAY_GOLF);
 		CRPlayer player = new CRPlayer("Programming Puzzles & Code Golf", cards);
 		return player;
 	}

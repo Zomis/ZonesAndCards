@@ -35,45 +35,8 @@ public class CRTest extends CardsTest<CRCardGame> {
 		game.startGame();
 	}
 	
-	
-	interface FOrig {
-		IF getCaller();
-		double count(String str);
-	}
-	
-	@FunctionalInterface
-	interface IF extends FOrig {
-		default IF getCaller() {
-			return this;
-		}
-		
-		double count(String str);
-	}
-	
-	class CallingBase {
-		public void setProd(IF iff) {
-			
-		}
-	}
-	
-	class Calling extends CallingBase {
-		public Calling() {
-			this.setProd(myI());
-		}
-		
-		IF myI() {
-			return (a) -> {
-				return a.length();
-			};
-		}
-	}
-	
-	
-	
-	
 	@Test
 	public void aiTest() {
-		System.out.println(new Calling());
 		CGController controller = new CGController(game);
 		controller.setAI(0, new AI2());
 		controller.setAI(1, new AI2());
@@ -100,11 +63,12 @@ public class CRTest extends CardsTest<CRCardGame> {
 		System.out.println("Total cards: " + sum);
 		
 		game.getPlayers().forEach(this::outputPlayerInfo);
+		
+		assertEquals(game.getPlayers().get(0).getTotalCards(), game.getPlayers().get(1).getTotalCards());
 	}
 	
 	public void outputPlayerInfo(CRPlayer player) {
-		int i = player.getDeck().size() + player.getHand().size();
-		System.out.println(player.getName() + ": " + i);
+		System.out.println(player.getName() + ": " + player.getTotalCards());
 	}
 	
 	@Test
