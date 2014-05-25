@@ -7,7 +7,14 @@ import net.zomis.cards.wart.HStoneRes;
 
 public class HSFilters {
 
-	public static HSFilter thisCard() {
+	private static final HSGetCounts g = new HSGetCounts();
+	private static final Battlecry e = new Battlecry();
+	
+	public HSFilter shamanCanPlayTotem() {
+		return (src, dst) -> e.summonableTotems(src.getPlayer()).size() > 0;
+	}
+
+	public HSFilter thisCard() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -16,11 +23,11 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter minionWithDivineShield() {
+	public HSFilter minionWithDivineShield() {
 		return minionHasAbility(HSAbility.DIVINE_SHIELD);
 	}
 
-	public static HSFilter minionHasAbility(final HSAbility ability) {
+	public HSFilter minionHasAbility(final HSAbility ability) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -29,7 +36,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter all() {
+	public HSFilter all() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -38,7 +45,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter allMinions() {
+	public HSFilter allMinions() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -47,7 +54,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter allPlayers() {
+	public HSFilter allPlayers() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -56,11 +63,11 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter minionIsMurloc() {
+	public HSFilter minionIsMurloc() {
 		return minionIs(HStoneMinionType.MURLOC);
 	}
 
-	public static HSFilter samePlayer() {
+	public HSFilter samePlayer() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -69,7 +76,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter not(final HSFilter filter) {
+	public HSFilter not(final HSFilter filter) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -78,7 +85,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter anotherCard() {
+	public HSFilter anotherCard() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -87,7 +94,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter withAttackLess(final int thisOrLess) {
+	public HSFilter withAttackLess(final int thisOrLess) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -96,7 +103,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter withAttackMore(final int thisOrMore) {
+	public HSFilter withAttackMore(final int thisOrMore) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -105,7 +112,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter adjacents() {
+	public HSFilter adjacents() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -114,7 +121,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter minionIs(final HStoneMinionType minionType) {
+	public HSFilter minionIs(final HStoneMinionType minionType) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -126,7 +133,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter canTakeDamage(final int i) {
+	public HSFilter canTakeDamage(final int i) {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -135,15 +142,15 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter enemy() {
+	public HSFilter enemy() {
 		return not(samePlayer());
 	}
 
-	public static HSFilter enrage() {
+	public HSFilter enrage() {
 		return thisCard().and(isDamaged());
 	}
 
-	public static HSFilter isDamaged() {
+	public HSFilter isDamaged() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -152,7 +159,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter isSpell() {
+	public HSFilter isSpell() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -161,15 +168,15 @@ public class HSFilters {
 		};
 	}
 	
-	public static HSFilter opponent() {
+	public HSFilter opponent() {
 		return not(samePlayer());
 	}
 
-	public static HSFilter opponentMinions() {
+	public HSFilter opponentMinions() {
 		return allMinions().and(opponent());
 	}
 
-	public static HSFilter targetPlayerHasWeapon() {
+	public HSFilter targetPlayerHasWeapon() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -178,7 +185,7 @@ public class HSFilters {
 		};
 	}
 
-	public static HSFilter isActiveSecret() {
+	public HSFilter isActiveSecret() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -189,7 +196,7 @@ public class HSFilters {
 		};
 	}
 	
-	public static HSFilter haveBeast() {
+	public HSFilter haveBeast() {
 		return new HSFilter() {
 			@Override
 			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
@@ -203,22 +210,33 @@ public class HSFilters {
 		};
 	}
 
-	public static final HSFilter haveWeapon = (src, dst) -> src.getPlayer().getWeapon() != null;
+	public final HSFilter haveWeapon = (src, dst) -> src.getPlayer().getWeapon() != null;
 
-	public static final HSFilter isWeapon = (src, dst) -> dst.getPlayer().getWeapon() == dst;
+	public final HSFilter isWeapon = (src, dst) -> dst.getPlayer().getWeapon() == dst;
 
-	public static final HSFilter isTargetAlive = (src, dst) -> dst.isAlive();
+	public final HSFilter isTargetAlive = (src, dst) -> dst.isAlive();
 
-	public static final HSFilter haveSpaceOnBattleField = (src, dst) -> src.getPlayer().getBattlefield().size() < HStonePlayer.MAX_BATTLEFIELD_SIZE;
+	public final HSFilter haveSpaceOnBattleField = (src, dst) -> src.getPlayer().getBattlefield().size() < HStonePlayer.MAX_BATTLEFIELD_SIZE;
 
-	public static final HSFilter opponentHasMinions(int count) {
+	public final HSFilter opponentHasMinions(int count) {
 		return (src, dst) -> src.getPlayer().getNextPlayer().getBattlefield().size() >= count;
 	}
 
-	public static final HSFilter undamaged = (src, target) -> target.getHealth() == target.getHealthMax();
+	public final HSFilter undamaged = (src, target) -> target.getHealth() == target.getHealthMax();
 	
 	public HSFilter countAtLeast(HSFilter filter, int moreThanOrEqualTo) {
 		return (src, dst) -> src.getGame().findAll(src, filter).size() >= moreThanOrEqualTo;
+	}
+
+	public final HSFilter isCombo = (src, dst) -> g.calcCombo.determineCount(src, dst) > 1;
+	
+	public HSFilter playerControlsSecret() {
+		return new HSFilter() {
+			@Override
+			public boolean shouldKeep(HStoneCard searcher, HStoneCard target) {
+				return !searcher.getPlayer().getSecrets().isEmpty();
+			}
+		};
 	}
 
 }

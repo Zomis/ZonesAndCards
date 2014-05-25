@@ -1,7 +1,9 @@
 package net.zomis.cards.wart.factory;
 
+import net.zomis.cards.wart.HSAction1;
 import net.zomis.cards.wart.HSDoubleEventConsumer;
 import net.zomis.cards.wart.HSFilter;
+import net.zomis.cards.wart.HSGetCount;
 import net.zomis.cards.wart.HStoneCard;
 import net.zomis.cards.wart.HStoneClass;
 import net.zomis.cards.wart.HStoneRes;
@@ -23,6 +25,9 @@ import net.zomis.cards.wart.triggers.HStoneTrigger;
 
 
 public class HStoneCardFactory {
+	
+	private static final HSFilters f = new HSFilters();
+	private static final Battlecry e = new Battlecry();
 
 	private HStoneCardModel card;
 
@@ -108,7 +113,7 @@ public class HStoneCardFactory {
 	}
 
 	public HStoneCardFactory deathrattle(HStoneEffect effect) {
-		return on(HStoneMinionDiesEvent.class, effect, HSFilters.thisCard());
+		return on(HStoneMinionDiesEvent.class, effect, f.thisCard());
 	}
 	
 	public HStoneCardFactory on(Class<? extends HStoneCardEvent> eventClass, HStoneEffect effect, HSFilter filter) {
@@ -122,7 +127,7 @@ public class HStoneCardFactory {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				source.getPlayer().getResources().changeResources(HStoneRes.MANA_OVERLOAD, overload);
 			}
-		}, HSFilters.thisCard());
+		}, f.thisCard());
 	}
 
 	public HStoneCardFactory staticEffectOtherMurlocsBonus(final int attack, final int health) {
@@ -231,7 +236,7 @@ public class HStoneCardFactory {
 	public HStoneCardFactory secret(Class<? extends HStoneDoubleCardEvent> clazz, HSDoubleEventConsumer effect, HSFilter triggerSource, HSFilter triggerTarget) {
 		card.secret = true;
 		card.addTriggerEffect(new CardEventDoubleTrigger(clazz, combinedConsumer(revealTheSecret(), effect), 
-				HSFilters.isActiveSecret().and(triggerSource), HSFilters.isActiveSecret().and(triggerTarget)));
+				f.isActiveSecret().and(triggerSource), f.isActiveSecret().and(triggerTarget)));
 		card.setEffect(new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -253,7 +258,7 @@ public class HStoneCardFactory {
 
 	public HStoneCardFactory secret(Class<? extends HStoneCardEvent> clazz, HStoneEffect effect, HSFilter trigger) {
 		card.secret = true;
-		card.addTriggerEffect(new CardEventTrigger(clazz, Battlecry.combined(effect, revealTheSecret()), trigger.and(HSFilters.isActiveSecret())));
+		card.addTriggerEffect(new CardEventTrigger(clazz, e.combined(effect, revealTheSecret()), trigger.and(f.isActiveSecret())));
 		card.setEffect(new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
@@ -269,14 +274,14 @@ public class HStoneCardFactory {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				
 				source.getGame().callEvent(new HStoneSecretRevealedEvent(source));
-				Battlecry.selfDestruct().performEffect(source, target);
+				e.selfDestruct().performEffect(source, target);
 			}
 		};
 	}
 
 	public HStoneCardFactory poison() {
 //		"Destroy any minion damaged by this minion"
-		return on(new DealDamageTrigger(Battlecry.destroyTarget(), HSFilters.thisCard()));
+		return on(new DealDamageTrigger(e.destroyTarget(), f.thisCard()));
 	}
 
 	public HStoneCardFactory staticMana(HSFilter filter, int change) {
@@ -296,6 +301,26 @@ public class HStoneCardFactory {
 				});
 			}
 		});
+	}
+	
+	public HStoneCardFactory staticSelfCost(HSGetCount count) {
+		card.onCreate = new HSAction1() {
+			@Override
+			public void performEffect(HStoneCard card) {
+				card.getGame().addEnchantment(new HStoneEnchMana(0) {
+					@Override
+					public boolean appliesTo(HStoneCard enchantCard) {
+						return card == enchantCard;
+					}
+			
+					@Override
+					protected Integer mana(HStoneCard card, Integer mana) {
+						return mana + count.determineCount(card, null);
+					}
+				});
+			};
+		};
+		return this;
 	}
 	
 }

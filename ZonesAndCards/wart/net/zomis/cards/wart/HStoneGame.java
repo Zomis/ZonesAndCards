@@ -271,6 +271,9 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		}
 		if (result == null)
 			throw new NullPointerException("No enchantment affected " + resource + " for " + card);
+
+		if (resource == HStoneRes.MANA_COST)
+			return Math.max(0, result);
 		return result;
 	}
 

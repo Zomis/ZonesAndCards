@@ -1,8 +1,5 @@
 package net.zomis.cards.wart.sets;
 
-import static net.zomis.cards.wart.factory.Battlecry.*;
-import static net.zomis.cards.wart.factory.HSFilters.*;
-import static net.zomis.cards.wart.factory.HSGetCounts.*;
 import static net.zomis.cards.wart.factory.HStoneCardFactory.*;
 import static net.zomis.cards.wart.factory.HStoneRarity.*;
 import net.zomis.cards.util.CardSet;
@@ -13,33 +10,40 @@ import net.zomis.cards.wart.ench.HStoneEnchForward;
 import net.zomis.cards.wart.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.wart.events.HStoneCardPlayedEvent;
 import net.zomis.cards.wart.events.HStoneDamagedEvent;
+import net.zomis.cards.wart.factory.Battlecry;
+import net.zomis.cards.wart.factory.HSFilters;
+import net.zomis.cards.wart.factory.HSGetCounts;
 import net.zomis.cards.wart.factory.HStoneEffect;
 
 public class ManaFiveCards implements CardSet<HStoneGame> {
 
+	private static final HSGetCounts c = new HSGetCounts();
+	private static final HSFilters f = new HSFilters();
+	private static final Battlecry e = new Battlecry();
+	
 	@Override
 	public void addCards(HStoneGame game) {
 		
-		game.addCard(minion( 5,      FREE, 4, 4, "Nightblade").battlecry(damageToOppHero(3)).card());
+		game.addCard(minion( 5,      FREE, 4, 4, "Nightblade").battlecry(e.damageToOppHero(3)).card());
 		game.addCard(minion( 5,    COMMON, 5, 4, "Booty Bay Bodyguard").taunt().card());
-		game.addCard(minion( 5,    COMMON, 4, 5, "Darkscale Healer").battlecry(forEach(samePlayer(), null, heal(2))).card());
+		game.addCard(minion( 5,    COMMON, 4, 5, "Darkscale Healer").battlecry(e.forEach(f.samePlayer(), null, e.heal(2))).card());
 		game.addCard(minion( 5,    COMMON, 5, 5, "Devilsaur").card());
 		game.addCard(minion( 5,    COMMON, 3, 6, "Fen Creeper").taunt().card());
-		game.addCard(minion( 5,    COMMON, 4, 4, "Frostwolf Warlord").battlecry(forEach(allMinions().and(anotherCard()), selfPT(1, 1), null)).card());
-		game.addCard(minion( 5,    COMMON, 2, 7, "Gurubashi Berserker").on(HStoneDamagedEvent.class, selfPT(3, 0), thisCard()).card());
-		game.addCard(minion( 5,    COMMON, 4, 4, "Silver Hand Knight").battlecry(summon("Squire")).card());
+		game.addCard(minion( 5,    COMMON, 4, 4, "Frostwolf Warlord").battlecry(e.forEach(f.allMinions().and(f.anotherCard()), e.selfPT(1, 1), null)).card());
+		game.addCard(minion( 5,    COMMON, 2, 7, "Gurubashi Berserker").on(HStoneDamagedEvent.class, e.selfPT(3, 0), f.thisCard()).card());
+		game.addCard(minion( 5,    COMMON, 4, 4, "Silver Hand Knight").battlecry(e.summon("Squire")).card());
 		game.addCard(minion( 5,    COMMON, 4, 6, "Spiteful Smith").effect(enrageWeaponTwoAttack()).card());
-		game.addCard(minion( 5,    COMMON, 4, 2, "Stormpike Commando").battlecry(damage(2)).card());
+		game.addCard(minion( 5,    COMMON, 4, 2, "Stormpike Commando").battlecry(e.damage(2)).card());
 		game.addCard(minion( 5,    COMMON, 5, 5, "Stranglethorn Tiger").stealth().card());
-//		game.addCard(minion( 5,    COMMON, 7, 6, "Venture Co. Mercenary").effect("Your minions cost (3) more").card());
-		game.addCard(minion( 5,      RARE, 4, 4, "Abomination").taunt().deathrattle(forEach(all(), null, damage(2))).card());
-		game.addCard(minion( 5,      RARE, 4, 4, "Azure Drake").spellDamage(1).battlecry(drawCard()).card());
-		game.addCard(minion( 5,      RARE, 4, 4, "Gadgetzan Auctioneer").on(HStoneCardPlayedEvent.class, drawCard(), samePlayer().and(isSpell())).card());
-		game.addCard(minion( 5,      RARE, 3, 5, "Stampeding Kodo").battlecry(toRandom(opponentMinions().and(withAttackLess(2)), destroyTarget())).card());
-//		game.addCard(minion( 5,      EPIC, 3, 3, "Faceless Manipulator").battlecry("Choose a minion and become a copy of it").card());
+		game.addCard(minion( 5,    COMMON, 7, 6, "Venture Co. Mercenary").staticMana(f.allMinions().and(f.samePlayer()), 3).card());
+		game.addCard(minion( 5,      RARE, 4, 4, "Abomination").taunt().deathrattle(e.forEach(f.all(), null, e.damage(2))).card());
+		game.addCard(minion( 5,      RARE, 4, 4, "Azure Drake").spellDamage(1).battlecry(e.drawCard()).card());
+		game.addCard(minion( 5,      RARE, 4, 4, "Gadgetzan Auctioneer").on(HStoneCardPlayedEvent.class, e.drawCard(), f.samePlayer().and(f.isSpell())).card());
+		game.addCard(minion( 5,      RARE, 3, 5, "Stampeding Kodo").battlecry(e.toRandom(f.opponentMinions().and(f.withAttackLess(2)), e.destroyTarget())).card());
+		game.addCard(minion( 5,      EPIC, 3, 3, "Faceless Manipulator").battlecry(e.pickAndCopy()).card());
 		game.addCard(minion( 5, LEGENDARY, 5, 4, "Captain Greenskin").battlecry(giveWeapon(1, 1)).card());
-		game.addCard(minion( 5, LEGENDARY, 5, 5, "Elite Tauren Chieftain").battlecry(bothPlayers(evenChance(giveCard("I Am Murloc"), giveCard("Power of the Horde"), giveCard("Rogues Do It...")))).card());
-		game.addCard(minion( 5, LEGENDARY, 5, 4, "Harrison Jones").battlecry(combined(repeat(oppWeaponDurability(), drawCard()), destroyOppWeapon())).card());
+		game.addCard(minion( 5, LEGENDARY, 5, 5, "Elite Tauren Chieftain").battlecry(e.bothPlayers(e.evenChance(e.giveCard("I Am Murloc"), e.giveCard("Power of the Horde"), e.giveCard("Rogues Do It...")))).card());
+		game.addCard(minion( 5, LEGENDARY, 5, 4, "Harrison Jones").battlecry(e.combined(e.repeat(c.oppWeaponDurability(), e.drawCard()), e.destroyOppWeapon())).card());
 	}
 
 	private HStoneEffect giveWeapon(int attack, int durability) {
@@ -68,7 +72,7 @@ public class ManaFiveCards implements CardSet<HStoneGame> {
 
 					@Override
 					public boolean appliesTo(HStoneCard card) {
-						return enrage().shouldKeep(source, source) && isWeapon.and(samePlayer()).shouldKeep(source, card);
+						return f.enrage().shouldKeep(source, source) && f.isWeapon.and(f.samePlayer()).shouldKeep(source, card);
 					}
 				});
 			}

@@ -1,13 +1,13 @@
 package net.zomis.cards.wart.factory;
 
-import net.zomis.cards.wart.HSFilter;
 import net.zomis.cards.wart.HSGetCount;
 import net.zomis.cards.wart.HStoneCard;
+import net.zomis.cards.wart.HStonePlayer;
 import net.zomis.cards.wart.HStoneRes;
 
 public class HSGetCounts {
 	
-	public static HSGetCount fixed(final int count) {
+	public HSGetCount fixed(final int count) {
 		return new HSGetCount() {
 			@Override
 			public int determineCount(HStoneCard source, HStoneCard target) {
@@ -16,15 +16,13 @@ public class HSGetCounts {
 		};
 	}
 	
-	public static final HSGetCount calcWeaponDamage = (src, dst) -> src.getPlayer().getWeapon() != null ? src.getPlayer().getWeapon().getAttack() : 0;
+	public final HSGetCount calcWeaponDamage = (src, dst) -> src.getPlayer().getWeapon() != null ? src.getPlayer().getWeapon().getAttack() : 0;
 
-	public static final HSGetCount calcCombo = (src, dst) -> src.getPlayer().getResources().get(HStoneRes.CARDS_PLAYED);
+	public final HSGetCount calcCombo = (src, dst) -> src.getPlayer().getResources().get(HStoneRes.CARDS_PLAYED);
 
-	public static final HSGetCount edwinBonus = (src, dst) -> (calcCombo.determineCount(src, dst) - 1) * 2;
+	public final HSGetCount edwinBonus = (src, dst) -> (calcCombo.determineCount(src, dst) - 1) * 2;
 
-	public static final HSFilter isCombo = (src, dst) -> calcCombo.determineCount(src, dst) > 1;
-	
-	public static HSGetCount oppWeaponDurability() {
+	public HSGetCount oppWeaponDurability() {
 		return new HSGetCount() {
 			@Override
 			public int determineCount(HStoneCard source, HStoneCard target) {
@@ -36,7 +34,7 @@ public class HSGetCounts {
 		};
 	}
 	
-	public static HSGetCount oppHandSizeMinusMyHandSize() {
+	public HSGetCount oppHandSizeMinusMyHandSize() {
 		//   "Draw cards until you have as many in hand as your opponent"
 		return new HSGetCount() {
 			@Override
@@ -48,8 +46,25 @@ public class HSGetCounts {
 		};
 	}
 
-	public static final HSGetCount calcHeroArmor = (src, dst) -> src.getPlayer().getArmor();
+	public final HSGetCount calcHeroArmor = (src, dst) -> src.getPlayer().getArmor();
 
-	public static final HSGetCount myHeroAttack = (src, dst) -> src.getPlayer().getPlayerCard().getAttack();
+	public final HSGetCount myHeroAttack = (src, dst) -> src.getPlayer().getPlayerCard().getAttack();
+
+	public final HSGetCount oneLessPerHeroDamage = (src, dst) -> src.getPlayer().getHealth() - src.getPlayer().getPlayerCard().getHealthMax();
+
+	public final HSGetCount	oneLessPerOtherCardInHand = (src, dst) -> -src.getPlayer().getHand().size() + (src.getCurrentZone() == src.getPlayer().getHand() ? 1 : 0);
+
+	public final HSGetCount oneLessPerOtherMinionOnBattlefield = new HSGetCount() {
+		@Override
+		public int determineCount(HStoneCard source, HStoneCard target) {
+			int total = 0;
+			for (HStonePlayer pl : source.getGame().getPlayers()) {
+				total -= pl.getBattlefield().size();
+				if (source.getCurrentZone() == pl.getBattlefield())
+					total++;
+			}
+			return total;
+		}
+	};
 
 }

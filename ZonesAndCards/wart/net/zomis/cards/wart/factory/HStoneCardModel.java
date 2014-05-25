@@ -9,6 +9,7 @@ import java.util.Set;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.wart.HSAction1;
 import net.zomis.cards.wart.HStoneCard;
 import net.zomis.cards.wart.HStoneClass;
 import net.zomis.cards.wart.triggers.HStoneTrigger;
@@ -28,6 +29,7 @@ public class HStoneCardModel extends CardModel {
 	int overload;
 	int spellDamage;
 	boolean secret;
+	HSAction1 onCreate;
 	
 	public int getManaCost() {
 		return manaCost;
@@ -53,6 +55,8 @@ public class HStoneCardModel extends CardModel {
 	@Override
 	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
 		Card<HStoneCardModel> card = new HStoneCard(this, initialZone);
+		if (this.onCreate != null && card.getGame() != null)
+			this.onCreate.performEffect((HStoneCard) card);
 		return (Card<E>) card;
 	}
 
