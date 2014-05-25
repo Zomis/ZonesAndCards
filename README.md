@@ -31,7 +31,7 @@ Note that although this code is meant to be very flexible and intended to be pos
 ##others
 
 - net.zomis.cards.cwars2: Castle Wars implementation, a quite simple game based on three types of resources: Builders/Bricks, Recruits/Weapons, Wizards/Crystals. First to reach a castle of 100 or to destroy opponent's castle to 0 wins.
-net.zomis.cards.greger: (Very incomplete) [UNO](http://en.wikipedia.org/wiki/Uno_%28card_game%29) is a Swedish first name, just like Greger. Greger sounds more fun though.
+- net.zomis.cards.greger: (Very incomplete) [UNO](http://en.wikipedia.org/wiki/Uno_%28card_game%29) is a Swedish first name, just like Greger. Greger sounds more fun though.
 
 
 ##The rest of the directories
@@ -48,6 +48,3 @@ This project requires the following:
 - https://github.com/Zomis/AIScorers
 - https://github.com/Zomis/Commons
 - https://github.com/Zomis/Fighting
-- [Jackson Library](https://github.com/FasterXML/jackson)
-- [Jackson Dataformat XML](https://github.com/FasterXML/jackson-dataformat-xml)
-- stax2-2.1.jar (Jackson XML dependency)
