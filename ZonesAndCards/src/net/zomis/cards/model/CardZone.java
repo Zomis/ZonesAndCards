@@ -140,8 +140,8 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		}
 		return copy;
 	}
-	public CardZone<?> extractBottomCards(int number) {
-		CardZone<?> copy = this.createEmptyCopy();
+	public CardZone<E> extractBottomCards(int number) {
+		CardZone<E> copy = this.createEmptyCopy();
 		for (int i = 0; i < number; i++) {
 			this.getBottomCard().zoneMoveOnTop(copy);
 		}
