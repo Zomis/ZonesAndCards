@@ -62,7 +62,7 @@ public class TurnEightPlayAction extends ZoneMoveAction {
 		super.onPerform();
 		getGame().setCurrentSuite(getModel().getSuite());
 		if (getModel().getRank() == TurnEightController.EIGHT) {
-			// Välj en färg. GamePhase eller något annat? Kan jämföras med "target color" för diverse andra kortspel
+			// Choose a color, should this be a GamePhase or something else? Can be compared with choosing a target color for several other card games.
 			getGame().setCurrentSuite(getGame().getPlayerChoice());
 		}
 		if (getModel().getRank() == getGame().getAceValue()) {

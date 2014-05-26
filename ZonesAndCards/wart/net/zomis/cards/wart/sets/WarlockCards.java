@@ -37,7 +37,7 @@ public class WarlockCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 4,      FREE, "Hellfire").effect(e.forEach(f.all(), null, e.damage(3))).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 3,      FREE, "Shadow Bolt").effect(e.toMinion(e.damage(4))).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 1,    COMMON, "Corruption").effect(e.to(f.opponentMinions(), e.addEnchantOnMyTurnStartDestroy)).forClass(HStoneClass.WARLOCK).card());
-//		game.addCard(spell( 2,    COMMON, "Demonfire").effect("Deal 2 damage to a minion.   If it’s a friendly Demon, give it +2/+2 instead").forClass(HStoneClass.WARLOCK).card());
+//		game.addCard(spell( 2,    COMMON, "Demonfire").effect("Deal 2 damage to a minion.   If it's a friendly Demon, give it +2/+2 instead").forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 1,    COMMON, "Mortal Coil").effect("Deal 1 damage to a minion. If that kills it, draw a card").forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 1,    COMMON, "Power Overwhelming").effect("Give a friendly minion +4/+4 until end of turn. Then, it dies. Horribly").forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 0,    COMMON, "Sacrificial Pact").effect(e.to(f.minionIs(HStoneMinionType.DEMON), e.combined(e.destroyTarget(), e.healMyHero(5)))).forClass(HStoneClass.WARLOCK).card());

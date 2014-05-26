@@ -253,11 +253,11 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
  * In MDJQ, use TargetSelectPhase 
  * 
  * 
- * 1. active player triggar ETB
- * 2. non-active    triggar ETB
- * Spelare får välja vilken ordning ETB-effekter läggs på stacken
+ * 1. active player triggers ETB
+ * 2. non-active    triggers ETB
+ * Players can choose in which order ETB-triggers are put on the stack.
  * 
- * Gamestate ändras, allt görs om
+ * When gamestate is changed, everything is done again.
  * 
  * Invisible state data:
  * - Unit attacks/turn (for some units)

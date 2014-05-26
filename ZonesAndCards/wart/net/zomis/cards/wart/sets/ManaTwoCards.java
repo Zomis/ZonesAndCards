@@ -62,7 +62,7 @@ public class ManaTwoCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 2,      EPIC, 0, 7, "Doomsayer").on(HStoneTurnStartEvent.class, e.destroyAllMinions(), f.samePlayer()).card());
 		game.addCard(minion( 2, LEGENDARY, 1, 1, "Bloodmage Thalnos").spellDamage(1).deathrattle(e.drawCard()).card());
 		game.addCard(minion( 2, LEGENDARY, 3, 3, "Finkle Einhorn").card());
-//		game.addCard(minion( 2, LEGENDARY, 0, 4, "Lorewalker Cho").effect("Whenever a player casts a spell, put a copy into the other player’s hand").card());
+//		game.addCard(minion( 2, LEGENDARY, 0, 4, "Lorewalker Cho").effect("Whenever a player casts a spell, put a copy into the other player's hand").card());
 //		game.addCard(minion( 2, LEGENDARY, 4, 4, "Millhouse Manastorm").effect("<b>Battlecry:</b>").effect("Enemy spells cost (0) next turn").card());
 		game.addCard(minion( 2, LEGENDARY, 0, 4, "Nat Pagle").on(HStoneTurnStartEvent.class, e.evenChance(e.drawCard(), e.doNothing()), f.samePlayer()).card());
 	}

@@ -47,12 +47,11 @@ public class TurnEightGame extends ClassicGame {
 	}
 	
 	/*
-	 * "Vändåtta"
 	 * http://sv.wikipedia.org/wiki/V%C3%A4nd%C3%A5tta
-	 * Var sin tur, lägg ett eller många kort, om man inte kan får man dra kort -- max 3
+	 * Each player has his turn, place one or more cards. If you can't play you have to draw a card - with a limit of 3.
+	 * See also http://en.wikipedia.org/wiki/Mau_Mau_%28card_game%29
 	 * 
-	 * 8or vänder "färg"
-	 * Ess gör att alla andra måste dra ett kort
+	 * 8's switch suit. Aces makes everyone else draw a card
 	 * */
 	public TurnEightGame() {
 		super(AceValue.HIGH);
