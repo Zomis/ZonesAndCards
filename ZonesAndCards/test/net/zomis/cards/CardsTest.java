@@ -18,6 +18,7 @@ import net.zomis.events.IEventExecutor;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public abstract class CardsTest<E> {
 
@@ -98,5 +99,10 @@ public abstract class CardsTest<E> {
 	
 	protected void assertResources(ResourceMap resources, IResource resource, int expected) {
 		assertTrue("Expected to have " + expected + " " + resource + " but had " + resources, resources.hasResources(resource, expected));
+	}
+	
+	@Test
+	public void noTestForSillyNetbeans() {
+		assertTrue(true);
 	}
 }

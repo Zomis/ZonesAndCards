@@ -58,6 +58,7 @@ import net.zomis.cards.swing.CardViewStrategies.TextActionString;
 import net.zomis.cards.swing.CardViewStrategies.TextCardModelName;
 import net.zomis.cards.swing.CardViewStrategies.TextCardToString;
 import net.zomis.custommap.CustomFacade;
+import net.zomis.custommap.ZomisSwing;
 import net.zomis.custommap.view.Log4jLog;
 import net.zomis.custommap.view.swing.MenuItemBuilder;
 import net.zomis.custommap.view.swing.SimpleAction;
@@ -86,8 +87,9 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	private CGController	controller;
 
 	public CardFrame() {
+		ZomisSwing.setup();
 		ZomisSwingLog4j.addConsoleAppender(Log4jLog.DETAILED_LAYOUT);
-		new CustomFacade(new Log4jLog("Cards"));
+		
 		CustomFacade.getLog().i("Creating game");
 //		this.game = new TurnEightGame().addPlayer("BUBU").addPlayer("Zomis").addPlayer("Minken");
 //		this.game = new IdiotGame();
@@ -98,7 +100,8 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 //			this.game = new PokerGame();
 //		game = CWars2Setup.newMultiplayerGame().setDecks(CWars2Decks.zomisMultiplayerDeck(), CWars2Decks.zomisMultiplayerDeck()).setAIs(null, new CWars2AI_Better()).build();
 		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).build();
-		controller = new CGController(game).setAIs(null, new CWars2AI_Better());
+		controller = new CGController(game);
+		controller.setAI(1, new CWars2AI_Better());
 
 		CustomFacade.getLog().i("Game created");
 		

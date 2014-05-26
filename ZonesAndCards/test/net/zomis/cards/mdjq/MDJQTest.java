@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.junit.Test;
+
 import net.zomis.cards.CardsTest;
 import net.zomis.cards.mdjq.MDJQGame;
 import net.zomis.cards.mdjq.MDJQObject;
@@ -99,4 +101,8 @@ public class MDJQTest extends CardsTest<MDJQGame> {
 		game.startGame();
 	}
 	
+	@Test
+	public void noTestForSillyNetbeans() {
+		assertTrue(true);
+	}
 }

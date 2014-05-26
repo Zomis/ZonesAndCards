@@ -25,7 +25,6 @@ import net.zomis.cards.util.StackActionAllowedFilter;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.utils.ZomisList;
 
-import org.junit.After;
 import org.junit.Test;
 
 public class CWarsTest extends CardsTest<CWars2Game> {
@@ -79,6 +78,7 @@ public class CWarsTest extends CardsTest<CWars2Game> {
 		}
 		assertTrue(game.isGameOver());
 		game = null;
+		assertNull(game);
 	}
 	
 	private void assertResources() {
@@ -94,14 +94,6 @@ public class CWarsTest extends CardsTest<CWars2Game> {
 		}
 	}
 
-	@After
-	public void after() {
-		if (game == null)
-			return;
-		
-		assertNull(game);
-	}
-	
 	@Override
 	protected void onBefore() {
 		game = CWars2Setup.defaultGame(42L);

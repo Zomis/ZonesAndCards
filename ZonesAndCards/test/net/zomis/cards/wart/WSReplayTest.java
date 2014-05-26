@@ -1,7 +1,6 @@
 package net.zomis.cards.wart;
 
 import static org.junit.Assert.*;
-import net.zomis.cards.wart.HStoneGame;
 import net.zomis.cards.wart.factory.HStoneChars;
 import net.zomis.custommap.ZomisSwing;
 
@@ -20,7 +19,7 @@ public class WSReplayTest {
 		String init = game.getReplay().getInitialization();
 		System.out.println(init);
 		
-		assertTrue("TODO: Test HStone with replays", false); // TODO: Test HStone with replays
+		fail("TODO: Test HStone with replays"); // TODO: Test HStone with replays
 	}
 	
 }
