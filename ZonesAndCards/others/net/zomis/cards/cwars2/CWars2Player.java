@@ -33,7 +33,6 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 		this.discard.setGloballyKnown(true);
 	}
 	
-	@Override
 	public CardZone<Card<CWars2Card>> getDeck() {
 		return deck;
 	}
@@ -95,14 +94,9 @@ public class CWars2Player extends Player implements DeckPlayer<CWars2Card>, Hand
 	public CWars2Player getNextPlayer() {
 		return (CWars2Player) super.getNextPlayer();
 	}
-	@Override
-	public void clearCards() {
-		this.cards = new ArrayList<CWars2Card>();
-		// Need to create new list here because it can be unmodifiable already.
-	}
+	
 	public CardZone<Card<CWars2Card>> getDiscard() {
 		return this.discard;
 	}
-
 	
 }

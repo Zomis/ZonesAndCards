@@ -3,6 +3,7 @@ package net.zomis.cards.cwars;
 import static org.junit.Assert.*;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 
 import net.zomis.aiscores.ScoreConfigFactory;
@@ -88,7 +89,7 @@ public class CWars2CardsTest extends CardsTest<CWars2Game> {
 	public void createDeckMap() {
 		CWars2DeckBuilder builder = new CWars2DeckBuilder(new ScoreConfigFactory<CWars2Player, CWars2Card>());
 		int expected = 75;
-		Map<CWars2Card, Integer> map = builder.createDeckMap(game.getCurrentPlayer(), expected);
+		Map<CWars2Card, Integer> map = builder.createDeckMap(game.getCurrentPlayer(), expected, new Random());
 		int total = 0;
 		for (Entry<CWars2Card, Integer> ee : map.entrySet()) {
 			total += ee.getValue();

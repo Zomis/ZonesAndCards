@@ -2,6 +2,7 @@ package net.zomis.cards.mdjq;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.cards.events.card.ZoneChangeEvent;
@@ -208,7 +209,7 @@ public class MDJQGame extends CardGame<MDJQPlayer, MDJQCardModel> {
 //		factory.withScorer(new RandomScorer<MDJQPlayer, MDJQCardModel>());
 //		factory.withScorer(new IsOfTypeScorer(MDJQRes.CardType.CREATURE));
 		MDJQDeckBuilder db = new MDJQDeckBuilder(factory);
-		db.createDeck(player, 12);
+		db.createDeck(player, 12, new Random());
 		
 		player.getDeck().shuffle();
 		

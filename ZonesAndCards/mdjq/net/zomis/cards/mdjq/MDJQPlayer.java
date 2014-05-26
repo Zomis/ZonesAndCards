@@ -69,7 +69,6 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 		return this.library.size();
 	}
 
-	@Override
 	public MDJQZone getDeck() {
 		return this.library;
 	}
@@ -108,11 +107,6 @@ public class MDJQPlayer extends Player implements MDJQObject, DeckPlayer<MDJQCar
 		int idx = getGame().getPlayers().indexOf(this);
 		idx = (idx + 1) % getGame().getPlayers().size();
 		return (MDJQPlayer) getGame().getPlayers().get(idx);
-	}
-
-	@Override
-	public void clearCards() {
-		this.library.moveToBottomOf(null);
 	}
 
 	public void drawCard() {

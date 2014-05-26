@@ -82,7 +82,6 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 		return cards.size();
 	}
 
-	@Override
 	public CardZone<HStoneCard> getDeck() {
 		return this.library;
 	}
@@ -90,11 +89,6 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 	@Override
 	public void addCard(HStoneCardModel card) {
 		this.cards.add(card);
-	}
-	
-	@Override
-	public void clearCards() {
-		this.cards = new ArrayList<HStoneCardModel>();
 	}
 	
 	@Override

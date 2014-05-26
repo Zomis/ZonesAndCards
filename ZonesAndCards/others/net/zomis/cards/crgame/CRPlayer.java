@@ -44,7 +44,6 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 		return deck.size();
 	}
 
-	@Override
 	public CardZone<CRCard> getDeck() {
 		return deck;
 	}
@@ -56,11 +55,6 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 	@Override
 	public void addCard(CRCardModel card) {
 		deck.createCardOnBottom(card);
-	}
-
-	@Override
-	public void clearCards() {
-		deck.cardList().clear();
 	}
 
 	@Override

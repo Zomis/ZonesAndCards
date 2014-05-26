@@ -275,7 +275,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return action;
 	}
 	
-	public void registerHandler(Class<? extends IEvent> eventType, IEventHandler handler) {
+	public void registerHandler(Class<? extends IEvent> eventType, IEventHandler handler) { // TODO: Deprecate CardGame.registerHandler
 		getEvents().registerHandler(eventType, handler);
 	}
 	
@@ -283,10 +283,16 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		getEvents().registerHandler(eventType, handler);
 	}
 	
+	public <T extends IEvent> void registerHandler(Class<? extends T> eventType, EventConsumer<T> handler, int priority) {
+		getEvents().registerHandler(eventType, handler, priority);
+	}
+	
+	@Deprecated
 	public void registerListener(EventListener listener) {
 		getEvents().registerListener(listener);
 	}
 	
+	@Deprecated
 	public void removeListener(EventListener listener) {
 		getEvents().removeListener(listener);
 	}
@@ -321,7 +327,9 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 	public final void startGame() {
 		if (this.started)
-			throw new IllegalStateException("Game is already initialized.");
+			throw new IllegalStateException("Game is already started.");
+		if (this.phases.isEmpty())
+			throw new IllegalStateException("Game does not have any phases");
 		this.replay = new CardReplay(this);
 		this.started = true;
 		this.onStart();

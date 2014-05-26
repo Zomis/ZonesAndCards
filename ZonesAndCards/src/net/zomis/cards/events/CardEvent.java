@@ -7,7 +7,7 @@ public class CardEvent extends CardGameEvent {
 	private final Card<?> card;
 
 	public CardEvent(Card<?> card) {
-		super(card.getGame());
+		super(card == null ? null : card.getGame());
 		this.card = card;
 	}
 	
