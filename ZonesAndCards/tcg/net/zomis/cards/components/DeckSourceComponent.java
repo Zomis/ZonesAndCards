@@ -8,6 +8,7 @@ import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.util.DeckPlayer;
+import net.zomis.custommap.view.ZomisLog;
 
 public class DeckSourceComponent implements PlayerComponent, DeckPlayer<CompCardModel> {
 	
@@ -22,6 +23,7 @@ public class DeckSourceComponent implements PlayerComponent, DeckPlayer<CompCard
 	}
 
 	public void appendTo(CardZone<CardWithComponents<CompCardModel>> deck) {
+		ZomisLog.info("Appending cards: " + deckSource);
 		for (CompCardModel model : deckSource) {
 			deck.createCardOnBottom(model);
 		}

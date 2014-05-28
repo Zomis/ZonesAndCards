@@ -5,6 +5,7 @@ import java.util.List;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardZone;
 import net.zomis.events.IEvent;
 
 public class FindUsableCardsEvent implements IEvent {
@@ -33,6 +34,10 @@ public class FindUsableCardsEvent implements IEvent {
 	
 	public List<Card<?>> getResult() {
 		return result;
+	}
+
+	public void addZoneToResult(CardZone<?> zone) {
+		result.addAll(zone.cardList());
 	}
 
 }

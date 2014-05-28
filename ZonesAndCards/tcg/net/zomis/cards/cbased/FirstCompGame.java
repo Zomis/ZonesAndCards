@@ -1,7 +1,7 @@
 package net.zomis.cards.cbased;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.model.CardGame;
@@ -14,9 +14,8 @@ import net.zomis.events.IEvent;
 
 public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 
-	private final Set<GameSystem> systems = new HashSet<>(); // List or Set? Should the order matter?
+	private final List<GameSystem> systems = new ArrayList<>(); // List or Set? Should the order matter?
 	
-	// TODO: card game with components
 	// TODO: Feature-Request by @Mat'sMug: Support five players
 	/**
 	 * two players
@@ -64,11 +63,9 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 		return event;
 	}
 	
+	@Override
 	public <T extends IEvent> T executeEvent(T event, Runnable runInBetween) {
-		executeEvent(event, EventExecutorGWT.PRE);
-		runInBetween.run();
-		executeEvent(event, EventExecutorGWT.POST);
-		return event;
+		return super.executeEvent(event, runInBetween);
 	}
 	
 	public <T extends IEvent> T executeEvent(T event) {

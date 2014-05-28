@@ -8,7 +8,6 @@ public interface ComponentCompatibility {
 
 	void required() throws RuntimeException;
 
-	
-	
+	boolean failsThenWarn();
 	
 }

@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.zomis.cards.events.card.CardPlayedEvent;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
@@ -19,6 +20,7 @@ import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventConsumer;
 import net.zomis.events.EventExecutor;
+import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
 import net.zomis.events.IEventExecutor;
@@ -348,11 +350,13 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	public StackAction clickPerform(Card<?> card) {
 		if (card == null)
 			throw new NullPointerException("Card cannot be null");
+		
 		StackAction action = card.clickAction();
 		if (action.actionIsAllowed()) {
 			replay.addMove(card);
 		}
 		addAndProcessStackAction(action);
+		executeEvent(new CardPlayedEvent(card, action));
 		return action;
 	}
 	
@@ -375,6 +379,13 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		if (players.isEmpty())
 			return null;
 		return players.get(0);
+	}
+
+	protected <T extends IEvent> T executeEvent(T event, Runnable runInBetween) {
+		executeEvent(event, EventExecutorGWT.PRE);
+		runInBetween.run();
+		executeEvent(event, EventExecutorGWT.POST);
+		return event;
 	}
 	
 }

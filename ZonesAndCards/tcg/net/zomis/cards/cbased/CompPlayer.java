@@ -29,5 +29,5 @@ public class CompPlayer extends Player implements HasComponents, HasCompGame {
 	public Map<Class<? extends Component>, Component> getComponents() {
 		return this.components;
 	}
-	
+
 }

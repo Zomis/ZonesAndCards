@@ -3,8 +3,6 @@ package net.zomis.cards.components;
 import net.zomis.cards.cbased.CardWithComponents;
 import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.CompPlayer;
-import net.zomis.cards.cbased.FirstCompGame;
-import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.model.CardZone;
 
 public class DeckComponent implements PlayerComponent {
@@ -13,12 +11,7 @@ public class DeckComponent implements PlayerComponent {
 	
 	public DeckComponent(CompPlayer player) {
 		this.deck = new CardZone<>("Deck", player);
-		player.getGame().registerHandler(GameStartedEvent.class, this::onGameStart);
-	}
-	
-	private void onGameStart(GameStartedEvent event) {
-		FirstCompGame game = (FirstCompGame) event.getGame(); // TODO: Why not earlier?
-		game.addZone(deck);
+		player.getGame().addZone(deck);
 	}
 	
 	public CardZone<CardWithComponents<CompCardModel>> getDeck() {

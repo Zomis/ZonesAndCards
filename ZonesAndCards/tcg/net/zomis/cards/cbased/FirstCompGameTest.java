@@ -22,8 +22,8 @@ public class FirstCompGameTest {
 	@Test
 	public void playAGame() {
 		
-//		assertTrue(game.getCurrentPlayer().getComponent(DeckComponent.class).getDeck().size() > 20);
-//		assertEquals(1, game.getCurrentPlayer().getComponent(HandComponent.class).getHand().size());
+		assertTrue(game.getCurrentPlayer().getComponent(DeckComponent.class).getDeck().size() > 20);
+		assertEquals(6, game.getCurrentPlayer().getComponent(HandComponent.class).getHand().size());
 		
 		assertTrue(game.nextPhase());
 		

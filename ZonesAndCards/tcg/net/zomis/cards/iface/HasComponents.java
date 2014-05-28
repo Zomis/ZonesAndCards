@@ -23,4 +23,10 @@ public interface HasComponents {
 
 	Map<Class<? extends Component>, Component> getComponents();
 
+	default <T extends Component> T getRequiredComponent(Class<T> class1) {
+		if (hasComponent(class1))
+			return getComponent(class1);
+		throw new NullPointerException("Required component not found: " + class1 + " in " + this);
+	}
+	
 }

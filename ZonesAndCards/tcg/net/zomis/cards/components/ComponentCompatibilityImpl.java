@@ -3,6 +3,7 @@ package net.zomis.cards.components;
 import java.util.HashSet;
 
 import net.zomis.cards.iface.HasComponents;
+import net.zomis.custommap.view.ZomisLog;
 
 public class ComponentCompatibilityImpl implements ComponentCompatibility {
 
@@ -37,6 +38,14 @@ public class ComponentCompatibilityImpl implements ComponentCompatibility {
 	public void required() throws RuntimeException {
 		if (fails())
 			throw new RuntimeException("Missing components on " + object + ": found " + found + "/" + checked + " missing: " + missing);
+	}
+
+	@Override
+	public boolean failsThenWarn() {
+		boolean result = fails();
+		if (result)
+			ZomisLog.warn("Missing components on " + object + ": found " + found + "/" + checked + " missing: " + missing);
+		return result;
 	}
 
 }
