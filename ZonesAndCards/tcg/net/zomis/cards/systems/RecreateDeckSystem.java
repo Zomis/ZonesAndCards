@@ -20,10 +20,15 @@ public class RecreateDeckSystem implements GameSystem {
 		if (event.getPlayer().compatibility(DeckComponent.class).and(DeckSourceComponent.class).failsThenWarn())
 			return;
 		
-		ZomisLog.info("Recreating deck");
 		DeckComponent comp = event.getPlayer().getComponent(DeckComponent.class);
+		if (!comp.getDeck().isEmpty())
+			return;
+		
+		ZomisLog.info("Recreating deck");
 		DeckSourceComponent source = event.getPlayer().getComponent(DeckSourceComponent.class);
 		source.appendTo(comp.getDeck());
+		comp.getDeck().shuffle();
+		
 	}
 
 }

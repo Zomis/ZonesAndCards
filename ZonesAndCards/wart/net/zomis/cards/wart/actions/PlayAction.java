@@ -10,8 +10,8 @@ import net.zomis.cards.wart.factory.HStoneEffect;
 
 public class PlayAction extends StackAction {
 
-	private HStoneCard	card;
-	private HStonePlayer owner;
+	private final HStoneCard	card;
+	private final HStonePlayer owner;
 
 	public PlayAction(HStoneCard card) {
 		this.card = card;

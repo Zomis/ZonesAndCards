@@ -5,6 +5,7 @@ import net.zomis.cards.model.Player;
 
 public class PlayerPhase extends GamePhase implements IPlayerPhase {
 
+	// TODO: Replace non-PlayerPhases with PlayerPhase(null)
 	private final Player player;
 
 	public PlayerPhase(Player pl) {

@@ -1,20 +1,19 @@
 package net.zomis.cards.events2;
 
 import net.zomis.cards.cbased.CardWithComponents;
-import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.model.StackAction;
 import net.zomis.events.IEvent;
 
-public class CardClickEvent implements IEvent {
+public class DetermineActionEvent implements IEvent {
 
-	private final CardWithComponents<CompCardModel>	card;
+	private final CardWithComponents card;
 	private StackAction	action;
 
-	public CardClickEvent(CardWithComponents<CompCardModel> card) {
+	public DetermineActionEvent(CardWithComponents card) {
 		this.card = card;
 	}
 	
-	public CardWithComponents<CompCardModel> getCard() {
+	public CardWithComponents getCard() {
 		return card;
 	}
 	

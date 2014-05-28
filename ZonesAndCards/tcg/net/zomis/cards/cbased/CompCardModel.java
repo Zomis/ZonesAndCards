@@ -20,13 +20,20 @@ public class CompCardModel extends CardModel implements HasComponents {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
-		Card<E> card = (Card<E>) new CardWithComponents<CompCardModel>(this, initialZone);
+		Card<E> card = (Card<E>) new CardWithComponents(this, initialZone);
 		return card;
 	}
 
 	@Override
 	public Map<Class<? extends Component>, Component> getComponents() {
 		return components;
+	}
+	
+	public CompCardModel addComponent(Component component) {
+		if (component == null)
+			throw new NullPointerException("Component cannot be null. Previously added components: " + components);
+		this.components.put(component.getClass(), component);
+		return this;
 	}
 
 }

@@ -23,12 +23,21 @@ public class HealthComponent implements PlayerComponent {
 		this.health -= damage;
 	}
 	
+	public void heal(int heal) {
+		this.health += heal;
+	}
+	
 	public int getHealth() {
 		return health;
 	}
 	
 	public int getMaxHealth() {
 		return maxHealth;
+	}
+	
+	@Override
+	public String toString() {
+		return "Health " + health + " / " + maxHealth;
 	}
 	
 }

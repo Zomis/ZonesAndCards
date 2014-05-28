@@ -12,7 +12,6 @@ public class SimpleDeckSystem implements GameSystem {
 	@Override
 	public void onStart(FirstCompGame game) {
 		ZomisLog.info(this.toString());
-//		FirstCompGame game = (FirstCompGame) event.getGame();
 		for (CompPlayer pl : game.getPlayers()) {
 			if (pl.compatibility(DeckSourceComponent.class).failsThenWarn())
 				return;
@@ -20,10 +19,6 @@ public class SimpleDeckSystem implements GameSystem {
 			DeckList deck = new DeckList("Deck").add(52, "Random Card");
 			DeckBuilder.createExact(pl.getComponent(DeckSourceComponent.class), deck.getCount(game));
 		}
-//		game.registerHandler(GameStartedEvent.class, this::onStart);
 	}
 	
-//	private void onStart(GameStartedEvent event) {
-//	}
-
 }

@@ -22,7 +22,7 @@ public class DeckSourceComponent implements PlayerComponent, DeckPlayer<CompCard
 		return deckSource;
 	}
 
-	public void appendTo(CardZone<CardWithComponents<CompCardModel>> deck) {
+	public void appendTo(CardZone<CardWithComponents> deck) {
 		ZomisLog.info("Appending cards: " + deckSource);
 		for (CompCardModel model : deckSource) {
 			deck.createCardOnBottom(model);

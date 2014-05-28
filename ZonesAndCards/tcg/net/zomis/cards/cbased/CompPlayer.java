@@ -30,4 +30,14 @@ public class CompPlayer extends Player implements HasComponents, HasCompGame {
 		return this.components;
 	}
 
+	@Override
+	public CompPlayer getNextPlayer() {
+		return (CompPlayer) super.getNextPlayer();
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + components.values();
+	}
+	
 }

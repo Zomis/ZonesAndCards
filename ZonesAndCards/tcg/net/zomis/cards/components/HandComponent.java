@@ -1,22 +1,18 @@
 package net.zomis.cards.components;
 
 import net.zomis.cards.cbased.CardWithComponents;
-import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.model.CardZone;
 
-public class HandComponent implements PlayerComponent {
+public class HandComponent extends ZoneComponent {
 
-	private final CardZone<CardWithComponents<CompCardModel>> hand;
-	
 	public HandComponent(CompPlayer player) {
-		this.hand = new CardZone<>("Hand", player);
-		this.hand.setKnown(player, true);
-		player.getGame().addZone(hand);
+		super(player.getGame(), new CardZone<>("Hand", player));
+		this.getZone().setKnown(player, true);
 	}
 	
-	public CardZone<CardWithComponents<CompCardModel>> getHand() {
-		return hand;
+	public CardZone<CardWithComponents> getHand() {
+		return getZone();
 	}
 	
 }

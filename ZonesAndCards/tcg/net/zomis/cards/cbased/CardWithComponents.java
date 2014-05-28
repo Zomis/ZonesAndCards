@@ -6,14 +6,13 @@ import java.util.Map;
 import net.zomis.cards.components.Component;
 import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.Card;
-import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
 
-public class CardWithComponents<M extends CardModel> extends Card<M> implements HasComponents {
+public class CardWithComponents extends Card<CompCardModel> implements HasComponents {
 
 	private final Map<Class<? extends Component>, Component> components = new HashMap<>();
 	
-	public CardWithComponents(M model, CardZone<?> initialZone) {
+	public CardWithComponents(CompCardModel model, CardZone<?> initialZone) {
 		super(model);
 		this.currentZone = initialZone;
 	}
@@ -28,4 +27,9 @@ public class CardWithComponents<M extends CardModel> extends Card<M> implements 
 		return (FirstCompGame) super.getGame();
 	}
 
+	@Override
+	public CompPlayer getOwner() {
+		return (CompPlayer) super.getOwner();
+	}
+	
 }
