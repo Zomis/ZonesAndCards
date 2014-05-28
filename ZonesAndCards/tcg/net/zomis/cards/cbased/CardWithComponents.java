@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.zomis.cards.components.Component;
-import net.zomis.cards.components.HasComponents;
+import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
@@ -21,6 +21,11 @@ public class CardWithComponents<M extends CardModel> extends Card<M> implements 
 	@Override
 	public Map<Class<? extends Component>, Component> getComponents() {
 		return components;
+	}
+	
+	@Override
+	public FirstCompGame getGame() {
+		return (FirstCompGame) super.getGame();
 	}
 
 }

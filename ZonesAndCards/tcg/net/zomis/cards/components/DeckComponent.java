@@ -17,7 +17,7 @@ public class DeckComponent implements PlayerComponent {
 	}
 	
 	private void onGameStart(GameStartedEvent event) {
-		FirstCompGame game = (FirstCompGame) event.getGame();
+		FirstCompGame game = (FirstCompGame) event.getGame(); // TODO: Why not earlier?
 		game.addZone(deck);
 	}
 	

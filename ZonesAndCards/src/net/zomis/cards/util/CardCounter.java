@@ -9,8 +9,8 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.Player;
-import net.zomis.events.Event;
 import net.zomis.events.EventListener;
+import net.zomis.events.IEventHandler;
 import net.zomis.utils.ZomisList;
 import net.zomis.utils.ZomisList.FilterInterface;
 
@@ -20,10 +20,11 @@ public class CardCounter<C extends Card<?>> implements EventListener {
 	private Player perspectivePlayer;
 	private int informationCounter;
 	private final List<C> availableCards;
+	private final IEventHandler eventHandler;
 	
 	public CardCounter(CardGame<?, ?> game) {
 		this.game = game;
-		game.registerListener(this);
+		this.eventHandler = game.registerHandler(ZoneChangeEvent.class, this::onZoneMove);
 		this.availableCards = new ArrayList<C>();
 	}
 
@@ -40,7 +41,6 @@ public class CardCounter<C extends Card<?>> implements EventListener {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Event
 	public void onZoneMove(ZoneChangeEvent event) {
 		C card = (C) event.getCard();
 		CardZone<C> source = (CardZone<C>) event.getFromCardZone();
@@ -55,11 +55,10 @@ public class CardCounter<C extends Card<?>> implements EventListener {
 	
 	private void informMove(C card, CardZone<C> fromCardZone, CardZone<C> toCardZone) {
 		++informationCounter;
-		
 	}
 
 	public void javaGarbage() {
-		game.removeListener(this);
+		game.removeHandler(eventHandler);
 		perspectivePlayer = null;
 	}
 

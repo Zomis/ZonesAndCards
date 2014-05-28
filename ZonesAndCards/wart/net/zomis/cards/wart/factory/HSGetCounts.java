@@ -1,5 +1,6 @@
 package net.zomis.cards.wart.factory;
 
+import net.zomis.cards.wart.HSChangeCount;
 import net.zomis.cards.wart.HSGetCount;
 import net.zomis.cards.wart.HStoneCard;
 import net.zomis.cards.wart.HStonePlayer;
@@ -66,5 +67,9 @@ public class HSGetCounts {
 			return total;
 		}
 	};
+
+	public HSChangeCount fixedChange(int i) {
+		return (src, dst, input) -> input + i;
+	}
 
 }

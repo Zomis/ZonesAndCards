@@ -26,7 +26,7 @@ public class WarlockCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 6,    COMMON, 6, 6, "Dread Infernal").battlecry(e.forEach(f.anotherCard(), null, e.damage(1))).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(minion( 1,    COMMON, 3, 2, "Flame Imp").battlecry(e.damageMyHero(3)).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(minion( 6,    COMMON, 6, 6, "Infernal").forClass(HStoneClass.WARLOCK).card());
-//		game.addCard(minion( 4,    COMMON, 0, 4, "Summoning Portal").effect("Your minions cost (2) less, but not less than (1)").forClass(HStoneClass.WARLOCK).card());
+		game.addCard(minion( 4,    COMMON, 0, 4, "Summoning Portal").staticMana(f.allMinions().and(f.samePlayer()), this::twoLessButNotLessThanOne).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(minion( 1,    COMMON, 1, 1, "Worthless Imp").forClass(HStoneClass.WARLOCK).card());
 		game.addCard(minion( 5,      RARE, 5, 7, "Doomguard").charge().battlecry(e.combined(e.discardRandomCard(), e.discardRandomCard())).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(minion( 3,      RARE, 3, 5, "Felguard").taunt().battlecry(e.destroyManaCrystal()).forClass(HStoneClass.WARLOCK).card());
@@ -37,8 +37,8 @@ public class WarlockCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 4,      FREE, "Hellfire").effect(e.forEach(f.all(), null, e.damage(3))).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 3,      FREE, "Shadow Bolt").effect(e.toMinion(e.damage(4))).forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 1,    COMMON, "Corruption").effect(e.to(f.opponentMinions(), e.addEnchantOnMyTurnStartDestroy)).forClass(HStoneClass.WARLOCK).card());
-//		game.addCard(spell( 2,    COMMON, "Demonfire").effect("Deal 2 damage to a minion.   If it's a friendly Demon, give it +2/+2 instead").forClass(HStoneClass.WARLOCK).card());
-//		game.addCard(spell( 1,    COMMON, "Mortal Coil").effect("Deal 1 damage to a minion. If that kills it, draw a card").forClass(HStoneClass.WARLOCK).card());
+		game.addCard(spell( 2,    COMMON, "Demonfire").effect(e.toMinion(e.ifElse(f.samePlayer().and(f.minionIs(HStoneMinionType.DEMON)), e.otherPT(2, 2), e.damage(2)))).forClass(HStoneClass.WARLOCK).card());
+		game.addCard(spell( 1,    COMMON, "Mortal Coil").effect(e.toMinion(e.combined(e.damage(1), e.ifElse(f.canTakeDamage(1), null, e.drawCard())))).forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 1,    COMMON, "Power Overwhelming").effect("Give a friendly minion +4/+4 until end of turn. Then, it dies. Horribly").forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 0,    COMMON, "Sacrificial Pact").effect(e.to(f.minionIs(HStoneMinionType.DEMON), e.combined(e.destroyTarget(), e.healMyHero(5)))).forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 3,    COMMON, "Sense Demons").effect("Put 2 random Demons from your deck into your hand").forClass(HStoneClass.WARLOCK).card()); // TODO: Does this remove them from the deck?
@@ -60,6 +60,12 @@ public class WarlockCards implements CardSet<HStoneGame> {
 				target.destroy();
 			}
 		};
+	}
+	
+	private int twoLessButNotLessThanOne(HStoneCard source, HStoneCard target, int input) {
+		if (input <= 1)
+			return input;
+		return Math.max(1, input - 2);
 	}
 
 

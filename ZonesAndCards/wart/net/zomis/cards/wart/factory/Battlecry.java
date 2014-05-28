@@ -877,10 +877,12 @@ public class Battlecry {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				if (condition.shouldKeep(source, target)) {
-					ifTrue.performEffect(source, target);
+					if (ifTrue != null)
+						ifTrue.performEffect(source, target);
 					return;
 				}
-				ifFalse.performEffect(source, target);
+				if (ifFalse != null)
+					ifFalse.performEffect(source, target);
 			}
 		};
 	}

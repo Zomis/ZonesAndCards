@@ -43,9 +43,9 @@ public class HStoneHandler implements ActionHandler {
 		
 		if (player == null) {
 			if (hscard.getCurrentZone() == hscard.getPlayer().getHand()) {
-				return new NextTurnAction(game); // TODO: Implement switching cards
+				return new NextTurnAction(game); // TODO: Implement switching cards -- HStoneOption?
 			}
-			else return new InvalidStackAction("Pre-Phase and not in hand zone. " + hscard + " in zone " + hscard.getCurrentZone());
+			else return new InvalidStackAction("Pre-Phase and not in hand zone");
 		}
 		
 		if (hscard.getCurrentZone() == player.getHand()) {

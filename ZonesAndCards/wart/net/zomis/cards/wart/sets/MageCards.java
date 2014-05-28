@@ -25,7 +25,7 @@ public class MageCards implements CardSet<HStoneGame> {
 	public void addCards(HStoneGame game) {
 		game.addCard(minion( 1,    COMMON, 1, 3, "Mana Wyrm").on(HStoneCardPlayedEvent.class, e.selfPT(1, 0), f.samePlayer().and(f.isSpell())).card());
 		game.addCard(minion( 0,    COMMON, 0, 2, "Mirror Image -Minion").taunt().card());
-		game.addCard(minion( 2,    COMMON, 3, 2, "Sorcerer's Apprentice").staticMana(f.isSpell().and(f.samePlayer()), -1).card());
+		game.addCard(minion( 2,    COMMON, 3, 2, "Sorcerer's Apprentice").staticMana(f.isSpell().and(f.samePlayer()), c.fixedChange(-1)).card());
 		game.addCard(minion( 4,    COMMON, 3, 6, "Water Elemental").on(new DealDamageTrigger(freezeDamagedMinion(), f.thisCard())).card());
 		game.addCard(minion( 4,      RARE, 3, 3, "Ethereal Arcanist").on(HStoneTurnEndEvent.class, e.selfPT(2, 2), f.samePlayer().and(f.playerControlsSecret())).card());
 //		game.addCard(minion( 3,      RARE, 4, 3, "Kirin Tor Mage").effect("<b>Battlecry:</b>").effect("The next").effect("<b>Secret</b>").effect("you play this turn costs (0)").card());

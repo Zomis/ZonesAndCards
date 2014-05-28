@@ -3,25 +3,18 @@ package net.zomis.cards.cbased;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.zomis.cards.components.DeckComponent;
-import net.zomis.cards.components.DeckSourceComponent;
-import net.zomis.cards.components.HandComponent;
 import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.phases.PlayerPhase;
-import net.zomis.cards.systems.DrawCardSystem;
+import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.systems.GameSystem;
-import net.zomis.cards.systems.RandomCardModelSystem;
-import net.zomis.cards.systems.RecreateDeckSystem;
-import net.zomis.cards.util.DeckBuilder;
-import net.zomis.cards.util.DeckList;
+import net.zomis.events.CancellableEvent;
 import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.IEvent;
 
 public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 
-	private final Set<GameSystem> systems = new HashSet<>();
+	private final Set<GameSystem> systems = new HashSet<>(); // List or Set? Should the order matter?
 	
 	// TODO: card game with components
 	// TODO: Feature-Request by @Mat'sMug: Support five players
@@ -42,20 +35,6 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 	 */
 	
 	public FirstCompGame() {
-		this.addPlayer(new CompPlayer());
-		this.addPlayer(new CompPlayer());
-		
-		// TODO: Add components, systems, players and phases to FirstCompGame after constructor and before calling `startGame`
-		for (CompPlayer pl : this.getPlayers()) {
-			pl.addComponent(new HandComponent(pl));
-			pl.addComponent(new DeckSourceComponent(pl));
-			pl.addComponent(new DeckComponent(pl));
-			this.addPhase(new PlayerPhase(pl));
-		}
-		
-		this.addSystem(new DrawCardSystem());
-		this.addSystem(new RecreateDeckSystem());
-		this.addSystem(new RandomCardModelSystem());
 		this.setActionHandler(new ComponentHandler());
 	}
 	
@@ -74,15 +53,15 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 			system.onStart(this);
 		
 		this.executeEvent(new GameStartedEvent(this));
-		
-		for (CompPlayer pl : getPlayers()) {
-			if (!pl.hasComponent(DeckSourceComponent.class))
-				return;
-			// TODO: This code should not be here.
-			DeckList deck = new DeckList("Deck").add(52, "Random Card");
-			DeckBuilder.createExact(pl.getComponent(DeckSourceComponent.class), deck.getCount(this));
-		}
-		
+	}
+	
+	public <T extends CancellableEvent> T executeCancellableEvent(T event, Runnable runInBetween) {
+		executeEvent(event, EventExecutorGWT.PRE);
+		if (event.isCancelled())
+			return event;
+		runInBetween.run();
+		executeEvent(event, EventExecutorGWT.POST);
+		return event;
 	}
 	
 	public <T extends IEvent> T executeEvent(T event, Runnable runInBetween) {
@@ -94,5 +73,15 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 	
 	public <T extends IEvent> T executeEvent(T event) {
 		return getEvents().executeEvent(event);
+	}
+	
+	@Override
+	public void addPlayer(CompPlayer player) {
+		super.addPlayer(player);
+	}
+	
+	@Override
+	public void addPhase(GamePhase phase) {
+		super.addPhase(phase);
 	}
 }

@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.zomis.cards.components.Component;
-import net.zomis.cards.components.HasComponents;
 import net.zomis.cards.components.PlayerComponent;
+import net.zomis.cards.iface.HasCompGame;
+import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.Player;
 
-public class CompPlayer extends Player implements HasComponents {
+public class CompPlayer extends Player implements HasComponents, HasCompGame {
 
 	private final Map<Class<? extends Component>, Component> components = new HashMap<>();
 

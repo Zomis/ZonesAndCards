@@ -3,6 +3,7 @@ package net.zomis.cards.cbased;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.events2.CardClickEvent;
 import net.zomis.cards.events2.FindUsableCardsEvent;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
@@ -21,8 +22,8 @@ public class ComponentHandler implements ActionHandler {
 		@SuppressWarnings("unchecked")
 		CardWithComponents<CompCardModel> card = (CardWithComponents<CompCardModel>) c;
 		
-		
-		return ILLEGAL;
+		StackAction action = card.getGame().executeEvent(new CardClickEvent(card)).getAction();
+		return action != null ? action : ILLEGAL;
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class ComponentHandler implements ActionHandler {
 		List<Card<?>> result = new ArrayList<>();
 		FirstCompGame game = (FirstCompGame) gm;
 		
-		game.executeEvent(new FindUsableCardsEvent(game, (CompPlayer) player));
+		game.executeEvent(new FindUsableCardsEvent(game, (CompPlayer) player, result));
 		
 		return result;
 	}

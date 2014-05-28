@@ -279,12 +279,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		getEvents().registerHandler(eventType, handler);
 	}
 	
-	public <T extends IEvent> void registerHandler(Class<? extends T> eventType, EventConsumer<T> handler) {
-		getEvents().registerHandler(eventType, handler);
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> eventType, EventConsumer<T> handler) {
+		return getEvents().registerHandler(eventType, handler);
 	}
 	
-	public <T extends IEvent> void registerHandler(Class<? extends T> eventType, EventConsumer<T> handler, int priority) {
-		getEvents().registerHandler(eventType, handler, priority);
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> eventType, EventConsumer<T> handler, int priority) {
+		return getEvents().registerHandler(eventType, handler, priority);
 	}
 	
 	@Deprecated
@@ -292,9 +292,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		getEvents().registerListener(listener);
 	}
 	
-	@Deprecated
-	public void removeListener(EventListener listener) {
-		getEvents().removeListener(listener);
+	public void removeHandler(IEventHandler listener) {
+		getEvents().removeHandler(listener);
 	}
 //	protected boolean removeZone(CardZone zone) {
 //		return this.zones.remove(zone);

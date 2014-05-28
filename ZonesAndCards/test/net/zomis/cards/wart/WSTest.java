@@ -41,6 +41,28 @@ public class WSTest extends CardsTest<HStoneGame> {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
+    public void aldorPeacekeeper() {
+    	reachMana(5);
+    	HStoneCard minion = superPlayCard("Bloodfen Raptor");
+    	assertPTT(minion, 3, 2, 2);
+    	nextTurn();
+    	superPlayCard("Aldor Peacekeeper");
+    	target(minion);
+    	assertPTT(minion, 1, 2, 2);
+    }
+    
+    @Test
+    public void aldorPeacekeeperOnLightspawn() {
+    	reachMana(5);
+    	HStoneCard lightspawn = superPlayCard("Lightspawn");
+    	assertPTT(lightspawn, 5, 5, 5);
+    	nextTurn();
+    	superPlayCard("Aldor Peacekeeper");
+    	target(lightspawn);
+    	assertPTT(lightspawn, 5, 5, 5);
+    }
+    
+    @Test
     public void mountainGiant() {
     	HStoneCard giant = superCreateCard("Mountain Giant");
     	assertZoneSize(4, game.getCurrentPlayer().getHand());

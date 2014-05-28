@@ -13,7 +13,9 @@ public class HandComponent implements PlayerComponent {
 	
 	public HandComponent(CompPlayer player) {
 		this.hand = new CardZone<>("Hand", player);
-		player.getGame().registerHandler(GameStartedEvent.class, this::onGameStart);
+		this.hand.setKnown(player, true);
+		player.getGame().addZone(hand);
+//		player.getGame().registerHandler(GameStartedEvent.class, this::onGameStart);
 	}
 	
 	private void onGameStart(GameStartedEvent event) {

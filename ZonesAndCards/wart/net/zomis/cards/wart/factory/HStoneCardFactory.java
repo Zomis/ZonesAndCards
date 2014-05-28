@@ -1,6 +1,7 @@
 package net.zomis.cards.wart.factory;
 
 import net.zomis.cards.wart.HSAction1;
+import net.zomis.cards.wart.HSChangeCount;
 import net.zomis.cards.wart.HSDoubleEventConsumer;
 import net.zomis.cards.wart.HSFilter;
 import net.zomis.cards.wart.HSGetCount;
@@ -178,7 +179,6 @@ public class HStoneCardFactory {
 	}
 
 	public HStoneCardFactory shroud() {
-		// TODO: Implement shroud! (Can't be the target of spells or hero powers)
 		card.addAbility(HSAbility.SHROUD);
 		return this;
 	}
@@ -284,11 +284,11 @@ public class HStoneCardFactory {
 		return on(new DealDamageTrigger(e.destroyTarget(), f.thisCard()));
 	}
 
-	public HStoneCardFactory staticMana(HSFilter filter, int change) {
+	public HStoneCardFactory staticMana(HSFilter filter, HSChangeCount change) {
 		return effect(new HStoneEffect() {
 			@Override
 			public void performEffect(final HStoneCard source, HStoneCard target) {
-				source.addEnchantment(new HStoneEnchMana(change) {
+				source.addEnchantment(new HStoneEnchMana(0) {
 					@Override
 					public boolean isActive() {
 						return source.isAlive();
@@ -297,6 +297,11 @@ public class HStoneCardFactory {
 					@Override
 					public boolean appliesTo(HStoneCard card) {
 						return filter.shouldKeep(source, card);
+					}
+					
+					@Override
+					protected Integer mana(HStoneCard card, Integer mana) {
+						return change.determineCount(source, card, mana);
 					}
 				});
 			}

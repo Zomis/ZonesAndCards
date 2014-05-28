@@ -35,7 +35,7 @@ public class ManaFiveCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 5,    COMMON, 4, 6, "Spiteful Smith").effect(enrageWeaponTwoAttack()).card());
 		game.addCard(minion( 5,    COMMON, 4, 2, "Stormpike Commando").battlecry(e.damage(2)).card());
 		game.addCard(minion( 5,    COMMON, 5, 5, "Stranglethorn Tiger").stealth().card());
-		game.addCard(minion( 5,    COMMON, 7, 6, "Venture Co. Mercenary").staticMana(f.allMinions().and(f.samePlayer()), 3).card());
+		game.addCard(minion( 5,    COMMON, 7, 6, "Venture Co. Mercenary").staticMana(f.allMinions().and(f.samePlayer()), c.fixedChange(3)).card());
 		game.addCard(minion( 5,      RARE, 4, 4, "Abomination").taunt().deathrattle(e.forEach(f.all(), null, e.damage(2))).card());
 		game.addCard(minion( 5,      RARE, 4, 4, "Azure Drake").spellDamage(1).battlecry(e.drawCard()).card());
 		game.addCard(minion( 5,      RARE, 4, 4, "Gadgetzan Auctioneer").on(HStoneCardPlayedEvent.class, e.drawCard(), f.samePlayer().and(f.isSpell())).card());

@@ -28,6 +28,14 @@ public class HStoneDecks {
 			.add(1, "Ice Lance");
 	}
 
+	public static DeckList arenaDeck11wins() {
+		return DeckList.newInstance("Arena 11 wins Paladin")
+				.addMany("1 Blessing of Might;2 Blessing of Wisdom;1 Redemption;1 Equality;2 Argent Protector;2 Loot Hoarder;"
+						+ "1 Wild Pyromancer;1 Acolyte of Pain;1 Aldor Peacekeeper;1 Jungle Panther;1 Razorfen Hunter;Truesilver Champion;"
+						+ "Blessing of Kings;Consecration;Hammer of Wrath;Cult Master;2 Dragonling Mechanic;Gnomish Inventor;2 Silver Hand Knight;Stampeding Kodo;"
+						+ "Stranglethorn Tiger;2 Venture Co. Mercenary;2 Guardian of Kings;War Golem");
+	}
+	
 	public static DeckList shamanDeck() {
 		return DeckList.newInstance().addMany("Earth Shock;2 Forked Lightning;2 Frost Shock;Stormforged Axe;Acidic Swamp Ooze;2 Flametongue Totem;Knife Juggler;Mana Juggler;Mana Addict;" +
 				"Feral Spirit;2 Hex;2 Lightning Storm;Flesheating Ghoul;Mana Tide Totem;2 Unbound Elemental;Ogre Magi;2 Sin'jin Shieldmasta;Spellbreaker;Bloodlust;Earth Elemental;" +

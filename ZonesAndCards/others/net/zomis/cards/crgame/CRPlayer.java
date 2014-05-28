@@ -14,7 +14,7 @@ import net.zomis.utils.ZomisList;
 
 public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPlayer, HasBattlefield {
 
-	private static final int	MAX_HAND_SIZE	= 7;
+//	private static final int	MAX_HAND_SIZE	= 7;
 	private static final int	BASE_HOURS = 2;
 	private static final int	START_QUALITY = 50;
 	
@@ -68,8 +68,8 @@ public class CRPlayer extends Player implements DeckPlayer<CRCardModel>, HandPla
 	}
 
 	public CRCard drawCard() {
-		if (this.hand.size() == MAX_HAND_SIZE)
-			return null;
+//		if (this.hand.size() == MAX_HAND_SIZE)
+//			return null;
 		
 		CRCard card = this.deck.getTopCard();
 		if (card == null) {

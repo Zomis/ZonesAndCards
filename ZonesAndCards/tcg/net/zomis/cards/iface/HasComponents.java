@@ -1,6 +1,10 @@
-package net.zomis.cards.components;
+package net.zomis.cards.iface;
 
 import java.util.Map;
+
+import net.zomis.cards.components.Component;
+import net.zomis.cards.components.ComponentCompatibility;
+import net.zomis.cards.components.ComponentCompatibilityImpl;
 
 public interface HasComponents {
 

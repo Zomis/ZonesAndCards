@@ -36,9 +36,7 @@ import net.zomis.aiscores.FieldScore;
 import net.zomis.aiscores.FieldScoreProducer;
 import net.zomis.aiscores.FieldScores;
 import net.zomis.cards.ai.CGController;
-import net.zomis.cards.cwars2.CWars2Setup;
-import net.zomis.cards.cwars2.ais.CWars2AI_Better;
-import net.zomis.cards.cwars2.ais.CWars2Decks;
+import net.zomis.cards.cbased.CompGameFactory;
 import net.zomis.cards.events.card.CardCreatedEvent;
 import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.events.game.AfterActionEvent;
@@ -63,10 +61,8 @@ import net.zomis.custommap.view.Log4jLog;
 import net.zomis.custommap.view.swing.MenuItemBuilder;
 import net.zomis.custommap.view.swing.SimpleAction;
 import net.zomis.custommap.view.swing.ZomisSwingLog4j;
-import net.zomis.events.Event;
-import net.zomis.events.EventListener;
 
-public class CardFrame extends JFrame implements EventListener, CardViewClickListener {
+public class CardFrame extends JFrame implements CardViewClickListener {
 //	private final CardGame<? extends Player, ? extends CardModel> game;
 	private final CardGame<?, ?> game;
 
@@ -99,9 +95,10 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 //			this.game = new HeartsSuperGame(new String[]{ "BUBU", "Minken", "Tejpbit", "Zomis"});
 //			this.game = new PokerGame();
 //		game = CWars2Setup.newMultiplayerGame().setDecks(CWars2Decks.zomisMultiplayerDeck(), CWars2Decks.zomisMultiplayerDeck()).setAIs(null, new CWars2AI_Better()).build();
-		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).build();
+//		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).build();
+		game = CompGameFactory.simple();
 		controller = new CGController(game);
-		controller.setAI(1, new CWars2AI_Better());
+//		controller.setAI(1, new CWars2AI_Better());
 
 		CustomFacade.getLog().i("Game created");
 		
@@ -244,7 +241,14 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 	
 	
 	private void setupGame() {
-		getGame().registerListener(this);
+		getGame().registerHandler(CardCreatedEvent.class, this::evCardCreatedEvent, 1000);
+		getGame().registerHandler(PhaseChangeEvent.class, this::evPhaseChangeEvent, 1000);
+		getGame().registerHandler(ZoneShuffleEvent.class, this::evZoneShuffleEvent, 1000);
+		getGame().registerHandler(ZoneSortEvent.class, this::evZoneSortEvent, 1000);
+		getGame().registerHandler(ZoneReverseEvent.class, this::evZoneReverseEvent, 1000);
+		getGame().registerHandler(AfterActionEvent.class, this::evAfterAction, 1000);
+		getGame().registerHandler(ZoneChangeEvent.class, this::evZoneChangeEvent, 1000);
+		getGame().registerHandler(GameOverEvent.class, this::evGameOver, 1000);
 		
 		// Setup gameviews:
 		for (CardZone<?> zone : this.getGame().getPublicZones()) {
@@ -256,36 +260,52 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		}
 	}
 	
-	@Event(priority=1000)
-	public void evCardCreatedEvent(CardCreatedEvent event) {
+	private void evAfterAction(AfterActionEvent event) {
+		updateViews();
+		this.playerSummary.updateStatus();
+		if (game.getCurrentPlayer() != null && controller.getAI(game.getCurrentPlayer()) != null) {
+			if (aiAutoplay && !game.isGameOver())
+				controller.play();
+		}
+	}
+	
+	private void evZoneChangeEvent(ZoneChangeEvent event) {
+		CustomFacade.getLog().i("Zone Change: " + event);
+		for (CardZoneView zv : zoneViews) {
+			zv.onZoneChangeEvent(event);
+		}
+		updateGameStatus();
+	}
+
+	private void evZoneSortEvent(ZoneSortEvent event) {
+		recreateViewFor(event.getZone());
+	}
+	
+	private void evZoneReverseEvent(ZoneReverseEvent event) {
+		recreateViewFor(event.getZone());
+	}
+
+	private void evCardCreatedEvent(CardCreatedEvent event) {
 		for (CardZoneView zv : zoneViews) {
 			if (zv.getZone() == event.getZone())
 				zv.addCard(event.getCard());
 		}
 	}
-	@Event(priority=1000)
-	public void evPhaseChangeEvent(PhaseChangeEvent event) {
+	
+	private void evPhaseChangeEvent(PhaseChangeEvent event) {
 		CustomFacade.getLog().i("Phase Change: " + event);
 		updateViews();
 	}
-	@Event(priority=1000)
-	public void evZoneShuffleEvent(ZoneShuffleEvent event) {
+	
+	private void evZoneShuffleEvent(ZoneShuffleEvent event) {
 		recreateViewFor(event.getZone());
 	}
+	
 	private void recreateViewFor(CardZone<?> zone) {
 		for (CardZoneView view : this.zoneViews) {
 			if (view.getZone() == zone)
 				view.recreateFromScratch();
 		}
-	}
-
-	@Event(priority=1000)
-	public void evZoneSortEvent(ZoneSortEvent event) {
-		recreateViewFor(event.getZone());
-	}
-	@Event(priority=1000)
-	public void evZoneShuffleEvent(ZoneReverseEvent event) {
-		recreateViewFor(event.getZone());
 	}
 
 	private void updateViews() {
@@ -303,25 +323,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 				model.addElement(element);
 		}
 	}
-	@Event(priority=1000)
-	public void evAfterAction(AfterActionEvent event) {
-		updateViews();
-		this.playerSummary.updateStatus();
-		if (game.getCurrentPlayer() != null && controller.getAI(game.getCurrentPlayer()) != null) {
-			if (aiAutoplay && !game.isGameOver())
-				controller.play();
-		}
-	}
 	
-	@Event(priority=1000)
-	public void evZoneChangeEvent(ZoneChangeEvent event) {
-		CustomFacade.getLog().i("Zone Change: " + event);
-		for (CardZoneView zv : zoneViews) {
-			zv.onZoneChangeEvent(event);
-		}
-		updateGameStatus();
-	}
-
 	private void updateGameStatus() {
 		text.setText(getGame().toString());
 		for (Player ee : getGame().getPlayers()) {
@@ -356,8 +358,7 @@ public class CardFrame extends JFrame implements EventListener, CardViewClickLis
 		});
 	}
 
-	@Event(priority = 1000)
-	public void gameOver(GameOverEvent event) {
+	private void evGameOver(GameOverEvent event) {
 		if (!event.isCancelled())
 			JOptionPane.showMessageDialog(this, "Game Finished!");
 	}
