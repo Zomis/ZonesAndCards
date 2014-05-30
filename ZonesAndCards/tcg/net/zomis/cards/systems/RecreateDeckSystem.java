@@ -7,7 +7,11 @@ import net.zomis.cards.events2.DrawCardEvent;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.events.EventExecutorGWT;
 
-
+/**
+ * <p>Functionality for recreating the Deck when it's out of cards.</p>
+ * <p>Requires: {@link DeckComponent} and {@link DeckSourceComponent}</p>
+ * <p>Listens for {@link DrawCardEvent}</p>
+ */
 public class RecreateDeckSystem implements GameSystem {
 
 	@Override
@@ -16,7 +20,7 @@ public class RecreateDeckSystem implements GameSystem {
 	}
 	
 	private void onDrawCard(DrawCardEvent event) {
-		ZomisLog.info("DrawCard Event");
+		ZomisLog.info("RecreateDeckSystem - DrawCard Event triggered");
 		if (event.getPlayer().compatibility(DeckComponent.class).and(DeckSourceComponent.class).failsThenWarn())
 			return;
 		

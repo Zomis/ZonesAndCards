@@ -7,7 +7,7 @@ import net.zomis.cards.model.CardZone;
 public class HandComponent extends ZoneComponent {
 
 	public HandComponent(CompPlayer player) {
-		super(player.getGame(), new CardZone<>("Hand", player));
+		super(player.getGame(), new CardZone<CardWithComponents>("Hand", player));
 		this.getZone().setKnown(player, true);
 	}
 	

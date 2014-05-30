@@ -96,7 +96,7 @@ public class CardFrame extends JFrame implements CardViewClickListener {
 //			this.game = new PokerGame();
 //		game = CWars2Setup.newMultiplayerGame().setDecks(CWars2Decks.zomisMultiplayerDeck(), CWars2Decks.zomisMultiplayerDeck()).setAIs(null, new CWars2AI_Better()).build();
 //		game = CWars2Setup.newSingleplayerGame().setDecks(CWars2Decks.zomisSingleplayerControl(), CWars2Decks.zomisSingleplayerControl()).build();
-		game = CompGameFactory.rps(); // simple();
+		game = CompGameFactory.simple();
 		controller = new CGController(game);
 //		controller.setAI(1, new CWars2AI_Better());
 

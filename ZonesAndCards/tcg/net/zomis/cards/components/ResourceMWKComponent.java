@@ -1,53 +1,67 @@
 package net.zomis.cards.components;
 
+import net.zomis.cards.resources.IResource;
+import net.zomis.cards.resources.ResourceData;
+import net.zomis.cards.resources.ResourceMap;
+
 
 public class ResourceMWKComponent implements PlayerComponent {
 
-	private int mages, warriors, kings;
+	private enum Res implements IResource {
+		MAGES, WARRIORS, KINGS;
 
-	public ResourceMWKComponent(int mages, int warriors, int kings) {
-		this.mages = mages;
-		this.warriors = warriors;
-		this.kings = kings;
+		@Override
+		public ResourceData createData(IResource resource) {
+			return ResourceData.forResource(resource);
+		}
+	}
+	
+	private final ResourceMap	resMap;
+
+	public ResourceMWKComponent(ResourceMap resourceMap, int mages, int warriors, int kings) {
+		this.resMap = resourceMap;
+		setMages(mages);
+		setWarriors(warriors);
+		setKings(kings);
 	}
 	
 	public int getKings() {
-		return kings;
+		return resMap.get(Res.KINGS);
 	}
 	
 	public int getMages() {
-		return mages;
+		return resMap.get(Res.MAGES);
 	}
 	
 	public int getWarriors() {
-		return warriors;
+		return resMap.get(Res.WARRIORS);
 	}
 	
 	public void setKings(int kings) {
-		this.kings = kings;
+		resMap.set(Res.KINGS, kings);
 	}
 	
 	public void setMages(int mages) {
-		this.mages = mages;
+		resMap.set(Res.MAGES, mages);
 	}
 	
-	public void setWarriors(int warrios) {
-		this.warriors = warrios;
+	public void setWarriors(int warriors) {
+		resMap.set(Res.WARRIORS, warriors);
 	}
 
 	public boolean has(int mages, int warriors, int kings) {
-		return this.mages >= mages && this.warriors >= warriors && this.kings >= kings;
+		return getMages() >= mages && getWarriors() >= warriors && getKings() >= kings;
 	}
 
 	public void change(int mages, int warriors, int kings) {
-		this.mages += mages;
-		this.warriors += warriors;
-		this.kings += kings;
+		resMap.changeResources(Res.MAGES, mages);
+		resMap.changeResources(Res.WARRIORS, warriors);
+		resMap.changeResources(Res.KINGS, kings);
 	}
 	
 	@Override
 	public String toString() {
-		return "{" + mages + ", " + warriors + ", " + kings + "}";
+		return resMap.toString();
 	}
 	
 	

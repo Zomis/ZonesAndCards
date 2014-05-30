@@ -17,6 +17,7 @@ import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.cards.model.phases.IPlayerPhase;
+import net.zomis.cards.util.CardSet;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventConsumer;
 import net.zomis.events.EventExecutor;
@@ -219,6 +220,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 
 	public boolean nextPhase() {
+		if (!this.started)
+			throw new IllegalStateException("Game is not started.");
 		if (!this.isNextPhaseAllowed())
 			return false;
 		GamePhase previousPhase = getActivePhase();
@@ -388,4 +391,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return event;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends CardGame<P, M>> void addCards(CardSet<T> mwkCardsSystem) {
+		mwkCardsSystem.addCards((T) this);
+	}
 }

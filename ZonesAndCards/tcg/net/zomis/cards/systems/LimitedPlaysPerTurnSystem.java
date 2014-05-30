@@ -6,6 +6,10 @@ import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.events.EventExecutorGWT;
 
+/**
+ * <p>Functionality for automatically ending phase once x cards has been played that turn. (ActionZone cards not included)</p>
+ * <p>Listens for {@link CardPlayedEvent} and {@link PhaseChangeEvent}</p>
+ */
 public class LimitedPlaysPerTurnSystem implements GameSystem {
 
 	private int cardsPlayedThisTurn;
@@ -27,12 +31,12 @@ public class LimitedPlaysPerTurnSystem implements GameSystem {
 	}
 	
 	private void onCardPlayed(CardPlayedEvent event) {
+		if (event.getGame().getActionZone().containsModel(event.getCard().getModel()))
+			return;
 		ZomisLog.info(this + " on card played " + cardsPlayedThisTurn);
 		this.cardsPlayedThisTurn++;
 		if (this.cardsPlayedThisTurn >= limit)
 			event.getGame().nextPhase();
 	}
 	
-	
-
 }

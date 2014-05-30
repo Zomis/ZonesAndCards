@@ -209,7 +209,7 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 			for (F player : players) {
 				if (this.size() <= cardsLeft)
 					return;
-				Card<?> card = this.getTopCard();
+				E card = this.getTopCard();
 				card.zoneMoveOnBottom(getHand.getZone(player));
 			}
 		}
@@ -222,6 +222,15 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	@Override
 	public Iterator<E> iterator() {
 		return cards.iterator();
+	}
+	
+	public boolean containsModel(CardModel c) {
+		for (E card : this) {
+			if (card.getModel() == c) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// TODO: move-card-to-and-replace-with -- replace at specific index

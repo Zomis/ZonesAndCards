@@ -1,11 +1,14 @@
 package net.zomis.cards.systems;
 
+import java.util.List;
+
 import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.components.ZoneComponent;
 import net.zomis.custommap.view.ZomisLog;
+import net.zomis.utils.ZomisList;
 
 public class DeckFromEachCardSystem implements GameSystem {
 
@@ -19,14 +22,15 @@ public class DeckFromEachCardSystem implements GameSystem {
 	
 	@Override
 	public void onStart(FirstCompGame game) {
-		ZomisLog.info(this.toString());
+		ZomisLog.info("Create deck from each card. " + this.count + " to " + toComponent);
+		List<CompCardModel> cards = ZomisList.filter2(game.getCards().values(), c -> !game.getActionZone().containsModel(c));
 		for (CompPlayer pl : game.getPlayers()) {
 			if (toComponent != null) {
 				pl.compatibility(this.toComponent).required();
 				ZomisLog.info("Creating deck for " + pl + " to " + toComponent);
 			
 				ZoneComponent component = pl.getComponent(toComponent);
-				for (CompCardModel card : game.getCards().values()) {
+				for (CompCardModel card : cards) {
 					for (int i = 0; i < count; i++)
 						component.getZone().createCardOnBottom(card);
 				}
@@ -37,7 +41,7 @@ public class DeckFromEachCardSystem implements GameSystem {
 				ZomisLog.info("Creating deck for " + pl);
 			
 				DeckSourceComponent component = pl.getComponent(DeckSourceComponent.class);
-				for (CompCardModel card : game.getCards().values()) {
+				for (CompCardModel card : cards) {
 					for (int i = 0; i < count; i++)
 						component.addCard(card);
 				}

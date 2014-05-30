@@ -22,11 +22,6 @@ public class NextTurnAction extends StackAction {
 	
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName();
-	}
-	
-	@Override
-	public int hashCode() {
-		return this.getClass().getSimpleName().hashCode();
+		return "NextTurn: " + game;
 	}
 }

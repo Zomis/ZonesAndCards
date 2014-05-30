@@ -121,9 +121,11 @@ public final class ResourceMap {
 		resdata.value = value;
 		return this;
 	}
+	
 	public Set<IResource> getKeys() {
 		return new HashSet<IResource>(this.data.keySet());
 	}
+	
 	public Set<Entry<IResource, Integer>> getValues() {
 		Map<IResource, Integer> values = new LinkedHashMap<IResource, Integer>();
 		for (Entry<IResource, ResourceData> ee : this.data.entrySet()) {
@@ -136,6 +138,7 @@ public final class ResourceMap {
 	public String toString() {
 		return this.data.toString(); // or getValues().toString() ?
 	}
+	
 	public boolean hasResources(ResourceMap cost) {
 		for (Entry<IResource, Integer> ee : cost.getValues()) {
 			if (!this.hasResources(ee.getKey(), ee.getValue())) {

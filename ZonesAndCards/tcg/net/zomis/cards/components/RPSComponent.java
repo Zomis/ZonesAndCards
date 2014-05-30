@@ -1,6 +1,5 @@
 package net.zomis.cards.components;
 
-import net.zomis.cards.systems.RPSCardsSystem;
 import net.zomis.cards.systems.RPSCardsSystem.RPS;
 
 public class RPSComponent implements Component {

@@ -16,21 +16,14 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 
 	private final List<GameSystem> systems = new ArrayList<>(); // List or Set? Should the order matter?
 	
-	// TODO: Feature-Request by @Mat'sMug: Support five players
 	/**
-	 * two players
-	 * players have battlefields
-	 * players have graveyard
-	 * players have decks
-	 * players have hands
-	 * players have mana, get +1 total mana each turn (like Wartstone) 
-	 * 
+	 * x players
 	 * event-based: When playing card, at the start of turn, when performing a fight, when cleaning up (state-based effects), etc.
 	 * 
-	 * component should only hold state
-	 * card has a collection of components (list/set/map?)
+	 * components only hold state
+	 * each card and cardmodel has a collection of components
 	 * 
-	 * Is it possible to not use generics once you have a proper component-based system? Using generics together with a Map<? extends Component, Component> would cause a mess.
+	 * How can generics be used with the component-based system? Using generics together with a Map<? extends Component, Component> would cause a mess.
 	 */
 	
 	public FirstCompGame() {
@@ -81,4 +74,5 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 	public void addPhase(GamePhase phase) {
 		super.addPhase(phase);
 	}
+
 }

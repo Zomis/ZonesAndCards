@@ -6,7 +6,9 @@ import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.components.HandComponent;
 import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.ResourceMWKComponent;
+import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.cards.systems.ConsumeCardSystem;
 import net.zomis.cards.systems.CostAndEffectSystem;
 import net.zomis.cards.systems.DeckFromEachCardSystem;
 import net.zomis.cards.systems.DrawCardAtBeginningOfTurnSystem;
@@ -32,12 +34,13 @@ public class CompGameFactory {
 		
 		for (CompPlayer pl : game.getPlayers()) {
 			pl.addComponent(new HandComponent(pl));
-			pl.addComponent(new HealthComponent(50));
+			pl.addComponent(new HealthComponent(pl.getResources(), 50));
 			pl.addComponent(new ChosenCardComponent());
 			game.addPhase(new PlayerPhase(pl));
 		}
 		
-		game.addSystem(new RPSCardsSystem(game));
+		game.addCards(new RPSCardsSystem());
+		
 		game.addSystem(new PlayHandSystem());
 		game.addSystem(new CostAndEffectSystem());
 		game.addSystem(new LimitedPlaysPerTurnSystem(1));
@@ -61,24 +64,26 @@ public class CompGameFactory {
 			pl.addComponent(new HandComponent(pl));
 			pl.addComponent(new DeckSourceComponent(pl));
 			pl.addComponent(new DeckComponent(pl));
-			pl.addComponent(new HealthComponent(30));
-			pl.addComponent(new ResourceMWKComponent(5, 3, 1));
+			pl.addComponent(new HealthComponent(pl.getResources(), 30));
+			pl.addComponent(new ResourceMWKComponent(pl.getResources(), 5, 3, 1));
 			game.addPhase(new PlayerPhase(pl));
 		}
+		
+		game.addCards(new MWKCardsSystem());
 		
 		game.addSystem(new DrawCardAtBeginningOfTurnSystem());
 		game.addSystem(new GainMWKResourcesSystem());
 		game.addSystem(new RecreateDeckSystem());
-//		game.addSystem(new RandomCardModelSystem());
-		game.addSystem(new MWKCardsSystem());
 		game.addSystem(new PlayHandSystem());
+		game.addSystem(new ConsumeCardSystem());
 		game.addSystem(new CostAndEffectSystem());
-		game.addSystem(new LimitedPlaysPerTurnSystem(1));
+		game.addSystem(new LimitedPlaysPerTurnSystem(2));
 		// TODO: Buffered Health system(?) - don't decrease health directly, do it during cleanup. Listen for CleanupEvent and HealthModificationEvent
 		
 		game.addSystem(new DeckFromEachCardSystem(2, null));
 		game.addSystem(new DrawStartCards(5));
 		game.addSystem(new SkipPlayerIfNoHealthSystem());
+		game.addAction(new CompCardModel("End Turn"), () -> new NextTurnAction(game) );
 		
 //		game.addSystem(new DrawStartCards(game.getPlayers().get(0), 1));
 		
