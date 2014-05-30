@@ -1,9 +1,13 @@
 package net.zomis.cards.cbased;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.zomis.cards.components.Component;
 import net.zomis.cards.events2.GameStartedEvent;
+import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.phases.GamePhase;
@@ -12,9 +16,10 @@ import net.zomis.events.CancellableEvent;
 import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.IEvent;
 
-public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
+public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> implements HasComponents {
 
 	private final List<GameSystem> systems = new ArrayList<>(); // List or Set? Should the order matter?
+	private final Map<Class<? extends Component>, Component> components = new HashMap<>();
 	
 	/**
 	 * x players
@@ -73,6 +78,11 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> {
 	@Override
 	public void addPhase(GamePhase phase) {
 		super.addPhase(phase);
+	}
+
+	@Override
+	public Map<Class<? extends Component>, Component> getComponents() {
+		return components;
 	}
 
 }
