@@ -2,13 +2,12 @@ package net.zomis.cards.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
 
 import net.zomis.cards.events.card.CardPlayedEvent;
 import net.zomis.cards.events.game.AfterActionEvent;
@@ -28,28 +27,20 @@ import net.zomis.events.IEventHandler;
 
 public class CardGame<P extends Player, M extends CardModel> implements EventListener {
 	
-	private static class UselessAIHandler implements ActionHandler {
-		@Override
-		public StackAction click(Card<?> card) {
-			return new InvalidStackAction("Useless Handler");
-		}
-		
-		@Override
-		public List<Card<?>> getUseableCards(CardGame<? extends Player, ? extends CardModel> game, Player player) {
-			ArrayList<Card<?>> a = new ArrayList<Card<?>>();
-			return a;
-		}
-	}
-	
 	private final CardZone<Card<M>> actionZone;
 	
-	private ActionHandler actionHandler = new UselessAIHandler();
+	private ActionHandler actionHandler;
+	private boolean started;
 	
 	protected void setActionHandler(ActionHandler aiHandler) {
+		if (aiHandler == null)
+			throw new IllegalArgumentException("ActionHandler cannot be null.");
 		this.actionHandler = aiHandler;
 	}
 	
 	public List<Card<?>> getUseableCards(Player player) {
+		if (actionHandler == null)
+			throw new IllegalStateException("No actionHandler has been set.");
 		List<Card<?>> list = this.actionHandler.getUseableCards(this, player);
 		list.addAll(this.actionZone.cardList());
 		return list;
@@ -59,24 +50,16 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	private boolean callingOnEnd;
 	private GamePhase currentPhase;
 	private final IEventExecutor events;
-	private Exception exc;
 	private boolean gameOver = false;
 	private final List<GamePhase> phases = new ArrayList<GamePhase>();
 	private final List<P> players = new LinkedList<P>();
 	private Random random = new Random();
 
 	/**
-	 * The Stack is used as a history manager as well.
-	 * Possible stack actions: Activate a card, play card, discard card, next phase, auto-triggered effects, +more
+	 * The stack provides a way for actions to be processed one at a time
 	 */
-	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();;
+	private final Deque<StackAction> stack = new LinkedList<StackAction>();
 
-	
-	private boolean started;
-	protected void resetStarted() {
-		this.started = false;
-	}
-	
 	public M getCardModel(String name) {
 		return getCards().get(name);
 	}
@@ -129,7 +112,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 	
 	/**
-	 * Was meant to add a StackAction to the Stack and record it in history, but use instead CardGame.click(card) for that.
+	 * Was meant originally to add a StackAction to the Stack and record it in history, but use instead CardGame.click(card) for that.
 	 * @param action Action to add to stack
 	 */
 	public void addStackAction(StackAction action) {
@@ -146,11 +129,9 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	
 	protected final void endGame() {
 		if (this.isGameOver()) {
-			exc.printStackTrace();
-			throw new IllegalStateException("Game is already finished, previously called at ", exc);
+			return;
 		}
 		if (!this.executeEvent(new GameOverEvent(this)).isCancelled()) {
-			exc = new Exception("End game called");
 			this.gameOver = true;
 		}
 	}
@@ -166,11 +147,6 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return this.currentPhase;
 	}
 
-	@Deprecated
-	public Set<CardModel> getAvailableCards() {
-		return new TreeSet<CardModel>(availableCards.values());
-	}
-	
 	public Map<String, M> getCards() {
 		return new HashMap<String, M>(availableCards);
 	}
@@ -197,19 +173,20 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 	
 	public final Random getRandom() {
-//		CustomFacade.getLog().i("Using random! " + new Exception().getStackTrace()[1]);
 		return this.random;
 	}
 
-	protected LinkedList<StackAction> getStack() {
+	protected Deque<StackAction> getStack() {
 		return stack;
 	}
 	public final boolean isGameOver() {
 		return gameOver;
 	}
+	
 	public boolean isNextPhaseAllowed() {
-		return true;
+		return stack.isEmpty();
 	}
+	
 	public boolean isStarted() {
 		return started;
 	}
@@ -358,6 +335,8 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 
 	public StackAction getActionFor(Card<?> card) {
+		if (actionHandler == null)
+			throw new IllegalStateException("No actionHandler has been set.");
 		if (actions.containsKey(card.getModel())) {
 			return actions.get(card.getModel()).get();
 		}
