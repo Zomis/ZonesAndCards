@@ -5,7 +5,7 @@ import net.zomis.cards.resources.IResource;
 
 public class CWars2CardFactory {
 	
-	private CWars2Card	card;
+	private final CWars2Card card;
 
 	public CWars2CardFactory(String name) {
 		this.card = new CWars2Card(name);

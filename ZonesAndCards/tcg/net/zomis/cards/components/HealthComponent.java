@@ -37,7 +37,9 @@ public class HealthComponent implements PlayerComponent {
 	}
 	
 	public void heal(int heal) {
-		map.changeResources(HealthRes.HEALTH, heal);
+		if (heal + getHealth() >= getMaxHealth())
+			map.set(HealthRes.HEALTH, getMaxHealth());
+		else map.changeResources(HealthRes.HEALTH, heal);
 	}
 	
 	public int getHealth() {

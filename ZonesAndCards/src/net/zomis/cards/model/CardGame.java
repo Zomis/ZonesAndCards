@@ -22,6 +22,7 @@ import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventConsumer;
 import net.zomis.events.EventExecutor;
 import net.zomis.events.EventExecutorGWT;
+import net.zomis.events.EventHandlerGWT;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
 import net.zomis.events.IEventExecutor;
@@ -275,12 +276,11 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		}
 		else {
 			action.onFailedPerform();
-//			CustomFacade.getLog().d("StackAction was not allowed: " + action);
 		}
 		return action;
 	}
 	
-	public void registerHandler(Class<? extends IEvent> eventType, IEventHandler handler) { // TODO: Deprecate CardGame.registerHandler
+	public void registerHandler(Class<? extends IEvent> eventType, EventHandlerGWT<? extends IEvent> handler) {
 		getEvents().registerHandler(eventType, handler);
 	}
 	
@@ -292,17 +292,9 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		return getEvents().registerHandler(eventType, handler, priority);
 	}
 	
-	@Deprecated
-	public void registerListener(EventListener listener) {
-		getEvents().registerListener(listener);
-	}
-	
 	public void removeHandler(IEventHandler listener) {
 		getEvents().removeHandler(listener);
 	}
-//	protected boolean removeZone(CardZone zone) {
-//		return this.zones.remove(zone);
-//	}
 	
 	protected void setActivePhase(GamePhase phase) {
 		if (!callingOnEnd) {
@@ -315,6 +307,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		callingOnEnd = false;
 		setActivePhaseDirectly(phase);
 	}
+	
 	protected void setActivePhaseDirectly(GamePhase phase) {
 		GamePhase oldPhase = getActivePhase();
 		this.executeEvent(new PhaseChangeEvent(this, oldPhase, phase), EventExecutor.PRE);
@@ -323,12 +316,15 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		newPhase.onStart(this);
 		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase), EventExecutor.POST);
 	}
+	
 	public final void setRandomSeed(long seed) {
 		this.random = new Random(seed);
 	}
+	
 	public final void setRandom(Random random) {
 		this.random = random;
 	}
+	
 	public final void startGame() {
 		if (this.started)
 			throw new IllegalStateException("Game is already started.");
