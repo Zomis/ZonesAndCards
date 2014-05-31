@@ -89,6 +89,7 @@ public class MDJQCardModel extends CardModel {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <E extends CardModel> Card<E> createCardInternal(CardZone<?> initialZone) {
+		// TODO: Cleanup MDJQ code
 		MDJQZone initZone = (MDJQZone) initialZone;
 		for (MDJQPlayer player : initZone.getGame().getPlayers()) {
 			if (player.getLibrary() == initZone) {

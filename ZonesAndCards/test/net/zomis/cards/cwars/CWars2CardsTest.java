@@ -3,8 +3,8 @@ package net.zomis.cards.cwars;
 import static org.junit.Assert.*;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.cards.CardsTest;

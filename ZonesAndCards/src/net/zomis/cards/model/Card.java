@@ -7,14 +7,6 @@ import net.zomis.cards.events.card.ZoneChangeEvent;
 public class Card<M extends CardModel> {
 	private final M model;
 	
-	@Override
-	public int hashCode() {
-		final int prime = 41;
-		int result = 1;
-		result = prime * result + ((model == null) ? 0 : model.hashCode());
-		return result;
-	}
-
 	protected CardZone<?> currentZone;
 
 	Card() { this(null); }

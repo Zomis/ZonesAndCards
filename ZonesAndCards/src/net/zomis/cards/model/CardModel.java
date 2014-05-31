@@ -2,13 +2,9 @@ package net.zomis.cards.model;
 
 public class CardModel implements Comparable<CardModel> {
 
-	private String name;
+	private final String name;
 	
 	public CardModel(String name) {
-		this.setName(name);
-	}
-	
-	public void setName(String name) {
 		this.name = name;
 	}
 	
