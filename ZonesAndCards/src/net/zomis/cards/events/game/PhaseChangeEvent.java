@@ -1,7 +1,7 @@
 package net.zomis.cards.events.game;
 
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.phases.GamePhase;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.events.IEvent;
 
 public class PhaseChangeEvent implements IEvent {

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.actions.NextTurnAction;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.util.DeckBuilder;
 
 public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
@@ -20,7 +20,7 @@ public class CRCardGame extends CardGame<CRPlayer, CRCardModel> {
 		this.addPlayer(playerFactory.newPlayerCodeReview(this));
 		this.addPlayer(playerFactory.newPlayerPCG(this));
 		for (CRPlayer player : getPlayers()) {
-			this.addPhase(new PlayerPhase(player));
+			this.addPhase(new GamePhase(player));
 			this.addZone(player.getHand());
 			this.addZone(player.getBattlefield());
 			this.addZone(player.getDeck());

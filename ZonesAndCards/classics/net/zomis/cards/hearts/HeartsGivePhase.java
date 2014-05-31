@@ -2,7 +2,7 @@ package net.zomis.cards.hearts;
 
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.phases.GamePhase;
+import net.zomis.cards.model.GamePhase;
 
 public class HeartsGivePhase extends GamePhase {
 

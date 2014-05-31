@@ -10,7 +10,7 @@ import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.phases.GamePhase;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.systems.GameSystem;
 import net.zomis.events.CancellableEvent;
 import net.zomis.events.EventExecutorGWT;

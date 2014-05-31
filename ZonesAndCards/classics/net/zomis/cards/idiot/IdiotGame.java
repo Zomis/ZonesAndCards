@@ -8,7 +8,7 @@ import net.zomis.cards.classics.Suite;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
-import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.events.EventHandlerGWT;
 import net.zomis.iterate.ArrayIterator;
 import net.zomis.iterate.IndexIterator;
@@ -42,7 +42,7 @@ public class IdiotGame extends ClassicGame {
 		this.deck.addDeck(this, 0);
 		CardPlayer player = new CardPlayer();
 		this.addPlayer(player);
-		this.addPhase(new PlayerPhase(player));
+		this.addPhase(new GamePhase(player));
 		this.registerHandler(AfterActionEvent.class, new EventHandlerGWT<AfterActionEvent>() {
 			@Override
 			public void executeEvent(AfterActionEvent event) {

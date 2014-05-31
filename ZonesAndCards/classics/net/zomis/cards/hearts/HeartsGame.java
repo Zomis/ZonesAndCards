@@ -16,11 +16,10 @@ import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.ActionProvider;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
-import net.zomis.cards.model.phases.GamePhase;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.utils.ZomisList;
 
 public class HeartsGame extends ClassicGame {
@@ -74,7 +73,7 @@ public class HeartsGame extends ClassicGame {
 		player.setBoard(board);
 		this.addZone(board);
 		
-		this.addPhase(new PlayerPhase(player));
+		this.addPhase(new GamePhase(player));
 		super.addPlayer(player);
 		return this;
 	}
@@ -191,8 +190,7 @@ public class HeartsGame extends ClassicGame {
 	
 	private void setActivePlayer(CardPlayer pl) {
 		for (GamePhase phase : this.getPhases()) {
-			PlayerPhase playerPhase = (PlayerPhase) phase;
-			if (playerPhase.getPlayer() == pl) {
+			if (phase.getPlayer() == pl) {
 				if (this.getCurrentPlayer() != null)
 					this.setActivePhase(phase);
 				else this.setActivePhaseDirectly(phase);

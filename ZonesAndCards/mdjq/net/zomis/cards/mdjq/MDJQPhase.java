@@ -1,8 +1,8 @@
 package net.zomis.cards.mdjq;
 
-import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.cards.model.GamePhase;
 
-public class MDJQPhase extends PlayerPhase {
+public class MDJQPhase extends GamePhase {
 
 	private String	id;
 

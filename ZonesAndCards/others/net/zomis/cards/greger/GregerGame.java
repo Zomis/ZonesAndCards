@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.phases.PlayerPhase;
 
 /**
  * @author Zomis
@@ -71,7 +71,7 @@ public class GregerGame extends CardGame<Player, GregerCardModel> {
 		hand.setKnown(pl, true);
 		this.playerHands.put(pl, hand);
 		
-		this.addPhase(new PlayerPhase(pl));
+		this.addPhase(new GamePhase(pl));
 	}
 	
 	

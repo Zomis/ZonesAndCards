@@ -15,10 +15,10 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.ZoneMoveAction;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.poker.validation.PokerHandEval;
 import net.zomis.cards.poker.validation.PokerHandResult;
 import net.zomis.custommap.CustomFacade;
@@ -67,7 +67,7 @@ public class PokerGame extends ClassicGame {
 		deck.setGloballyKnown(true);
 		pl.getHand().setGloballyKnown(true);
 		addZone(pl.getHand());
-		this.addPhase(new PlayerPhase(pl));
+		this.addPhase(new GamePhase(pl));
 	}
 	@Override
 	protected void onStart() {

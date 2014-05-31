@@ -24,10 +24,10 @@ import net.zomis.cards.mdjq.scorers.CardNameScorer;
 import net.zomis.cards.mdjq.scorers.IsColorScorer;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.cards.model.phases.GamePhase;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.IEvent;
 

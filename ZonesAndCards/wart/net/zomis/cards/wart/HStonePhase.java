@@ -1,10 +1,10 @@
 package net.zomis.cards.wart;
 
 import net.zomis.cards.model.CardGame;
-import net.zomis.cards.model.phases.PlayerPhase;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.resources.ResourceMap;
 
-public class HStonePhase extends PlayerPhase {
+public class HStonePhase extends GamePhase {
 
 	public HStonePhase(HStonePlayer pl) {
 		super(pl);

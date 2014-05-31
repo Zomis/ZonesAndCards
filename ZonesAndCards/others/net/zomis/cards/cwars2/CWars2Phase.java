@@ -2,15 +2,15 @@ package net.zomis.cards.cwars2;
 
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.model.CardGame;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.resources.IResource;
 import net.zomis.cards.resources.ResourceMap;
 
-public class CWars2Phase extends PlayerPhase {
+public class CWars2Phase extends GamePhase {
 
 	CWars2Phase() {
-		super(null);
+		this(null);
 	}
 	public CWars2Phase(Player pl) {
 		super(pl);

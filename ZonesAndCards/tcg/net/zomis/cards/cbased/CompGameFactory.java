@@ -6,8 +6,8 @@ import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.components.HandComponent;
 import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.ResourceMWKComponent;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.actions.NextTurnAction;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.cards.systems.ConsumeCardSystem;
 import net.zomis.cards.systems.CostAndEffectSystem;
 import net.zomis.cards.systems.DeckFromEachCardSystem;
@@ -36,7 +36,7 @@ public class CompGameFactory {
 			pl.addComponent(new HandComponent(pl));
 			pl.addComponent(new HealthComponent(pl.getResources(), 50));
 			pl.addComponent(new ChosenCardComponent());
-			game.addPhase(new PlayerPhase(pl));
+			game.addPhase(new GamePhase(pl));
 		}
 		
 		game.addCards(new RPSCardsSystem());
@@ -66,7 +66,7 @@ public class CompGameFactory {
 			pl.addComponent(new DeckComponent(pl));
 			pl.addComponent(new HealthComponent(pl.getResources(), 30));
 			pl.addComponent(new ResourceMWKComponent(pl.getResources(), 5, 3, 1));
-			game.addPhase(new PlayerPhase(pl));
+			game.addPhase(new GamePhase(pl));
 		}
 		
 		game.addCards(new MWKCardsSystem());

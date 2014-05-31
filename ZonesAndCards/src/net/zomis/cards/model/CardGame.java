@@ -15,8 +15,6 @@ import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
-import net.zomis.cards.model.phases.GamePhase;
-import net.zomis.cards.model.phases.IPlayerPhase;
 import net.zomis.cards.util.CardSet;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventConsumer;
@@ -180,11 +178,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	@SuppressWarnings("unchecked")
 	public P getCurrentPlayer() {
 		GamePhase phase = getActivePhase();
-		if (phase instanceof IPlayerPhase) {
-			IPlayerPhase phase2 = (IPlayerPhase) phase;
-			return (P) phase2.getPlayer();
-		}
-		return null;
+		return (P) phase.getPlayer();
 	}
 
 	protected IEventExecutor getEvents() {

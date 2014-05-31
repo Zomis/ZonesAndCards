@@ -8,9 +8,9 @@ import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.actions.NextTurnAction;
-import net.zomis.cards.model.phases.PlayerPhase;
 import net.zomis.custommap.CustomFacade;
 
 public class TurnEightGame extends ClassicGame {
@@ -122,7 +122,7 @@ public class TurnEightGame extends ClassicGame {
 		player.getHand().setKnown(player, true);
 		this.addPlayer(player);
 		this.addZone(player.getHand());
-		this.addPhase(new PlayerPhase(player));
+		this.addPhase(new GamePhase(player));
 		return this;
 	}
 	
