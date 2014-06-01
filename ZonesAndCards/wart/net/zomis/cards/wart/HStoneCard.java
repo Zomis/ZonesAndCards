@@ -225,7 +225,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		copy.abilities.clear();
 		copy.abilities.addAll(abilities);
 		copy.triggers.clear();
-		copy.triggers.addAll(triggers); // TODO: Create copies of the triggers.
+		copy.triggers.addAll(triggers); // TODO: When copying a card, create copies of the triggers.
 		
 		for (HStoneEnchantment ench : getGame().getEnchantments()) {
 			if (ench.appliesTo(this) && !ench.appliesTo(copy)) { // TODO: Test enchantment logic when copying a card

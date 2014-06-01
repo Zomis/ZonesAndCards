@@ -25,7 +25,7 @@ public class RogueCards implements CardSet<HStoneGame> {
 		game.addCard(minion( 1,      NONE, 2, 1, "Defias Bandit").card());
 		game.addCard(minion( 2,    COMMON, 2, 2, "Defias Ringleader").battlecry(e.comboOrNothing(e.summon("Defias Bandit"))).card());
 		game.addCard(minion( 4,      RARE, 4, 4, "Master of Disguise").battlecry(e.to(f.samePlayer().and(f.allMinions()), e.giveAbility(HSAbility.STEALTH))).card());
-		game.addCard(minion( 3,      RARE, 3, 3, "SI:7 Agent").battlecry(e.comboOrNothing(e.damage(2))).card()); // TODO: Only activate target selection mode if it's combo time
+		game.addCard(minion( 3,      RARE, 3, 3, "SI:7 Agent").battlecry(e.iffThenSelect(f.isCombo, e.damage(2))).card());
 		game.addCard(minion( 6,      EPIC, 5, 3, "Kidnapper").battlecry(e.comboOrNothing(e.unsummon())).card());
 		game.addCard(minion( 2,      EPIC, 1, 1, "Patient Assassin").stealth().poison().card());
 		game.addCard(minion( 3, LEGENDARY, 2, 2, "Edwin VanCleef").battlecry(e.selfPT(c.edwinBonus, c.edwinBonus)).card());

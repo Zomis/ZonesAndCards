@@ -41,7 +41,7 @@ public class WarlockCards implements CardSet<HStoneGame> {
 		game.addCard(spell( 1,    COMMON, "Mortal Coil").effect(e.toMinion(e.combined(e.damage(1), e.ifElse(f.canTakeDamage(1), null, e.drawCard())))).forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 1,    COMMON, "Power Overwhelming").effect("Give a friendly minion +4/+4 until end of turn. Then, it dies. Horribly").forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 0,    COMMON, "Sacrificial Pact").effect(e.to(f.minionIs(HStoneMinionType.DEMON), e.combined(e.destroyTarget(), e.healMyHero(5)))).forClass(HStoneClass.WARLOCK).card());
-//		game.addCard(spell( 3,    COMMON, "Sense Demons").effect("Put 2 random Demons from your deck into your hand").forClass(HStoneClass.WARLOCK).card()); // TODO: Does this remove them from the deck?
+//		game.addCard(spell( 3,    COMMON, "Sense Demons").effect("Put 2 random Demons from your deck into your hand").forClass(HStoneClass.WARLOCK).card()); 
 		game.addCard(spell( 0,    COMMON, "Soulfire").effect(e.toAny(e.combined(e.damage(4), e.discardRandomCard()))).forClass(HStoneClass.WARLOCK).card());
 //		game.addCard(spell( 4,      RARE, "Shadowflame").effect("Destroy a friendly minion and deal its Attack damage to all enemy minions").forClass(HStoneClass.WARLOCK).card());
 		game.addCard(spell( 6,      RARE, "Siphon Soul").effect(e.toMinion(e.combined(e.destroyTarget(), e.healMyHero(3)))).forClass(HStoneClass.WARLOCK).card());

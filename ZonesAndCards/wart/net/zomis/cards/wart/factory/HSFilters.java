@@ -229,6 +229,7 @@ public class HSFilters {
 	}
 
 	public final HSFilter isCombo = (src, dst) -> g.calcCombo.determineCount(src, dst) > 1;
+	public final HSFilter canDrawCard = (src, dst) -> !src.getPlayer().getDeck().isEmpty();
 	
 	public HSFilter playerControlsSecret() {
 		return new HSFilter() {

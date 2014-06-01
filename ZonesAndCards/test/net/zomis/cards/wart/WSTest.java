@@ -41,6 +41,18 @@ public class WSTest extends CardsTest<HStoneGame> {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
+    public void noComboNoDamage() {
+    	reachMana(8);
+    	superPlayCard("SI:7 Agent");
+    	assertFalse(game.isTargetSelectionMode());
+    	
+    	superPlayCard("SI:7 Agent");
+    	assertTrue(game.isTargetSelectionMode());
+    	target(game.getOpponent().getPlayerCard());
+    	assertEquals(28, game.getOpponent().getHealth());
+    }
+    
+    @Test
     public void aldorPeacekeeper() {
     	reachMana(5);
     	HStoneCard minion = superPlayCard("Bloodfen Raptor");
@@ -138,7 +150,7 @@ public class WSTest extends CardsTest<HStoneGame> {
 	// x Nourish adds permanent mana
 	// x Stealth minions are like hexproof
 	
-	// TEST: Crazed Alchemist - swapPT when you have Raid Leader or similar in game
+	// TEST: Does playing Warlock:Sense Demons remove the demons from the deck?
 	// WIKI: Wild Pyromancer - what comes first, spell effect or Wild Pyro effect?
 	// TEST: Rogue - Headcrack when you have a full hand already (by using Sprint). Expected: Card disappears
 	// TEST: copyOppCardInHand when opp card in hand has modified playing cost
@@ -147,6 +159,7 @@ public class WSTest extends CardsTest<HStoneGame> {
 	// TODO: Tests for which cards can be used on "shroud" minions (all where source is minion AFAIK)
 	// TEST: Hunter look at deck card, is it allowed to play at end of game when no cards is in deck?
 	// TESTED: Druid - Starfall when there are no minions. Not possible to choose the other target
+	// TESTED: Crazed Alchemist - swapPT when you have Raid Leader or similar in game -- works by setting the new values, which gives you additional PT
 
 	
 	// TODO: NEED 400 DUST: Copy card that has been enchanted with draw card enchantment?
@@ -1252,6 +1265,38 @@ HSAbilities - Set<HSAbility>, add and remove as needed. Even for stealth until n
 		
 	}
 
+	@Test
+	public void paladinCannotUseHeroPowerWhenBattlefieldIsFull() {
+		game = testGame(HStoneClass.PALADIN);
+		reachMana(2);
+		for (int i = 0; i < 7; i++) {
+			use(game.getCurrentPlayer().getHeroPower());
+			nextTurnX2();
+		}
+		assertZoneSize(7, game.getCurrentPlayer().getBattlefield());
+		useFail(game.getCurrentPlayer().getHeroPower());
+	}
+	
+	@Test
+	public void weaponIsNotCharacter() {
+		reachMana(6);
+		HStoneCard axe = superPlayCard("Fiery War Axe");
+		HSFilters f = new HSFilters();
+		assertTrue(f.isWeapon.shouldKeep(axe, axe));
+		assertFalse(f.all().shouldKeep(axe, axe));
+	}
+	
+	@Test
+	public void twilightDrakeHealth() {
+		HStoneCard drake = superCreateCard("Twilight Drake");
+		reachMana(8);
+		assertZoneSize(10, game.getCurrentPlayer().getHand());
+		
+		use(drake);
+		assertZoneSize(9, game.getCurrentPlayer().getHand());
+		assertEquals(10, drake.getHealth());
+	}
+	
 	@Test
 	public void cantAfford() {
 		HStoneCard card = superCreateCard("Bloodfen Raptor");

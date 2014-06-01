@@ -191,9 +191,13 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	public int size() {
 		return this.cards.size();
 	}
+	
+	@Deprecated
 	public <F> void deal(int count, F[] objects, GetZoneInterface<F> zoneGetter) {
 		this.deal(count, Arrays.asList(objects), zoneGetter);
 	}
+	
+	@Deprecated
 	public <F> void deal(int count, List<F> objects, GetZoneInterface<F> zoneGetter) {
 		for (F e : objects) {
 			if (count <= 0)
@@ -204,6 +208,7 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		}
 	}
 	
+	@Deprecated
 	public <F> void dealUntilLeft(int cardsLeft, List<? extends F> players, GetZoneInterface<F> getHand) {
 		while (true) {
 			for (F player : players) {
@@ -232,6 +237,4 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		}
 		return false;
 	}
-	
-	// TODO: move-card-to-and-replace-with -- replace at specific index
 }

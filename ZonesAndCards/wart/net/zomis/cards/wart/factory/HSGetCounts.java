@@ -40,7 +40,9 @@ public class HSGetCounts {
 		return new HSGetCount() {
 			@Override
 			public int determineCount(HStoneCard source, HStoneCard target) {
-				int myHand = source.getPlayer().getHand().size(); // TODO: Do not count the card itself!
+				int myHand = source.getPlayer().getHand().size();
+				if (source.getCurrentZone() == source.getPlayer().getHand())
+					myHand--;
 				int oppHand = source.getPlayer().getNextPlayer().getHand().size();
 				return oppHand - myHand;
 			}

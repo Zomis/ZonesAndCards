@@ -2,9 +2,11 @@ package net.zomis.cards.wart.sets;
 
 import static net.zomis.cards.wart.factory.HStoneCardFactory.*;
 import static net.zomis.cards.wart.factory.HStoneRarity.*;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.util.CardSet;
 import net.zomis.cards.wart.HStoneCard;
 import net.zomis.cards.wart.HStoneGame;
+import net.zomis.cards.wart.HStonePlayer;
 import net.zomis.cards.wart.events.HStoneCardPlayedEvent;
 import net.zomis.cards.wart.events.HStoneDamagedEvent;
 import net.zomis.cards.wart.events.HStoneMinionDiesEvent;
@@ -59,11 +61,15 @@ public class ManaThreeCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 3, LEGENDARY, 3, 3, "Tinkmaster Overspark").battlecry("Transform another random minion into a 5/5 Devilsaur or a 1/1 Squirrel").card());
 	}
 
-	private HStoneEffect giveOpponentCard(String string, int i) {
+	private HStoneEffect giveOpponentCard(String cardName, int count) {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				// TODO: giveOpponentCard
+				CardZone<HStoneCard> zone = source.getPlayer().getNextPlayer().getHand();
+				for (int i = 0; i < count; i++) {
+					if (zone.size() < HStonePlayer.MAX_CARDS_IN_HAND)
+						zone.createCardOnBottom(source.getGame().getCardModel(cardName));
+				}
 			}
 		};
 	}

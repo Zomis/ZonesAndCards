@@ -43,9 +43,9 @@ public enum HStoneClass {
 			case WARRIOR:
 				return factory().effect(e.armor(2)).card();
 			case SHAMAN:
-				return factory().effect(e.iff(f.shamanCanPlayTotem(), e.randomTotem())).card(); // TODO: Is this ever disallowed to use? (when having all possibles, or battlefield full)
+				return factory().effect(e.iff(f.shamanCanPlayTotem(), e.randomTotem())).card();
 			case PALADIN:
-				return factory().effect(e.iff(f.haveSpaceOnBattleField, e.summon("Silver Hand Recruit"))).card(); // TODO: Is this ever disallowed to use? (when having all possibles, or battlefield full)
+				return factory().effect(e.iff(f.haveSpaceOnBattleField, e.summon("Silver Hand Recruit"))).card();
 			case PRIEST:
 				return factory().effect(e.heal(2)).card();
 			case ROGUE:

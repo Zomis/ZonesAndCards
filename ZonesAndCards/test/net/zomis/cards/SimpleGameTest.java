@@ -3,11 +3,11 @@ package net.zomis.cards;
 import static org.junit.Assert.*;
 
 import java.util.Comparator;
-import java.util.List;
 
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;
 import net.zomis.cards.model.CardZone;
+import net.zomis.cards.model.CardZoneLocation;
 import net.zomis.cards.resources.ResourceMap;
 import net.zomis.cards.resources.ResourceType;
 
@@ -16,6 +16,32 @@ import org.junit.Test;
 
 public class SimpleGameTest extends CardsTest<SimpleGame> {
 
+	@Test
+	public void moveAndReplace() {
+		for (int i = 0; i < 5; i++) {
+			game.a.createCardOnBottom(game.model[0]);
+			game.b.createCardOnBottom(game.model[1]);
+			game.c.createCardOnBottom(game.model[2]);
+			game.d.createCardOnBottom(game.model[3]);
+		}
+		assertCards(game.a, new int[]{ 0, 0, 0, 0, 0 });
+		assertCards(game.b, new int[]{ 1, 1, 1, 1, 1 });
+		assertCards(game.c, new int[]{ 2, 2, 2, 2, 2 });
+		assertCards(game.d, new int[]{ 3, 3, 3, 3, 3 });
+		
+		game.a.cardList().get(3).moveAndReplaceWith(CardZoneLocation.bottomOf(game.b), game.c.getTopCard());
+		assertCards(game.a, new int[]{ 0, 0, 0, 2, 0 });
+		assertCards(game.b, new int[]{ 1, 1, 1, 1, 1, 0 });
+		assertCards(game.c, new int[]{ 2, 2, 2, 2 });
+		assertCards(game.d, new int[]{ 3, 3, 3, 3, 3 });
+		
+		game.a.cardList().get(1).moveAndReplaceWith(CardZoneLocation.indexIn(game.b, 1), game.b.cardList().get(1));
+		assertCards(game.a, new int[]{ 0, 1, 0, 2, 0 });
+		assertCards(game.b, new int[]{ 1, 0, 1, 1, 1, 0 });
+		assertCards(game.c, new int[]{ 2, 2, 2, 2 });
+		assertCards(game.d, new int[]{ 3, 3, 3, 3, 3 });
+	}
+	
 	@Test
 	public void topAndBottom() {
 		game.a.createCardOnBottom(game.model[0]);
@@ -86,6 +112,8 @@ public class SimpleGameTest extends CardsTest<SimpleGame> {
 		game.d.extractTopCards(2).reverse().moveToTopOf(game.d);
 		game.d.moveToBottomOf(game.a);
 		assertCards(game.a, new int[]{ 0, 1, 2, 2, 3, 3, 4, 4 });
+		assertCards(game.b, new int[]{ });
+		assertCards(game.c, new int[]{ });
 		assertCards(game.d, new int[]{ });
 	}
 	
@@ -96,14 +124,6 @@ public class SimpleGameTest extends CardsTest<SimpleGame> {
 			Card<CardModel> card = zone.cardList().get(i);
 			assertEquals("Real zone is: " + zone.cardList(), game.model[models[i]].getName(), card.getModel().getName());
 		}
-	}
-	
-	@Test
-	public void uselessAIHandler() {
-		List<Card<?>> list = game.getUseableCards(game.getCurrentPlayer());
-		assertTrue("Available cards: " + list, list.isEmpty());
-		game.a.createCardOnBottom(game.model[0]);
-		assertFalse(game.click(game.a.getBottomCard()));
 	}
 	
 	@Test

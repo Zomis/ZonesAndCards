@@ -3,6 +3,7 @@ package net.zomis.cards.model;
 import java.util.List;
 
 import net.zomis.cards.events.card.ZoneChangeEvent;
+import net.zomis.custommap.view.ZomisLog;
 
 public class Card<M extends CardModel> {
 	private final M model;
@@ -31,13 +32,14 @@ public class Card<M extends CardModel> {
 
 	public void moveAndReplaceWith(CardZoneLocation location, Card<M> card) {
 		CardZone<?> destination = location.getZone();
-		ZoneChangeEvent event = new ZoneChangeEvent(this.currentZone, destination, this);
 		CardZone<?> zone = this.getCurrentZone();
 		CardGame<?, ?> game = zone.getGame();
 		if (game == null)
 			game = destination.getGame();
 		if (game == null)
 			throw new NullPointerException("Neither zone is connected to a game: " + zone + " --> " + destination);
+		
+		ZoneChangeEvent event = new ZoneChangeEvent(this.currentZone, destination, this);
 		game.executeEvent(event);
 		game.executeEvent(new ZoneChangeEvent(card.getCurrentZone(), this.currentZone, card));
 		
@@ -45,16 +47,21 @@ public class Card<M extends CardModel> {
 		CardZone<Card<M>> dest = (CardZone<Card<M>>) event.getToCardZone();
 		
 		int myIndex = getCurrentZone().cardList().indexOf(this);
-		int newCardOldIndex = card.getCurrentZone().cardList().indexOf(this);
+		int newCardOldIndex = card.getCurrentZone().cardList().indexOf(card);
 		
 		@SuppressWarnings("unchecked")
-		List<Card<M>> list = (List<Card<M>>) event.getFromCardZone().cardList();
+		List<Card<M>> list = (List<Card<M>>) this.getCurrentZone().cardList();
 		list.set(myIndex, card);
+		ZomisLog.info(newCardOldIndex + " " + myIndex);
 		card.getCurrentZone().cardList().remove(newCardOldIndex);
 		
 		if (dest != null) {
-			if (location.isTop()) dest.cardList().addFirst(this);
-			else if (location.isBottom()) dest.cardList().addLast(this);
+			if (location.isTop()) {
+				dest.cardList().addFirst(this);
+			}
+			else if (location.isBottom()) {
+				dest.cardList().addLast(this);
+			}
 			else dest.cardList().add(location.getIndex(), this);
 		}
 		card.currentZone = this.currentZone;

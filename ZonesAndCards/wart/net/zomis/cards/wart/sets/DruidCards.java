@@ -44,7 +44,7 @@ public class DruidCards implements CardSet<HStoneGame> {
 //		game.addCard(minion( 5,    COMMON, 4, 4, "Druid of the Claw").charge().card());
 		game.addCard(minion( 8,    COMMON, 8, 8, "Ironbark Protector").taunt().card());
 		game.addCard(minion( 2,    COMMON, 3, 2, "Panther").card());
-		game.addCard(minion( 1,    COMMON, 2, 2, "Treant3").charge().on(HStoneTurnEndEvent.class, e.selfDestruct(), f.samePlayer()).card()); // TODO: *effect* not battlecry! Effect should also be applied when not played from hand.
+		game.addCard(minion( 1,    COMMON, 2, 2, "Treant3").charge().on(HStoneTurnEndEvent.class, e.selfDestruct(), f.samePlayer()).card());
 		game.addCard(minion( 4,      RARE, 2, 4, "Keeper of the Grove").battlecry(e.chooseOne(DAMAGE_2, SILENCE)).card());
 		game.addCard(minion( 7,      EPIC, 5, 5, "Ancient of Lore").battlecry(e.chooseOne(DRAW_2, HEAL_5)).card());
 		game.addCard(minion( 7,      EPIC, 5, 5, "Ancient of War").battlecry(e.chooseOne(ATTACK_5, HEALTH_5_TAUNT)).card());

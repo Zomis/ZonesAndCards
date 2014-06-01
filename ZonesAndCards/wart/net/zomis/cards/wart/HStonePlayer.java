@@ -171,7 +171,7 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 
 	public void setHeroPower(HStoneCardModel cardModel) {
 		HStoneCard card = this.specialZone.createCardOnBottom(cardModel);
-		this.heroPower.moveAndReplaceWith(CardZoneLocation.bottomOf(null), card);
+		this.heroPower.moveAndReplaceWith(CardZoneLocation.nowhere(), card);
 	}
 
 	public CardZone<HStoneCard> getDiscard() {

@@ -34,6 +34,9 @@ public class FightModule {
 	}
 
 	public static int damage(HStoneCard source, HStoneCard target, int damage) {
+		if (target == null)
+			throw new NullPointerException("A target has not been specified");
+		
 		if (target.hasAbility(HSAbility.IMMUNE)) {
 			return 0;
 		}

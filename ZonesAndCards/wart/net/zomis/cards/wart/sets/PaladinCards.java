@@ -40,7 +40,7 @@ public class PaladinCards implements CardSet<HStoneGame> {
 //		game.addCard(spell( 5,      RARE, "Blessed Champion").effect( "Double a minion's Attack").card());
 		game.addCard(spell( 3,      RARE, "Divine Favor").effect(e.repeat(c.oppHandSizeMinusMyHandSize(), e.drawCard())).card());
 		game.addCard(spell( 2,      RARE, "Equality").effect(e.forEach(f.allMinions(), null, e.set(HStoneRes.HEALTH, 1))).card());
-		game.addCard(spell( 5,      RARE, "Holy Wrath").effect(e.toAny(e.drawCardAndDealDamageEqualToCost())).card());
+		game.addCard(spell( 5,      RARE, "Holy Wrath").effect(e.iff(f.canDrawCard, e.toAny(e.drawCardAndDealDamageEqualToCost()))).card());
 		game.addCard(spell( 6,      EPIC, "Avenging Wrath").effect(e.repeat(c.fixed(8), e.toRandom(f.opponent().and(f.canTakeDamage(1)), e.damage(1)))).card());
 		game.addCard(spell( 8,      EPIC, "Lay on Hands").effect(e.toAny(e.combined(e.heal(8), e.drawCards(3)))).card());
 		game.addCard(weapon( 1,      FREE, 1, 4, "Light's Justice").card());

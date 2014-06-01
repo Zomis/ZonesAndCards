@@ -75,7 +75,9 @@ public class ManaSevenPlusCards implements CardSet<HStoneGame> {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				source.getPlayer().getHand().moveToBottomOf(source.getPlayer().getDiscard()); // TODO: Not the same card!
+				for (HStoneCard card : source.getPlayer().getHand())
+					if (card != source)
+						card.zoneMoveOnBottom(source.getPlayer().getDiscard());
 			}
 		};
 	}

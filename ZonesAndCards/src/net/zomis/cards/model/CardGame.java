@@ -112,7 +112,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	}
 	
 	/**
-	 * Was meant originally to add a StackAction to the Stack and record it in history, but use instead CardGame.click(card) for that.
+	 * Add an action to the stack to be performed later. This does not save anything in history.
 	 * @param action Action to add to stack
 	 */
 	public void addStackAction(StackAction action) {
@@ -321,12 +321,13 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		if (card == null)
 			throw new NullPointerException("Card cannot be null");
 		
+		CardGame<?, ?> cardGame = card.getGame();
 		StackAction action = card.clickAction();
 		if (action.actionIsAllowed()) {
 			replay.addMove(card);
 		}
 		addAndProcessStackAction(action);
-		executeEvent(new CardPlayedEvent(card, action));
+		executeEvent(new CardPlayedEvent(card, cardGame, action));
 		return action;
 	}
 	

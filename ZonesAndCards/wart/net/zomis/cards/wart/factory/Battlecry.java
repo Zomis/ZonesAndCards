@@ -172,7 +172,6 @@ public class Battlecry {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				HStoneCard weapon = source.getPlayer().getNextPlayer().getWeapon();
 				if (weapon != null) {
-					// TODO: A weapon should not count as a character!
 					FightModule.damage(source, weapon, durabilityToRemove);
 					weapon.getGame().cleanup();
 				}
@@ -681,7 +680,7 @@ public class Battlecry {
 				if (!target.hasAbility(HSAbility.CHARGE)) {
 					target.getResources().set(HStoneRes.ACTION_POINTS_USED, 255);
 				}
-				// TODO: Trigger summon minion event (or is that done automatically by the zone move?)
+				// TODO: Trigger summon minion event when stealing a minion (or is that done automatically by the zone move?)
 			}
 		};
 	}
@@ -730,7 +729,8 @@ public class Battlecry {
 		return new HStoneEffect(f.allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				// TODO Auto-generated method stub
+//				target.transform(cardName);
+				// TODO Transform minions
 			}
 		};
 	}
@@ -914,6 +914,10 @@ public class Battlecry {
 		return new HStoneConditionalEffect(condition, action);
 	}
 
+	public HStoneEffect iffThenSelect(HSFilter condition, HStoneEffect action) {
+		return new HStoneConditionalEffect(condition, action, action);
+	}
+
 	public HStoneEffect unsummon() {
 		return new HStoneEffect() {
 			@Override
@@ -979,7 +983,7 @@ public class Battlecry {
 			public void performEffect(HStoneCard source, HStoneCard target) {
 				HStoneCard card = source.getPlayer().drawCard();
 				if (card == null)
-					return; // TODO: Cannot draw a card
+					throw new IllegalStateException(source + " should not be able to be used when it is not possible to draw a card");
 				int cost = card.getManaCost();
 				damage(cost).performEffect(source, target);
 			}
@@ -987,7 +991,6 @@ public class Battlecry {
 	}
 
 	public HStoneEffect addEnchantOnAttackDrawCard() {
-//		 TODO: "Choose a minion.  Whenever it attacks, draw a card"
 		return new HStoneEffect(f.allMinions()) {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {

@@ -21,6 +21,18 @@ public class CardZoneLocation {
 		return zone;
 	}
 
+	public boolean isTop() {
+		return this.index == TOP;
+	}
+	
+	public boolean isBottom() {
+		return this.index == BOTTOM;
+	}
+
+	public static CardZoneLocation nowhere() {
+		return new CardZoneLocation(null, BOTTOM);
+	}
+	
 	public static CardZoneLocation bottomOf(CardZone<?> zone) {
 		return new CardZoneLocation(zone, BOTTOM);
 	}
@@ -29,12 +41,8 @@ public class CardZoneLocation {
 		return new CardZoneLocation(zone, TOP);
 	}
 
-	public boolean isTop() {
-		return this.index == TOP;
+	public static CardZoneLocation indexIn(CardZone<?> zone, int index) {
+		return new CardZoneLocation(zone, index);
 	}
-	
-	public boolean isBottom() {
-		return this.index == BOTTOM;
-	}
-	
+
 }

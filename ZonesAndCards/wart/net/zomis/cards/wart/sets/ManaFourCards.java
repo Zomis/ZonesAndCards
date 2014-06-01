@@ -5,7 +5,6 @@ import static net.zomis.cards.wart.factory.HStoneRarity.*;
 import net.zomis.cards.util.CardSet;
 import net.zomis.cards.wart.HStoneCard;
 import net.zomis.cards.wart.HStoneGame;
-import net.zomis.cards.wart.ench.HStoneEnchSpecificPT;
 import net.zomis.cards.wart.events.HStoneMinionDiesEvent;
 import net.zomis.cards.wart.factory.Battlecry;
 import net.zomis.cards.wart.factory.HSAbility;
@@ -52,8 +51,10 @@ public class ManaFourCards implements CardSet<HStoneGame> {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				int health = source.getPlayer().getHand().size(); // TODO: Should not count the card itself.
-				source.addEnchantment(new HStoneEnchSpecificPT(source, 0, health));
+				int health = source.getPlayer().getHand().size();
+				if (source.getCurrentZone() == source.getPlayer().getHand())
+					health--;
+				e.selfPT(0, health).performEffect(source, target);
 			}
 		};
 	}
