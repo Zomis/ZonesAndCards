@@ -2,7 +2,11 @@ package net.zomis.cards.analyze2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.zomis.cards.model.CardZone;
@@ -10,13 +14,25 @@ import net.zomis.cards.model.CardZone;
 
 
 
-public class CardsAnalyze<Z extends CardZone<?>, C> {
+public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallback<Z, C> {
 
 	private final List<ZoneRule<Z, C>> rules = new ArrayList<>();
 	private final List<C> cards = new ArrayList<>();
 	private final List<Z> zones = new ArrayList<>();
 	
+	private final Map<CardGroup<C>, Integer> unplacedCards = new HashMap<>();
+	private final List<ZoneRule<Z, C>> assignmentProgress = new ArrayList<>();
+	private final CardSolutionCallback<Z, C> solutionCallback;
+	private final List<CardSolution<Z, C>> solutions = new ArrayList<>();
+	
+	// GroupValues<Field> knownValues, List<FieldRule<Field>> unsolvedRules
+	
 	public CardsAnalyze() {
+		this.solutionCallback = this;
+	}
+	
+	public CardsAnalyze(CardSolutionCallback<Z, C> callback) {
+		this.solutionCallback = callback;
 	}
 
 	public CardsAnalyze<Z, C> addCards(Iterable<C> cards) {
@@ -42,28 +58,161 @@ public class CardsAnalyze<Z extends CardZone<?>, C> {
 		this.rules.add(new ZoneRule<Z, C>(zone, compare, count, findCards(predicate)));
 	}
 
-	private final List<CardSolution<Z, C>> solutions = new ArrayList<>();
+	public List<CardSolution<Z, C>> solve() {
+		this.solveOnce();
+		this.solveInternal();
+		return this.solutions;
+	}
 	
-	public void solve() {
+	private void solveOnce() {
 		this.verifySums();
 		this.addRulesAboutMissingCards();
 		
-		
 		// Create/Split CardGroups
 		this.splitGroups();
-		
+		this.calculateUnplacedCards();
+	}
+	
+	private void solveInternal() {
+		System.out.println("Before simplification:");
 		this.outputRules();
 		
 		// Simplify rules
+		this.simplify();
 		
-		
+		System.out.println("After simplification:");
+		this.outputRules();
 		
 		// Iterate and solve
+		this.solveByIteration();
+	}
+
+	private void solveByIteration() {
+		ZoneRule<Z, C> focusZone = determineFocusZone();
+		if (focusZone == null) {
+			this.solutionCallback.onSolved(assignmentProgress);
+			return;
+		}
 		
+		CardGroup<C> focusGroup = getFocusGroupFor(focusZone);
+		
+		int unplaced = this.unplacedCards.get(focusGroup);
+		
+		for (int i = 0; i <= unplaced; i++) {
+			System.out.println("Solving by iteration: " + focusGroup + " in " + focusZone + " = " + i);
+			try {
+				Thread.sleep(200);
+			}
+			catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			CardsAnalyze<Z, C> copy = this.createCopy();
+			copy.assign(focusZone.getZone(), focusGroup, i);
+			copy.solveInternal(); // TODO: When simplifying, detect if there's only one CardGroup left. Or if there's exact space left for all the possible CardGroups. If it is, make assignment.
+			System.out.println("-------------");
+		}
 		
 	}
-	
-	
+
+	private ZoneRule<Z, C> determineFocusZone() {
+		ZoneRule<Z, C> zoneRule = this.assignmentProgress.get(2); // TODO: This is for testing purposes only. For the x,y,z zone problem.
+		if (zoneRule.getCompare() != CountStyle.DONE)
+			return zoneRule;
+		
+		for (ZoneRule<Z, C> rule : this.assignmentProgress) {
+			if (rule.getCompare() != CountStyle.DONE) {
+				return rule;
+			}
+		}
+		
+		return null;
+	}
+
+	private CardGroup<C> getFocusGroupFor(ZoneRule<Z, C> focusZone) {
+		for (Entry<CardGroup<C>, Integer> grp : focusZone.getAssignments().getAssigns().entrySet()) {
+			if (grp.getValue() != null)
+				continue;
+			return grp.getKey();
+		}
+		throw new IllegalArgumentException("Rule does not have any unset groups: " + focusZone);
+	}
+
+	private CardsAnalyze<Z, C> createCopy() {
+		CardsAnalyze<Z, C> result = new CardsAnalyze<>(this.solutionCallback);
+		
+		for (ZoneRule<Z, C> assignmentProg : this.assignmentProgress) {
+			result.assignmentProgress.add(assignmentProg.copy());
+		}
+		
+		for (ZoneRule<Z, C> rule : this.rules) {
+			result.rules.add(rule.copy());
+		}
+		
+//		result.assignmentProgress
+//		result.rules
+		result.unplacedCards.putAll(this.unplacedCards);
+		
+		return result;
+	}
+
+	private void calculateUnplacedCards() {
+		ZoneRule<Z, C> first = this.assignmentProgress.get(0);
+		for (CardGroup<C> group : first.getAssignments().getGroups()) {
+			this.unplacedCards.put(group, group.size());
+		}
+	}
+
+	/**
+	 * Loop through the rules and check for `EQUAL(x) = Assign:{only one group}`
+	 */
+	private void simplify() {
+		boolean simplificationDone;
+		do {
+			simplificationDone = false;
+			for (ZoneRule<Z, C> rule : this.rules) {
+				if (rule.isEqualKnown()) {
+
+					Entry<CardGroup<C>, Integer> assignment = rule.getAssignments().getAssigns().entrySet().iterator().next(); // TODO: Law of Demeter. rule.getOnlyAssignment(); ?
+					assignment.setValue(rule.getCount());
+					CardGroup<C> group = assignment.getKey();
+
+					this.assign(rule.getZone(), group, rule.getCount());
+					rule.clear();
+					simplificationDone = true;
+				}
+			}
+
+			for (ZoneRule<Z, C> progress : this.assignmentProgress) {
+				if (progress.synchronizeWith(unplacedCards))
+					simplificationDone = true;
+			}
+		}
+		while (simplificationDone);
+	}
+
+	private void assign(Z zone, CardGroup<C> group, int count) {
+		ZoneRule<Z, C> progress = this.getAssignmentProgressFor(zone);
+		progress.getAssignments().assign(group, count);
+		this.unplacedCards.put(group, unplacedCards.get(group) - count);
+
+		// Check if `progress` is complete (i.e. sum of assignments == size)
+		progress.completedCheck();
+		
+		// TODO: If assignments is complete, then try to scan for groups that can only be within one zone
+	}
+
+	private ZoneRule<Z, C> getAssignmentProgressFor(Z zone) {
+		// TODO: Probably make assignment progress a Map<Z, ZoneRule<Z, C>> instead, this is just nuts right now.
+		for (ZoneRule<Z, C> rule : this.assignmentProgress) {
+			if (rule.getZone() == zone) {
+				return rule;
+			}
+		}
+		throw new IllegalStateException("No assignment progress found for zone " + zone);
+	}
+
 	private void verifySums() {
 		int cards = 0;
 		for (Z zone : this.zones) {
@@ -85,14 +234,8 @@ public class CardsAnalyze<Z extends CardZone<?>, C> {
 		 * 2z = ?a + ?bc + ?d
 		 **/
 		for (Z zone : this.zones) {
-			
-//			List<ZoneRule<Z, C>> zoneRules = getRulesFor(zone);
-			this.rules.add(ZoneRule.unknown(zone, cards));
-			
-			
+			this.assignmentProgress.add(ZoneRule.unknown(zone, cards));
 		}
-		
-		
 	}
 
 	private List<ZoneRule<Z, C>> getRulesFor(Z zone) {
@@ -107,12 +250,8 @@ public class CardsAnalyze<Z extends CardZone<?>, C> {
 	}
 
 	private void splitGroups() {
-//		List<CardGroup<C>> groups = new ArrayList<>();
-//		for (ZoneRule<Z, C> rule : this.rules) {
-//			for (CardGroup<C> grp : rule.getAssignments().getGroups()) {
-//				groups.add(grp);
-//			}
-//		}
+		List<ZoneRule<Z, C>> rules = new ArrayList<>(this.rules);
+		rules.addAll(this.assignmentProgress);
 		
 		boolean splitPerformed = true;
 		while (splitPerformed) {
@@ -126,10 +265,6 @@ public class CardsAnalyze<Z extends CardZone<?>, C> {
 				}
 			}
 		}
-		
-		
-		
-		
 	}
 
 	private Collection<C> findCards(Predicate<C> predicate) {
@@ -143,7 +278,31 @@ public class CardsAnalyze<Z extends CardZone<?>, C> {
 	}
 
 	public void outputRules() {
-		this.rules.forEach(System.out::println);
+		Consumer<Object> log = System.out::println;
+		Runnable hr = System.out::println;
+		
+		hr.run();
+		log.accept("Rules:");
+		this.rules.forEach(log);
+		hr.run();
+		log.accept("Assignment Progress:");
+		this.assignmentProgress.forEach(log);
+		hr.run();
+		log.accept("Unplaced cards:");
+		log.accept(this.unplacedCards);
+		hr.run();
+	}
+
+	@Override
+	public void onSolved(List<ZoneRule<Z, C>> results) {
+		CardSolution<Z, C> sol = new CardSolution<Z, C>(results);
+		this.solutions.add(sol);
+		
+		System.out.println(this + " Solution has been found!!!".toUpperCase() + " -- " + sol);
+		results.forEach(System.out::println);
+		System.out.println();
+		System.out.println();
+		System.out.println();
 	}
 	
 }

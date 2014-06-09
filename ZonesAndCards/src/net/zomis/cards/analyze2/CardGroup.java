@@ -30,6 +30,10 @@ public class CardGroup<C> {
 		return cards.isEmpty();
 	}
 	
+	public int size() {
+		return cards.size();
+	}
+	
 	@Override
 	public int hashCode() {
 		return cards.hashCode();
