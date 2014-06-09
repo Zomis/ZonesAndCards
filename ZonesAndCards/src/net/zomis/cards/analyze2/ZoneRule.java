@@ -115,6 +115,15 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		return this.compare == CountStyle.EQUAL && this.assignments.getGroups().size() == 1;
 	}
 
+	private boolean checkFinished() {
+		for (Integer ee : this.assignments.assigns.values()) {
+			if (ee == null)
+				return false;
+		}
+		this.compare = CountStyle.DONE;
+		return true;
+	}
+
 	public void completedCheck() {
 		int i = getAssignmentSum();
 		if (i == this.zone.size()) {
@@ -123,7 +132,7 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 				if (it.next().getValue() == null)
 					it.remove();
 			}
-			this.compare = CountStyle.DONE;
+//			this.compare = CountStyle.DONE;
 		}
 		
 	}
@@ -187,6 +196,21 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		return false;
 	}
 	
+	void assign(CardGroup<C> group, int count, Map<CardGroup<C>, Integer> unplacedCards) {
+		this.assignments.assign(group, count);
+		unplacedCards.put(group, unplacedCards.get(group) - count);
+
+		// Check if `progress` is complete (i.e. sum of assignments == size)
+		this.completedCheck();
+		this.checkFinished();
+		
+		
+//		unassignedCards.put(unassigned, 0);
+//		this.assignments.assign(unassigned, count);
+//		this.checkFinished();
+
+	}
+	
 	public boolean checkForOnlyOneUnassignedGroup(Map<CardGroup<C>, Integer> unassignedCards) {
 		// Rule:Zone{Y} = null(0) Assign:Zone{Y}={CG:[Card:a, Card:a]=0, CG:[Card:b, Card:c, Card:b, Card:c]=null, CG:[Card:d, Card:d]=0}
 		// {CG:[Card:a, Card:a]=2, CG:[Card:b, Card:c, Card:b, Card:c]=2, CG:[Card:d, Card:d]=2}
@@ -196,22 +220,12 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 			// Find the unassigned group and assign it to whatever space is available.
 			
 			int count = Math.min(unassignedCards.get(unassigned), this.getRemainingSpace());
-			unassignedCards.put(unassigned, 0);
-			this.assignments.assign(unassigned, count);
-			this.checkFinished();
+			this.assign(unassigned, count, unassignedCards);
+			
 		}
 		return unassigned != null;
 	}
 	
-	private boolean checkFinished() {
-		for (Integer ee : this.assignments.assigns.values()) {
-			if (ee == null)
-				return false;
-		}
-		this.compare = CountStyle.DONE;
-		return true;
-	}
-
 	public CountStyle getCompare() {
 		return compare;
 	}

@@ -178,11 +178,12 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 					assignment.setValue(rule.getCount());
 					CardGroup<C> group = assignment.getKey();
 
-					this.assign(rule.getZone(), group, rule.getCount());
+					this.assign(rule.getZone(), group, rule.getCount()); // Note that the assignment progress rule for `rule.getZone` does not match `rule` here!
 					rule.clear();
 					simplificationDone = true;
 				}
 			}
+			// TODO: If assignments is complete, then try to scan for groups that can only be within one zone
 
 			for (ZoneRule<Z, C> progress : this.assignmentProgress) {
 				if (progress.synchronizeWith(unplacedCards))
@@ -194,13 +195,8 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 
 	private void assign(Z zone, CardGroup<C> group, int count) {
 		ZoneRule<Z, C> progress = this.getAssignmentProgressFor(zone);
-		progress.getAssignments().assign(group, count);
-		this.unplacedCards.put(group, unplacedCards.get(group) - count);
-
-		// Check if `progress` is complete (i.e. sum of assignments == size)
-		progress.completedCheck();
 		
-		// TODO: If assignments is complete, then try to scan for groups that can only be within one zone
+		progress.assign(group, count, unplacedCards);
 	}
 
 	private ZoneRule<Z, C> getAssignmentProgressFor(Z zone) {
@@ -236,17 +232,6 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		for (Z zone : this.zones) {
 			this.assignmentProgress.add(ZoneRule.unknown(zone, cards));
 		}
-	}
-
-	private List<ZoneRule<Z, C>> getRulesFor(Z zone) {
-		List<ZoneRule<Z, C>> list = new ArrayList<>();
-		for (ZoneRule<Z, C> rule : this.rules) {
-			if (rule.getZone() == zone) {
-				list.add(rule);
-			}
-		}
-		
-		return list;
 	}
 
 	private void splitGroups() {
@@ -296,13 +281,16 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 	@Override
 	public void onSolved(List<ZoneRule<Z, C>> results) {
 		CardSolution<Z, C> sol = new CardSolution<Z, C>(results);
-		this.solutions.add(sol);
-		
-		System.out.println(this + " Solution has been found!!!".toUpperCase() + " -- " + sol);
-		results.forEach(System.out::println);
-		System.out.println();
-		System.out.println();
-		System.out.println();
+		if (sol.validCheck()) {
+			this.solutions.add(sol);
+		}
+		else {
+			System.out.println(this + " INVALID Solution has been found!!!".toUpperCase() + " -- " + sol);
+			results.forEach(System.out::println);
+			System.out.println();
+			System.out.println();
+			System.out.println();
+		}
 	}
 	
 }
