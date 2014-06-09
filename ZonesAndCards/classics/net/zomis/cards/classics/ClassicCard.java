@@ -7,6 +7,32 @@ public class ClassicCard extends CardModel {
 	private final Suite suite;
 	private final int rank;
 	
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + rank;
+		result = prime * result + ((suite == null) ? 0 : suite.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClassicCard other = (ClassicCard) obj;
+		if (rank != other.rank)
+			return false;
+		if (suite != other.suite)
+			return false;
+		return true;
+	}
 	public static final int RANK_ACE_LOW = 1;
 	public static final int RANK_2 = 2;
 	public static final int RANK_3 = 3;

@@ -1,4 +1,4 @@
-package net.zomis.cards.util;
+package net.zomis.cards.count;
 
 import net.zomis.utils.ZomisUtils;
 
@@ -47,8 +47,15 @@ public class CardCalculation {
 	}
 	
 	public static double NNKK(int N, int n, int K, int k) {
-//		Zomis.echo(String.format("NNKK %d %d %d %d", N, n, K, k)); // ????: (doubt it) Would buffering the values improve speed?
 		return ZomisUtils.nCr(K, k) * ZomisUtils.nCr(N - K, n - k); //	/ RootAnalyze.nCr(N, n)
 	}
 
+	public int getAvailable() {
+		return available;
+	}
+	
+	public int getMatchingCount() {
+		return matchingCount;
+	}
+	
 }

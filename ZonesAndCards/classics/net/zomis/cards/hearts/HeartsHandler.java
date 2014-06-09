@@ -6,7 +6,6 @@ import java.util.List;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardZone;
-import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -22,13 +21,12 @@ public class HeartsHandler implements ActionHandler {
 
 	@Override
 	public StackAction click(Card<?> card) {
-		ClassicGame game = (ClassicGame) card.getGame();
 		ClassicCardZone zone = (ClassicCardZone) card.getCurrentZone();
 		@SuppressWarnings("unchecked")
 		Card<ClassicCard> cardM = (Card<ClassicCard>) card;
-		Player player = game.findPlayerWithHand(zone);
+		Player player = zone.getOwner();
 		if (player == null)
-			player = game.findPlayerWithBoard(zone);
+			player = zone.getOwner();
 		
 		if (card.getGame().getCurrentPlayer() == null) {
 			// give phase

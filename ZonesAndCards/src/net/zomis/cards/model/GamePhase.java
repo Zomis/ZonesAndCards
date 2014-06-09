@@ -5,6 +5,7 @@ public class GamePhase {
 	
 	private final Player player;
 
+	@Deprecated
 	public GamePhase() {
 		this(null);
 	}

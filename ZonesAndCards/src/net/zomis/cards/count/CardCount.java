@@ -1,4 +1,4 @@
-package net.zomis.cards.util;
+package net.zomis.cards.count;
 
 import net.zomis.cards.model.CardModel;
 

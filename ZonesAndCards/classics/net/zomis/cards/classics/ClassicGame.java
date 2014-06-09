@@ -45,6 +45,8 @@ public class ClassicGame extends CardGame<CardPlayer, ClassicCard> {
 	public CardPlayer getCurrentPlayer() {
 		return (CardPlayer) super.getCurrentPlayer();
 	}
+	
+	@Deprecated
 	public CardPlayer findPlayerWithBoard(ClassicCardZone zone) {
 		for (Player player : this.getPlayers()) {
 			CardPlayer pl = (CardPlayer) player;
@@ -53,6 +55,8 @@ public class ClassicGame extends CardGame<CardPlayer, ClassicCard> {
 		}
 		return null;
 	}
+	
+	@Deprecated
 	public CardPlayer findPlayerWithHand(ClassicCardZone zone) {
 		for (Player player : this.getPlayers()) {
 			CardPlayer pl = (CardPlayer) player;
@@ -61,6 +65,8 @@ public class ClassicGame extends CardGame<CardPlayer, ClassicCard> {
 		}
 		return null;
 	}
+	
+	@Deprecated
 	public CardPlayer findPlayerWithZone(ClassicCardZone zone) {
 		CardPlayer pl = findPlayerWithHand(zone);
 		if (pl == null) 

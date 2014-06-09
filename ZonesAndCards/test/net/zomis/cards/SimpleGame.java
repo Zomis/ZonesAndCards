@@ -28,7 +28,7 @@ public class SimpleGame extends CardGame<Player, CardModel> {
 			model[i] = new CardModel(cards[i]);
 			addCard(model[i]);
 		}
-		this.addPhase(new GamePhase());
+		this.addPhase(new GamePhase(null));
 	}
 
 }

@@ -9,6 +9,7 @@ public class HeartsGivePhase extends GamePhase {
 	private final HeartsGiveDirection	giveDirection;
 
 	public HeartsGivePhase(HeartsGiveDirection giveDirection) {
+		super(null);
 		this.giveDirection = giveDirection;
 	}
 	

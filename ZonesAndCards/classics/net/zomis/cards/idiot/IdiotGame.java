@@ -59,7 +59,7 @@ public class IdiotGame extends ClassicGame {
 	}
 	
 	private void onAfterAction(AfterActionEvent event) {
-		if (ZomisList.filter2(this.getUseableCards(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
+		if (ZomisList.getAll(this.getUseableCards(this.getCurrentPlayer()), allowedActionFilter).isEmpty())
 			this.endGame();
 	}
 	

@@ -106,12 +106,12 @@ public class HeartsGame extends ClassicGame {
 	
 	
 	public void scanForStartingCard() {
-		for (Player player : this.getPlayers()) {
-			CardPlayer pl = (CardPlayer) player;
-			pl.getBoard().setGloballyKnown(true);
-			sort(pl.getHand());
-			if (!ZomisList.getAll(pl.getHand(), new ClassicCardFilter(Suite.CLUBS, 2)).isEmpty()) {
-				setActivePlayer(pl);
+		final ClassicCard startCard = new ClassicCard(Suite.CLUBS, 2);
+		for (CardPlayer player : this.getPlayers()) {
+			player.getBoard().setGloballyKnown(true);
+			sort(player.getHand());
+			if (player.getHand().containsModel(startCard)) { //) !ZomisList.fil getAll(pl.getHand(), new ClassicCardFilter(Suite.CLUBS, 2)).isEmpty()) {
+				setActivePlayer(player);
 			}
 		}
 	}
@@ -172,8 +172,8 @@ public class HeartsGame extends ClassicGame {
 		CardPlayer nextPlayer = this.lastPlayed.get(maxCard);
 		
 		// Find all the cards that give points
-		List<Card<ClassicCard>> hearts = ZomisList.getAll(this.pile, new ClassicCardFilter(Suite.HEARTS));
-		List<Card<ClassicCard>> queen = ZomisList.getAll(this.pile, new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
+		List<Card<ClassicCard>> hearts = ZomisList.getAll(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
+		List<Card<ClassicCard>> queen = ZomisList.getAll(this.pile.cardList(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN));
 		hearts.addAll(queen);
 		for (Card<ClassicCard> card : hearts) {
 			// give the point cards to the player who won the stick
@@ -216,8 +216,8 @@ public class HeartsGame extends ClassicGame {
 		if (this.getCurrentPlayer() == null)
 			return 0;
 		int i = 0;
-		i += ZomisList.getAll(player.getBoard(), new ClassicCardFilter(Suite.HEARTS)).size();
-		i += RANKS_PER_SUITE * ZomisList.getAll(player.getBoard(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN)).size();
+		i += ZomisList.getAll(player.getBoard().cardList(), new ClassicCardFilter(Suite.HEARTS)).size();
+		i += RANKS_PER_SUITE * ZomisList.getAll(player.getBoard().cardList(), new ClassicCardFilter(Suite.SPADES, ClassicCard.RANK_QUEEN)).size();
 		return i;
 	}
 	

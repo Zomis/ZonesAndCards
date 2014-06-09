@@ -5,7 +5,6 @@ import java.util.List;
 import net.zomis.cards.classics.CardPlayer;
 import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardFilter;
-import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
@@ -24,7 +23,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	
 	@Override
 	public boolean actionIsAllowed() {
-		CardPlayer player = getGame().findPlayerWithHand((ClassicCardZone) getCard().getCurrentZone());
+		CardPlayer player = (CardPlayer) getCard().getCurrentZone().getOwner();
 		if (player == null && getGame().getCurrentPlayer() != null) {
 			return setErrorMessage("Card is not in a hand. Current player is " + getGame().getCurrentPlayer());
 		}

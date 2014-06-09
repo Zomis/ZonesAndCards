@@ -136,7 +136,7 @@ public class HStoneGame extends CardGame<HStonePlayer, HStoneCardModel> {
 		getFirstPlayer().drawCards(3);
 		getFirstPlayer().getNextPlayer().drawCards(4);
 		
-		GamePhase phase = new GamePhase() { // Empty phase for exchanging some starting cards
+		GamePhase phase = new GamePhase(null) { // Empty phase for exchanging some starting cards
 			public void onEnd(CardGame<?, ?> game) {
 				setActivePhaseDirectly(getPhases().get(0));
 				HStoneCardModel coin = getCardModel("The Coin");

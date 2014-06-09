@@ -2,7 +2,6 @@ package net.zomis.cards.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,9 +14,7 @@ import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.util.CardSet;
-import net.zomis.custommap.CustomFacade;
 import net.zomis.events.EventConsumer;
-import net.zomis.events.EventExecutor;
 import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.EventHandlerGWT;
 import net.zomis.events.EventListener;
@@ -27,58 +24,46 @@ import net.zomis.events.IEventHandler;
 
 public class CardGame<P extends Player, M extends CardModel> implements EventListener {
 	
+	private ActionHandler actionHandler;
+	
+	private final Map<M, ActionProvider> actions;
 	private final CardZone<Card<M>> actionZone;
 	
-	private ActionHandler actionHandler;
-	private boolean started;
-	
-	protected void setActionHandler(ActionHandler aiHandler) {
-		if (aiHandler == null)
-			throw new IllegalArgumentException("ActionHandler cannot be null.");
-		this.actionHandler = aiHandler;
-	}
-	
-	public List<Card<?>> getUseableCards(Player player) {
-		if (actionHandler == null)
-			throw new IllegalStateException("No actionHandler has been set.");
-		List<Card<?>> list = this.actionHandler.getUseableCards(this, player);
-		list.addAll(this.actionZone.cardList());
-		return list;
-	}
-	
 	private final Map<String, M> availableCards = new HashMap<String, M>();
+	
 	private boolean callingOnEnd;
+	
 	private GamePhase currentPhase;
 	private final IEventExecutor events;
 	private boolean gameOver = false;
 	private final List<GamePhase> phases = new ArrayList<GamePhase>();
 	private final List<P> players = new LinkedList<P>();
 	private Random random = new Random();
-
+	private CardReplay replay;
 	/**
-	 * The stack provides a way for actions to be processed one at a time
+	 * The stack provides a way for actions to be processed one at a time.
+	 * Cannot be declared by interface because of GWT.
 	 */
-	private final Deque<StackAction> stack = new LinkedList<StackAction>();
+	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();
 
-	public M getCardModel(String name) {
-		return getCards().get(name);
-	}
+	private boolean started;
 
 	private final List<CardZone<?>> zones = new ArrayList<CardZone<?>>();
-	private CardReplay replay;
 
-	private final Map<M, ActionProvider> actions;
-	
 	public CardGame() {
-		if (!CustomFacade.isInitialized())
-			throw new IllegalStateException("EventFactory not initialized.");
-		this.events = CustomFacade.getInst().createEvents();
+		this.events = new EventExecutorGWT();
 		this.actionZone = new CardZone<Card<M>>("Actions");
 		this.actionZone.setGloballyKnown(true);
 		this.addZone(actionZone);
 		this.actions = new HashMap<M, ActionProvider>();
-//		this.events.registerListener(this); // This breaks GWT
 	}
+	
+	public Card<M> addAction(M actionModel, ActionProvider action) {
+		addCard(actionModel);
+		actions.put(actionModel, action);
+		return this.actionZone.createCardOnBottom(actionModel);
+	}
+
 	/**
 	 * A combination of {@link #addStackAction(StackAction)} and {@link #processStackAction()}
 	 * @param action {@link StackAction} to add and process.
@@ -87,7 +72,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		this.addStackAction(action);
 		this.processStackAction();
 	}
-
+	
 	public void addCard(M card) {
 		if (card == null)
 			throw new IllegalArgumentException("Card cannot be null");
@@ -96,21 +81,20 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		this.availableCards.put(card.getName(), card);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends CardGame<P, M>> void addCards(CardSet<T> cardSet) {
+		cardSet.addCards((T) this);
+	}
+
 	protected void addPhase(GamePhase phase) {
 		this.phases.add(phase);
 	}
-
+	
 	protected void addPlayer(P player) {
 		this.players.add(player);
 		player.game = this;
 	}
 
-	public Card<M> addAction(M actionModel, ActionProvider action) {
-		addCard(actionModel);
-		actions.put(actionModel, action);
-		return this.actionZone.createCardOnBottom(actionModel);
-	}
-	
 	/**
 	 * Add an action to the stack to be performed later. This does not save anything in history.
 	 * @param action Action to add to stack
@@ -118,13 +102,31 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	public void addStackAction(StackAction action) {
 		this.stack.addFirst(action);
 	}
-	
+
 	protected CardZone<?> addZone(CardZone<?> zone) {
 		if (zone == null)
 			throw new IllegalArgumentException("Zone cannot be null");
 		this.zones.add(zone);
 		zone.game = this;
 		return zone;
+	}
+	
+	public boolean click(Card<?> card) {
+		return clickPerform(card).actionIsPerformed();
+	}
+	
+	public StackAction clickPerform(Card<?> card) {
+		if (card == null)
+			throw new NullPointerException("Card cannot be null");
+		
+		CardGame<?, ?> cardGame = card.getGame();
+		StackAction action = card.clickAction();
+		if (action.actionIsAllowed()) {
+			replay.addMove(card);
+		}
+		addAndProcessStackAction(action);
+		executeEvent(new CardPlayedEvent(card, cardGame, action));
+		return action;
 	}
 	
 	protected final void endGame() {
@@ -136,49 +138,91 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		}
 	}
 
+	protected void executeEvent(IEvent event, int i) {
+		getEvents().executeEvent(event, i);
+	}
 	protected <T extends IEvent> T executeEvent(T event) {
 		return getEvents().executeEvent(event);
 	}
-	protected void executeEvent(IEvent event, int i) {
-		getEvents().executeEvent(event, i);
+
+	protected <T extends IEvent> T executeEvent(T event, Runnable runInBetween) {
+		executeEvent(event, EventExecutorGWT.PRE);
+		runInBetween.run();
+		executeEvent(event, EventExecutorGWT.POST);
+		return event;
+	}
+
+	public StackAction getActionFor(Card<?> card) {
+		if (actionHandler == null)
+			throw new IllegalStateException("No actionHandler has been set.");
+		if (actions.containsKey(card.getModel())) {
+			return actions.get(card.getModel()).get();
+		}
+		return actionHandler.click(card);
+	}
+	
+	public CardZone<?> getActionZone() {
+		return this.actionZone;
 	}
 
 	public GamePhase getActivePhase() {
 		return this.currentPhase;
 	}
+	public M getCardModel(String name) {
+		return getCards().get(name);
+	}
 
 	public Map<String, M> getCards() {
 		return new HashMap<String, M>(availableCards);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public P getCurrentPlayer() {
 		GamePhase phase = getActivePhase();
 		return (P) phase.getPlayer();
 	}
-
+	
 	protected IEventExecutor getEvents() {
 		return events;
+	}
+
+	public Player getFirstPlayer() {
+		if (players.isEmpty())
+			return null;
+		return players.get(0);
 	}
 	protected List<GamePhase> getPhases() {
 		return phases;
 	}
-
+	
 	public List<P> getPlayers() {
 		return Collections.unmodifiableList(players);
 	}
-
+	
 	public List<CardZone<?>> getPublicZones() {
 		return new ArrayList<CardZone<?>>(zones);
 	}
-	
+
 	public final Random getRandom() {
 		return this.random;
 	}
+	
+	public CardReplay getReplay() {
+		return replay;
+	}
 
-	protected Deque<StackAction> getStack() {
+	protected List<StackAction> getStack() {
 		return stack;
 	}
+	
+	public List<Card<?>> getUseableCards(Player player) {
+		if (actionHandler == null)
+			throw new IllegalStateException("No actionHandler has been set.");
+		List<Card<?>> list = this.actionHandler.getUseableCards(this, player);
+		list.addAll(this.actionZone.cardList());
+		return list;
+	}
+	
 	public final boolean isGameOver() {
 		return gameOver;
 	}
@@ -190,7 +234,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	public boolean isStarted() {
 		return started;
 	}
-
+	
 	public boolean nextPhase() {
 		if (!this.started)
 			throw new IllegalStateException("Game is not started.");
@@ -207,24 +251,20 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		}
 		
 		if (previousPhase == this.getActivePhase()) {
+			// setActivePhase was not called from onEnd of the previous phase, so we need to find the next phase here
 			int activePhase = this.phases.indexOf(getActivePhase());
 			if (activePhase < 0) {
 				throw new IllegalStateException("Phase does not appear in list of phases and did not change phase from GamePhase.onEnd: " + previousPhase);
 			}
 			int nextPhase = (activePhase + 1) % this.phases.size();
 			GamePhase next = this.phases.get(nextPhase);
-//			CustomFacade.getLog().i("Finding next phase in list: " + next);
 			setActivePhaseDirectly(next); // onEnd already called above so it should not be called again
 		}
-		else {
-			// setActivePhase was called from onEnd of the previous phase, no need to do anything here.
-//			CustomFacade.getLog().d("Current phase is now " + this.getActivePhase());
-		} 
 		return true;
 	}
 	
 	protected void onStart() {}
-
+	
 	/**
 	 * Take the top {@link StackAction} of the stack and process it if it is allowed.
 	 * @return The {@link StackAction} that was removed from the stack and possibly processed.
@@ -267,6 +307,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		getEvents().removeHandler(listener);
 	}
 	
+	protected void setActionHandler(ActionHandler aiHandler) {
+		if (aiHandler == null)
+			throw new IllegalArgumentException("ActionHandler cannot be null.");
+		this.actionHandler = aiHandler;
+	}
+	
 	protected void setActivePhase(GamePhase phase) {
 		if (!callingOnEnd) {
 			callingOnEnd = true;
@@ -278,22 +324,26 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		callingOnEnd = false;
 		setActivePhaseDirectly(phase);
 	}
-	
+
 	protected void setActivePhaseDirectly(GamePhase phase) {
 		GamePhase oldPhase = getActivePhase();
-		this.executeEvent(new PhaseChangeEvent(this, oldPhase, phase), EventExecutor.PRE);
+		this.executeEvent(new PhaseChangeEvent(this, oldPhase, phase), EventExecutorGWT.PRE);
 		this.currentPhase = phase;
 		GamePhase newPhase = getActivePhase();
 		newPhase.onStart(this);
-		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase), EventExecutor.POST);
+		this.executeEvent(new PhaseChangeEvent(this, oldPhase, newPhase), EventExecutorGWT.POST);
 	}
-	
+
+	public final void setRandom(Random random) {
+		this.random = random;
+	}
+
 	public final void setRandomSeed(long seed) {
 		this.random = new Random(seed);
 	}
-	
-	public final void setRandom(Random random) {
-		this.random = random;
+
+	public int stackSize() {
+		return this.stack.size();
 	}
 	
 	public final void startGame() {
@@ -307,62 +357,5 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		if (this.getActivePhase() == null) {
 			this.setActivePhase(this.phases.get(0));
 		}
-	}
-	
-	public int stackSize() {
-		return this.stack.size();
-	}
-	
-	public boolean click(Card<?> card) {
-		return clickPerform(card).actionIsPerformed();
-	}
-	
-	public StackAction clickPerform(Card<?> card) {
-		if (card == null)
-			throw new NullPointerException("Card cannot be null");
-		
-		CardGame<?, ?> cardGame = card.getGame();
-		StackAction action = card.clickAction();
-		if (action.actionIsAllowed()) {
-			replay.addMove(card);
-		}
-		addAndProcessStackAction(action);
-		executeEvent(new CardPlayedEvent(card, cardGame, action));
-		return action;
-	}
-	
-	public CardReplay getReplay() {
-		return replay;
-	}
-
-	public StackAction getActionFor(Card<?> card) {
-		if (actionHandler == null)
-			throw new IllegalStateException("No actionHandler has been set.");
-		if (actions.containsKey(card.getModel())) {
-			return actions.get(card.getModel()).get();
-		}
-		return actionHandler.click(card);
-	}
-
-	public CardZone<?> getActionZone() {
-		return this.actionZone;
-	}
-
-	public Player getFirstPlayer() {
-		if (players.isEmpty())
-			return null;
-		return players.get(0);
-	}
-
-	protected <T extends IEvent> T executeEvent(T event, Runnable runInBetween) {
-		executeEvent(event, EventExecutorGWT.PRE);
-		runInBetween.run();
-		executeEvent(event, EventExecutorGWT.POST);
-		return event;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T extends CardGame<P, M>> void addCards(CardSet<T> mwkCardsSystem) {
-		mwkCardsSystem.addCards((T) this);
 	}
 }

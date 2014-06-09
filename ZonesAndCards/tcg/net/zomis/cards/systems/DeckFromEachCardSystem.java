@@ -23,7 +23,7 @@ public class DeckFromEachCardSystem implements GameSystem {
 	@Override
 	public void onStart(FirstCompGame game) {
 		ZomisLog.info("Create deck from each card. " + this.count + " to " + toComponent);
-		List<CompCardModel> cards = ZomisList.filter2(game.getCards().values(), c -> !game.getActionZone().containsModel(c));
+		List<CompCardModel> cards = ZomisList.getAll(game.getCards().values(), c -> !game.getActionZone().containsModel(c));
 		for (CompPlayer pl : game.getPlayers()) {
 			if (toComponent != null) {
 				pl.compatibility(this.toComponent).required();

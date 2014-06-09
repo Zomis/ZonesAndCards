@@ -231,7 +231,7 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	
 	public boolean containsModel(CardModel c) {
 		for (E card : this) {
-			if (card.getModel() == c) {
+			if (c.equals(card.getModel())) {
 				return true;
 			}
 		}

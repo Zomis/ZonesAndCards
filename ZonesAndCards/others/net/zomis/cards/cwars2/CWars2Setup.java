@@ -2,6 +2,7 @@ package net.zomis.cards.cwars2;
 
 import java.util.Collection;
 
+import net.zomis.cards.count.CardCount;
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.cwars2.CWars2Res.Resources;
 import net.zomis.cards.cwars2.ais.CWars2Decks;
@@ -12,7 +13,6 @@ import net.zomis.cards.cwars2.cards.SinglePlayerCards;
 import net.zomis.cards.cwars2.cards.UnlockableGlobal;
 import net.zomis.cards.cwars2.cards.WeaponCards;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.util.CardCount;
 import net.zomis.cards.util.CardSet;
 import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckList;

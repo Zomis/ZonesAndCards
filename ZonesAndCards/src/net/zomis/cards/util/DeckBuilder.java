@@ -10,6 +10,7 @@ import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreStrategy;
 import net.zomis.aiscores.extra.ParamAndField;
 import net.zomis.aiscores.extra.ScoreUtils;
+import net.zomis.cards.count.CardCount;
 import net.zomis.cards.model.CardModel;
 import net.zomis.oldstuff.CountingMap;
 

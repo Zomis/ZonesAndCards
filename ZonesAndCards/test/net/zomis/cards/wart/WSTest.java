@@ -168,7 +168,7 @@ public class WSTest extends CardsTest<HStoneGame> {
 	// TODO: Warsong Commander (Warrior) --   "Whenever you summon a minion with 3 or less Attack, give it <b>Charge</b>" -- will it trigger for a 3/3 when you have Raid Leader in game? Expected: No.
 	// TODO: Force of Nature (Druid) - how many minions can I have on the battlefield in order to play it?
 	
-	// TODO: Blade Flurry + Spell damage?
+	// TESTED: Blade Flurry + Spell damage. Confirmed. Works with spell damage.
 	
 	// TODO: Test cards Hunter: Secretkeeper, Flare
 	// TODO: Test cards Mage: Counterspell, Ethereal Arcanist, Kirin Tor Mage, Vaporize, Ice Block, Spellbender

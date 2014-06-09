@@ -20,7 +20,7 @@ public class HeartsGiveAction extends ZoneMoveAction {
 		return isGiven() ? true : getPlayer().getBoard().size() < GIVE_COUNT;
 	}
 	private CardPlayer getPlayer() {
-		CardPlayer pl = this.getGame().findPlayerWithZone((ClassicCardZone) getCard().getCurrentZone());
+		CardPlayer pl = (CardPlayer) getCard().getCurrentZone().getOwner();
 		return pl;
 	}
 	private HeartsGame getGame() {

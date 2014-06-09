@@ -2,11 +2,11 @@ package net.zomis.cards.crgame;
 
 import java.util.List;
 
+import net.zomis.cards.count.CardCount;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.HandPlayer;
 import net.zomis.cards.model.HasBattlefield;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.util.CardCount;
 import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckList;
 import net.zomis.cards.util.DeckPlayer;

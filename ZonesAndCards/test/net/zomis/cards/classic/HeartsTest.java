@@ -9,6 +9,8 @@ import net.zomis.cards.classics.ClassicCard;
 import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.Suite;
+import net.zomis.cards.count.CardCalculation;
+import net.zomis.cards.count.CardCounter;
 import net.zomis.cards.hearts.HeartsGame;
 import net.zomis.cards.hearts.HeartsGiveAction;
 import net.zomis.cards.hearts.HeartsGiveDirection;
@@ -17,8 +19,6 @@ import net.zomis.cards.model.Card;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.model.ai.CardAI;
-import net.zomis.cards.util.CardCalculation;
-import net.zomis.cards.util.CardCounter;
 import net.zomis.utils.ZomisList;
 
 import org.junit.Test;
@@ -36,17 +36,19 @@ public class HeartsTest extends CardsTest<HeartsGame> {
 		game.addPlayer("Tejpbit");
 		game.addPlayer("Zomis");
 		
-		CardCounter<Card<ClassicCard>> counter = new CardCounter<Card<ClassicCard>>(game);
+		CardCounter counter = new CardCounter(game);
 		counter.setPerspective(game.getPlayers().get(0));
 		ClassicCardZone zone = new ClassicCardZone("Zone");
 		zone.addDeck(game, 0);
 		counter.addAvailableCards(zone);
-		CardCalculation calc = counter.calculate(counter.getAvailable(), new ClassicCardFilter(Suite.HEARTS));
+		CardCalculation calc = counter.calculate(new ClassicCardFilter(Suite.HEARTS));
 		// Library 52, Lands/Hearts 13, Hand 13, Probability for 3 lands is 28.63296%
 		
+		assertEquals(52, calc.getAvailable());
+		assertEquals(13, calc.getMatchingCount());
 		assertEquals("Incorrect probability 52/13/13/3", 0.2863296, calc.calcProbabilities(HeartsGame.RANKS_PER_SUITE)[3], 0.000001);
 		
-		calc = counter.calculate(counter.getAvailable(), new ZomisList.FilterOR<Card<ClassicCard>>()
+		calc = counter.calculate(new ZomisList.FilterOR<Card<ClassicCard>>()
 			.addFilter(new ClassicCardFilter(Suite.HEARTS))
 			.addFilter(new ClassicCardFilter(Suite.SPADES, 12))
 		);

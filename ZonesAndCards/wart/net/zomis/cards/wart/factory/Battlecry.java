@@ -556,7 +556,7 @@ public class Battlecry {
 		return new HStoneEffect() {
 			@Override
 			public void performEffect(HStoneCard source, HStoneCard target) {
-				LinkedList<HStoneCard> minions = ZomisList.filter2(source.getPlayer().getNextPlayer().getDeck().cardList(), new ZomisList.FilterInterface<HStoneCard>() {
+				List<HStoneCard> minions = ZomisList.getAll(source.getPlayer().getNextPlayer().getDeck().cardList(), new ZomisList.FilterInterface<HStoneCard>() {
 					@Override
 					public boolean shouldKeep(HStoneCard obj) {
 						return obj.getModel().isMinion();
