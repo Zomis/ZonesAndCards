@@ -6,7 +6,7 @@ import java.util.List;
 import net.zomis.cards.cwars2.CWars2Res.Producers;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
-import net.zomis.cards.model.ActionProvider;
+import net.zomis.cards.interfaces.ActionProvider;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.Player;

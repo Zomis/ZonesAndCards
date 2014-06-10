@@ -1,7 +1,7 @@
 package net.zomis.cards.classics;
 
-import net.zomis.cards.model.CardZone.GetZoneInterface;
-import net.zomis.cards.model.HandPlayer;
+import net.zomis.cards.hearts.HeartsGame.GetZoneInterface;
+import net.zomis.cards.interfaces.HandPlayer;
 import net.zomis.cards.model.Player;
 
 public class CardPlayer extends Player implements HandPlayer {

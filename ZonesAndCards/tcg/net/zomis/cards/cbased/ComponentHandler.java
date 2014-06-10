@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.zomis.cards.events2.DetermineActionEvent;
 import net.zomis.cards.events2.FindUsableCardsEvent;
-import net.zomis.cards.model.ActionHandler;
+import net.zomis.cards.interfaces.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;

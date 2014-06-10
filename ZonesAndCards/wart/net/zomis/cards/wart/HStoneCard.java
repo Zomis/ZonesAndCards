@@ -13,7 +13,6 @@ import net.zomis.cards.model.StackAction;
 import net.zomis.cards.resources.IResource;
 import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceMap;
-import net.zomis.cards.wart.ench.HStoneEnchForward;
 import net.zomis.cards.wart.ench.HStoneEnchantment;
 import net.zomis.cards.wart.events.HStoneDamagedEvent;
 import net.zomis.cards.wart.events.HStoneHealEvent;
@@ -53,9 +52,12 @@ public class HStoneCard extends Card<HStoneCardModel> {
 			this.getGame().registerHandler(trigger.getClazz(), trigger.createForCard(this));
 		}
 	}
-
+	
 	@Override
 	public HStoneCardModel getModel() {
+//		if (this.transformedModel != null)
+//			return transformedModel;
+		
 		return (HStoneCardModel) super.getModel();
 	}
 	
@@ -225,18 +227,14 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		copy.abilities.clear();
 		copy.abilities.addAll(abilities);
 		copy.triggers.clear();
-		copy.triggers.addAll(triggers); // TODO: When copying a card, create copies of the triggers.
+		copy.triggers.addAll(this.triggers);
 		
-		for (HStoneEnchantment ench : getGame().getEnchantments()) {
-			if (ench.appliesTo(this) && !ench.appliesTo(copy)) { // TODO: Test enchantment logic when copying a card
-				getGame().addEnchantmentAfter(new HStoneEnchForward(ench) {
-					@Override
-					public boolean appliesTo(HStoneCard card) {
-						return card == copy;
-					}
-				}, ench);
-			}
+		// create copies of the triggers.
+		for (HStoneTrigger<?> trigger : this.triggers) {
+			this.getGame().registerHandler(trigger.getClazz(), trigger.createForCard(copy));
 		}
+		
+		// TODO: Test enchantment logic when copying a card
 		
 		return copy;
 	}

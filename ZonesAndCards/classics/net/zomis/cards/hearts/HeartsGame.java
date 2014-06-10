@@ -14,8 +14,9 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.model.ActionProvider;
+import net.zomis.cards.interfaces.ActionProvider;
 import net.zomis.cards.model.Card;
+import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.model.StackAction;
@@ -90,7 +91,7 @@ public class HeartsGame extends ClassicGame {
 			throw new IllegalStateException("Hearts must currently be played with 4 players.");
 		
 		deck.shuffle(this.getRandom());
-		deck.dealUntilLeft(0, this.getPlayers(), new CardPlayer.GetHand());
+		dealUntilLeft(deck, 0, this.getPlayers(), new CardPlayer.GetHand());
 		
 		GamePhase phase = new HeartsGivePhase(this.giveDirection);
 		this.setActivePhase(phase);
@@ -99,6 +100,21 @@ public class HeartsGame extends ClassicGame {
 		}
 	}
 
+	public static interface GetZoneInterface<E> {
+		<C extends Card<?>> CardZone<C> getZone(E object);
+	}
+	
+	public void dealUntilLeft(ClassicCardZone deck, int cardsLeft, List<CardPlayer> players, GetZoneInterface<CardPlayer> getHand) {
+		while (true) {
+			for (CardPlayer player : players) {
+				if (deck.size() <= cardsLeft)
+					return;
+				Card<ClassicCard> card = deck.getTopCard();
+				card.zoneMoveOnBottom(getHand.getZone(player));
+			}
+		}
+	}
+	
 	public void sort(ClassicCardZone zone) {
 //		CustomFacade.getLog().d("Sorting: " + zone);
 		zone.sort(compare);

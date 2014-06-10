@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.zomis.cards.events.card.CardCreatedEvent;
 import net.zomis.cards.events.card.ZoneChangeEvent;
-import net.zomis.cards.model.ActionProvider;
+import net.zomis.cards.interfaces.ActionProvider;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;

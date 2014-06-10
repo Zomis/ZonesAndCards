@@ -12,6 +12,8 @@ import net.zomis.cards.events.card.CardPlayedEvent;
 import net.zomis.cards.events.game.AfterActionEvent;
 import net.zomis.cards.events.game.GameOverEvent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
+import net.zomis.cards.interfaces.ActionHandler;
+import net.zomis.cards.interfaces.ActionProvider;
 import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.util.CardSet;
 import net.zomis.events.EventConsumer;
@@ -40,9 +42,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	private final List<P> players = new LinkedList<P>();
 	private Random random = new Random();
 	private CardReplay replay;
+	
 	/**
 	 * The stack provides a way for actions to be processed one at a time.
-	 * Cannot be declared by interface because of GWT.
+	 * Cannot be declared as a Deque interface because of GWT.
 	 */
 	private final LinkedList<StackAction> stack = new LinkedList<StackAction>();
 
@@ -73,12 +76,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		this.processStackAction();
 	}
 	
-	public void addCard(M card) {
-		if (card == null)
+	public void addCard(M cardModel) {
+		if (cardModel == null)
 			throw new IllegalArgumentException("Card cannot be null");
-		if (this.availableCards.containsKey(card.getName()))
-			throw new IllegalStateException("A card with the name " + card.getName() + " has already been added");
-		this.availableCards.put(card.getName(), card);
+		if (this.availableCards.containsKey(cardModel.getName()))
+			throw new IllegalStateException("A card with the name " + cardModel.getName() + " has already been added");
+		this.availableCards.put(cardModel.getName(), cardModel);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -191,6 +194,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			return null;
 		return players.get(0);
 	}
+	
 	protected List<GamePhase> getPhases() {
 		return phases;
 	}
@@ -240,6 +244,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			throw new IllegalStateException("Game is not started.");
 		if (!this.isNextPhaseAllowed())
 			return false;
+		
 		GamePhase previousPhase = getActivePhase();
 		if (previousPhase == null) {
 			this.setActivePhase(this.phases.get(0));
@@ -274,14 +279,12 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			return new InvalidStackAction("Game has already ended.");
 		if (!this.started)
 			throw new IllegalStateException("Game is not started. Did you forget to call startGame() ?");
-//			return new InvalidStackAction("Game is not started. Did you forget to call startGame() ?");
 		
 		StackAction action = stack.isEmpty() ? null : stack.removeFirst();
 		if (action == null) 
 			action = new StackAction();
 		
 		if (action.actionIsAllowed()) {
-//			CustomFacade.getLog().d("Action Perform: " + action);
 			action.internalPerform();
 			executeEvent(new AfterActionEvent(this, action));
 		}
@@ -316,7 +319,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	protected void setActivePhase(GamePhase phase) {
 		if (!callingOnEnd) {
 			callingOnEnd = true;
-			// TODO: There's gotta be a better solution for letting phases go to the next phase by themselves.
+			// TODO: The `callingOnEnd` variable feels like a little dirty way to let phases go to the next phase by themselves, but it works.
 			GamePhase active = getActivePhase();
 			if (active != null)
 				active.onEnd(this);
@@ -325,6 +328,10 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		setActivePhaseDirectly(phase);
 	}
 
+	/**
+	 * Go to the next phase without calling onEnd on the current phase. Will call onStart on the new phase.
+	 * @param phase The phase to go to.
+	 */
 	protected void setActivePhaseDirectly(GamePhase phase) {
 		GamePhase oldPhase = getActivePhase();
 		this.executeEvent(new PhaseChangeEvent(this, oldPhase, phase), EventExecutorGWT.PRE);

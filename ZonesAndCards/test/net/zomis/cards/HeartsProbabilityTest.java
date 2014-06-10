@@ -1,10 +1,8 @@
 package net.zomis.cards;
 
 import static org.junit.Assert.*;
-
-import java.util.List;
-
 import net.zomis.cards.analyze2.CardSolution;
+import net.zomis.cards.analyze2.CardSolutions;
 import net.zomis.cards.analyze2.CardsAnalyze;
 import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.CompPlayer;
@@ -107,21 +105,23 @@ public class HeartsProbabilityTest {
 		counter.getProbabilityDistributionOf(y, card -> card.getModel() == d);
 		
 		CardsAnalyze<CardZone<?>, Card<?>> analyze = new CardsAnalyze<>();
-		analyze.addZone(known).addZone(x).addZone(y).addZone(z);
-		analyze.addCards(known).addCards(x).addCards(y).addCards(z);
-		analyze.addRule(known, 2, card -> card.getModel() == b || card.getModel() == c);
+		analyze.addZone(x).addZone(y).addZone(z);
+		analyze.addCards(x).addCards(y).addCards(z);
+//		analyze.addRule(known, 2, card -> card.getModel() == b || card.getModel() == c);
 //		analyze.addRule(known, 1, card -> card.getModel() == b);
 //		analyze.addRule(known, 1, card -> card.getModel() == c);
 		
 		analyze.addRule(x, 0, card -> card.getModel() == d);
 		analyze.addRule(y, 0, card -> card.getModel() == a);
 		
-		List<CardSolution<CardZone<?>, Card<?>>> solutions = analyze.solve();
+		CardSolutions<CardZone<?>, Card<?>> solutions = analyze.solve();
 		analyze.outputRules();
+		
+//		assertSolution(solutions);
 		
 //		assertEquals();
 		System.out.println("Solutions:");
-		for (CardSolution<CardZone<?>, Card<?>> sol : solutions) {
+		for (CardSolution<CardZone<?>, Card<?>> sol : solutions.getSolutions()) {
 			System.out.println("Solution: " + sol);
 			sol.getAssignments().forEach((zone, values) -> System.out.println(zone + " --> " + values));
 			if (!sol.validCheck()) {

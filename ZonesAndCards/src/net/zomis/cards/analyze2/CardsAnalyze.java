@@ -58,10 +58,10 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		this.rules.add(new ZoneRule<Z, C>(zone, compare, count, findCards(predicate)));
 	}
 
-	public List<CardSolution<Z, C>> solve() {
+	public CardSolutions<Z, C> solve() {
 		this.solveOnce();
 		this.solveInternal();
-		return this.solutions;
+		return new CardSolutions<Z, C>(this.solutions);
 	}
 	
 	private void solveOnce() {
@@ -99,27 +99,20 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		int unplaced = this.unplacedCards.get(focusGroup);
 		
 		for (int i = 0; i <= unplaced; i++) {
-			System.out.println("Solving by iteration: " + focusGroup + " in " + focusZone + " = " + i);
-			try {
-				Thread.sleep(200);
-			}
-			catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			System.out.println("Solving by iteration: " + focusGroup + " = " + i + " in " + focusZone);
 			
 			CardsAnalyze<Z, C> copy = this.createCopy();
 			copy.assign(focusZone.getZone(), focusGroup, i);
-			copy.solveInternal(); // TODO: When simplifying, detect if there's only one CardGroup left. Or if there's exact space left for all the possible CardGroups. If it is, make assignment.
+			copy.solveInternal(); 
 			System.out.println("-------------");
 		}
 		
 	}
 
 	private ZoneRule<Z, C> determineFocusZone() {
-		ZoneRule<Z, C> zoneRule = this.assignmentProgress.get(2); // TODO: This is for testing purposes only. For the x,y,z zone problem.
-		if (zoneRule.getCompare() != CountStyle.DONE)
-			return zoneRule;
+//		ZoneRule<Z, C> zoneRule = this.assignmentProgress.get(2);
+//		if (zoneRule.getCompare() != CountStyle.DONE)
+//			return zoneRule;
 		
 		for (ZoneRule<Z, C> rule : this.assignmentProgress) {
 			if (rule.getCompare() != CountStyle.DONE) {
@@ -184,7 +177,7 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 				}
 			}
 			// TODO: If assignments is complete, then try to scan for groups that can only be within one zone
-
+			
 			for (ZoneRule<Z, C> progress : this.assignmentProgress) {
 				if (progress.synchronizeWith(unplacedCards))
 					simplificationDone = true;

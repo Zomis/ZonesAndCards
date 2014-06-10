@@ -1,7 +1,6 @@
 package net.zomis.cards.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,9 +20,7 @@ import net.zomis.utils.ZomisList;
 
 public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Iterable<E> {
 
-	public static interface GetZoneInterface<E> {
-		<C extends Card<?>> CardZone<C> getZone(E object);
-	}
+	private int timesCopied;
 	
 	CardGame<?, ?> game;
 	
@@ -169,14 +166,6 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 		}
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (name.hashCode());
-		return result;
-	}
-	private int timesCopied;
 	private CardZone<E> createEmptyCopy() {
 		CardZone<E> zone = new CardZone<E>(this.getName() + "-Copy" + ++timesCopied, owner);
 		zone.setGloballyKnown(this.knownGlobal);
@@ -190,34 +179,6 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	}
 	public int size() {
 		return this.cards.size();
-	}
-	
-	@Deprecated
-	public <F> void deal(int count, F[] objects, GetZoneInterface<F> zoneGetter) {
-		this.deal(count, Arrays.asList(objects), zoneGetter);
-	}
-	
-	@Deprecated
-	public <F> void deal(int count, List<F> objects, GetZoneInterface<F> zoneGetter) {
-		for (F e : objects) {
-			if (count <= 0)
-				return;
-			CardZone<?> zone = zoneGetter.getZone(e);
-			this.getTopCard().zoneMoveOnBottom(zone);
-			count--;
-		}
-	}
-	
-	@Deprecated
-	public <F> void dealUntilLeft(int cardsLeft, List<? extends F> players, GetZoneInterface<F> getHand) {
-		while (true) {
-			for (F player : players) {
-				if (this.size() <= cardsLeft)
-					return;
-				E card = this.getTopCard();
-				card.zoneMoveOnBottom(getHand.getZone(player));
-			}
-		}
 	}
 	
 	public Player getOwner() {

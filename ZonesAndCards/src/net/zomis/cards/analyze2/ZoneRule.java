@@ -3,7 +3,6 @@ package net.zomis.cards.analyze2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -124,29 +123,6 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		return true;
 	}
 
-	public void completedCheck() {
-		int i = getAssignmentSum();
-		if (i == this.zone.size()) {
-			Iterator<Entry<CardGroup<C>, Integer>> it = this.assignments.assigns.entrySet().iterator();
-			while (it.hasNext()) {
-				if (it.next().getValue() == null)
-					it.remove();
-			}
-//			this.compare = CountStyle.DONE;
-		}
-		
-	}
-
-	private int getAssignmentSum() {
-		int i = 0;
-		for (Entry<CardGroup<C>, Integer> ee : this.assignments.assigns.entrySet()) {
-			Integer value = ee.getValue();
-			if (value != null)
-				i += value;
-		}
-		return i;
-	}
-
 	public void clear() {
 		this.compare = CountStyle.DONE;
 		this.assignments.assigns.clear();
@@ -178,7 +154,7 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		return count;
 	}
 
-	public boolean synchronizeWith(Map<CardGroup<C>, Integer> unplacedCards) {
+	boolean synchronizeWith(Map<CardGroup<C>, Integer> unplacedCards) {
 		for (Entry<CardGroup<C>, Integer> ee : this.assignments.assigns.entrySet()) {
 			if (ee.getValue() == null) {
 				if (unplacedCards.get(ee.getKey()) == 0) {
@@ -196,23 +172,17 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		return false;
 	}
 	
-	void assign(CardGroup<C> group, int count, Map<CardGroup<C>, Integer> unplacedCards) {
+	public void assign(CardGroup<C> group, int count, Map<CardGroup<C>, Integer> unplacedCards) {
 		this.assignments.assign(group, count);
 		unplacedCards.put(group, unplacedCards.get(group) - count);
 
 		// Check if `progress` is complete (i.e. sum of assignments == size)
-		this.completedCheck();
 		this.checkFinished();
-		
-		
-//		unassignedCards.put(unassigned, 0);
-//		this.assignments.assign(unassigned, count);
-//		this.checkFinished();
-
 	}
 	
 	public boolean checkForOnlyOneUnassignedGroup(Map<CardGroup<C>, Integer> unassignedCards) {
 		// Rule:Zone{Y} = null(0) Assign:Zone{Y}={CG:[Card:a, Card:a]=0, CG:[Card:b, Card:c, Card:b, Card:c]=null, CG:[Card:d, Card:d]=0}
+		// CG:[Card:b, Card:c, Card:b, Card:c]=null is the only unassigned group
 		// {CG:[Card:a, Card:a]=2, CG:[Card:b, Card:c, Card:b, Card:c]=2, CG:[Card:d, Card:d]=2}
 		
 		CardGroup<C> unassigned = this.getOnlyUnassignedGroup();

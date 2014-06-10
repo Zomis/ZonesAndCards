@@ -3,10 +3,10 @@ package net.zomis.cards.wart;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.interfaces.HandPlayer;
+import net.zomis.cards.interfaces.HasBattlefield;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.CardZoneLocation;
-import net.zomis.cards.model.HandPlayer;
-import net.zomis.cards.model.HasBattlefield;
 import net.zomis.cards.model.Player;
 import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceListener;

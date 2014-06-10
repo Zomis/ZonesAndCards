@@ -3,8 +3,8 @@ package net.zomis.cards.mdjq;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.interfaces.ActionHandler;
 import net.zomis.cards.mdjq.activated.ActivatedAbility;
-import net.zomis.cards.model.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;

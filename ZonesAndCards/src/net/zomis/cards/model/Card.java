@@ -3,15 +3,12 @@ package net.zomis.cards.model;
 import java.util.List;
 
 import net.zomis.cards.events.card.ZoneChangeEvent;
-import net.zomis.custommap.view.ZomisLog;
 
 public class Card<M extends CardModel> {
 	private final M model;
 	
 	protected CardZone<?> currentZone;
 
-	Card() { this(null); }
-	
 	protected Card(M model) {
 		this.model = model;
 	}
@@ -34,10 +31,12 @@ public class Card<M extends CardModel> {
 		CardZone<?> destination = location.getZone();
 		CardZone<?> zone = this.getCurrentZone();
 		CardGame<?, ?> game = zone.getGame();
-		if (game == null)
+		if (game == null) {
 			game = destination.getGame();
-		if (game == null)
+		}
+		if (game == null) {
 			throw new NullPointerException("Neither zone is connected to a game: " + zone + " --> " + destination);
+		}
 		
 		ZoneChangeEvent event = new ZoneChangeEvent(this.currentZone, destination, this);
 		game.executeEvent(event);
@@ -52,7 +51,6 @@ public class Card<M extends CardModel> {
 		@SuppressWarnings("unchecked")
 		List<Card<M>> list = (List<Card<M>>) this.getCurrentZone().cardList();
 		list.set(myIndex, card);
-		ZomisLog.info(newCardOldIndex + " " + myIndex);
 		card.getCurrentZone().cardList().remove(newCardOldIndex);
 		
 		if (dest != null) {
@@ -71,9 +69,11 @@ public class Card<M extends CardModel> {
 	public void zoneMoveOnBottom(CardZone<?> destination) {
 		this.zoneMoveInternal(destination, false);
 	}
+	
 	public void zoneMoveOnTop(CardZone<?> destination) {
 		this.zoneMoveInternal(destination, true);
 	}
+	
 	private void zoneMoveInternal(CardZone<?> destination, boolean top) {
 		ZoneChangeEvent event = new ZoneChangeEvent(this.currentZone, destination, this);
 		CardZone<?> zone = this.getCurrentZone();
@@ -82,6 +82,7 @@ public class Card<M extends CardModel> {
 			game = destination.getGame();
 		if (game == null)
 			throw new NullPointerException("Neither zone is connected to a game: " + zone + " --> " + destination);
+		
 		game.executeEvent(event);
 		event.getFromCardZone().cardList().remove(this);
 		@SuppressWarnings("unchecked")

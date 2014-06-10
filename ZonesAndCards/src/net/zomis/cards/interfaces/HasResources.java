@@ -1,4 +1,4 @@
-package net.zomis.cards.model;
+package net.zomis.cards.interfaces;
 
 import net.zomis.cards.resources.ResourceMap;
 

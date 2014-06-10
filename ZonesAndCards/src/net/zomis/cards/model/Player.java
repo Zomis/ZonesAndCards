@@ -3,9 +3,10 @@ package net.zomis.cards.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.zomis.cards.interfaces.HasResources;
 import net.zomis.cards.resources.ResourceMap;
 
-public class Player implements HasResources { // Comparable<Player>, 
+public class Player implements HasResources {
 
 	CardGame<? extends Player, ?> game;
 	
@@ -53,11 +54,12 @@ public class Player implements HasResources { // Comparable<Player>,
 	}
 
 	public int getIndex() {
-		List<?> players = new ArrayList<Object>(this.getGame().getPlayers());
-		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i) == this)
-				return i;
-		}
-		return -1;
+		return getGame().getPlayers().indexOf(this);
+//		List<?> players = new ArrayList<Object>(this.getGame().getPlayers());
+//		for (int i = 0; i < players.size(); i++) {
+//			if (players.get(i) == this)
+//				return i;
+//		}
+//		return -1;
 	}
 }

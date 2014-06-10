@@ -8,7 +8,7 @@ import net.zomis.aiscores.AbstractScorer;
 import net.zomis.aiscores.ScoreConfigFactory;
 import net.zomis.aiscores.ScoreParameters;
 import net.zomis.cards.classics.ClassicCardZone;
-import net.zomis.cards.model.ActionHandler;
+import net.zomis.cards.interfaces.ActionHandler;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardModel;
