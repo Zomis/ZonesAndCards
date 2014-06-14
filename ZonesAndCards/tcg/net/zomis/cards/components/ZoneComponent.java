@@ -4,7 +4,7 @@ import net.zomis.cards.cbased.CardWithComponents;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.model.CardZone;
 
-public class ZoneComponent implements PlayerComponent {
+public class ZoneComponent implements Component {
 
 	private final CardZone<CardWithComponents> zone;
 

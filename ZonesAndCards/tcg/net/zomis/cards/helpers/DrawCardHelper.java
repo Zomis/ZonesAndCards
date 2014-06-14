@@ -21,13 +21,18 @@ public class DrawCardHelper {
 		
 		ZomisLog.info("Draw a card");
 		FirstCompGame game = player.getGame();
-		DrawCardEvent event = new DrawCardEvent(player, deck.getDeck().getTopCard());
+		CardWithComponents card = deck.getDeck().getTopCard();
+		
+		DrawCardEvent event = new DrawCardEvent(game, player, card);
 		
 		game.executeEvent(event, new Runnable() {
 			@Override
 			public void run() {
 				ZomisLog.info("Moving card, top is " + deck.getDeck().getTopCard());
 				CardWithComponents card = deck.getDeck().getTopCard();
+				if (card == null) {
+					throw new IllegalStateException("Unable to draw card for " + player + ": There is no card to draw. Deck is empty.");
+				}
 				card.zoneMoveOnBottom(hand.getHand());
 			}
 		});

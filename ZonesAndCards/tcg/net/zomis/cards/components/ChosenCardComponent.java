@@ -2,7 +2,7 @@ package net.zomis.cards.components;
 
 import net.zomis.cards.cbased.CardWithComponents;
 
-public class ChosenCardComponent implements PlayerComponent {
+public class ChosenCardComponent implements Component {
 
 	private CardWithComponents card;
 	

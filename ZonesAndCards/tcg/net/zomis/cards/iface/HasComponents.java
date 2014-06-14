@@ -26,7 +26,7 @@ public interface HasComponents {
 	default <T extends Component> T getRequiredComponent(Class<T> class1) {
 		if (hasComponent(class1))
 			return getComponent(class1);
-		throw new NullPointerException("Required component not found: " + class1 + " in " + this);
+		throw new IllegalStateException("Required component not found: " + class1 + " in " + this);
 	}
 	
 }

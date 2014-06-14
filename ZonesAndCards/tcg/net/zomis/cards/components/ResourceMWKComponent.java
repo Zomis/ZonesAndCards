@@ -5,7 +5,7 @@ import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceMap;
 
 
-public class ResourceMWKComponent implements PlayerComponent {
+public class ResourceMWKComponent implements Component {
 
 	private enum Res implements IResource {
 		MAGES, WARRIORS, KINGS;

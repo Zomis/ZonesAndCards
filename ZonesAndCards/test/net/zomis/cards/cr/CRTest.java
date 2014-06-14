@@ -193,18 +193,6 @@ public class CRTest extends CardsTest<CRCardGame> {
 		return card.get();
 	}
 
-	@Test
-	public void maxHandSizeDrawCard() {
-		assertEquals(6, game.getCurrentPlayer().getHand().size());
-		nextTurn();
-		assertEquals(7, game.getCurrentPlayer().getHand().size());
-		nextTurn();
-		assertEquals(7, game.getCurrentPlayer().getHand().size());
-		nextTurn();
-		assertEquals(7, game.getCurrentPlayer().getHand().size());
-		
-	}
-
 	private void nextTurn() {
 		assertEquals(0, game.stackSize());
 		assertTrue(game.nextPhase());

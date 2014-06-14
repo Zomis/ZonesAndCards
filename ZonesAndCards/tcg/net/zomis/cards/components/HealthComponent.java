@@ -5,7 +5,7 @@ import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceMap;
 
 
-public class HealthComponent implements PlayerComponent {
+public class HealthComponent implements Component {
 
 	private enum HealthRes implements IResource {
 		HEALTH, MAX_HEALTH;

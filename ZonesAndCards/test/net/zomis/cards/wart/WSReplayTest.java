@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 import net.zomis.cards.wart.factory.HStoneChars;
 import net.zomis.custommap.ZomisSwing;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class WSReplayTest {
 
 	@Test
+	@Ignore
 	public void rep() {
 		
 		ZomisSwing.setup();
@@ -19,7 +21,9 @@ public class WSReplayTest {
 		String init = game.getReplay().getInitialization();
 		System.out.println(init);
 		
-		fail("TODO: Test HStone with replays"); // TODO: Test HStone with replays
+		fail();
+		
+		// TODO: Test HStone with replays
 	}
 	
 }

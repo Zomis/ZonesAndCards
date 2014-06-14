@@ -10,7 +10,7 @@ import net.zomis.cards.model.CardZone;
 import net.zomis.cards.util.DeckPlayer;
 import net.zomis.custommap.view.ZomisLog;
 
-public class DeckSourceComponent implements PlayerComponent, DeckPlayer<CompCardModel> {
+public class DeckSourceComponent implements Component, DeckPlayer<CompCardModel> {
 	
 	private final List<CompCardModel> deckSource;
 	
