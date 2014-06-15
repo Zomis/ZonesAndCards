@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import net.zomis.cards.analyze2.CardSolutions;
+import net.zomis.cards.analyze2.CardsAnalyze;
 import net.zomis.cards.events.card.ZoneChangeEvent;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
@@ -22,13 +24,21 @@ public class CardCounter implements EventListener {
 	private int informationCounter;
 	private final List<Card<?>> availableCards;
 	private final IEventHandler eventHandler;
+	private final CardsAnalyze<CardZone<?>, Card<?>> analyze;
 	
+	@SuppressWarnings("unchecked")
 	public CardCounter(CardGame<?, ?> game) {
+		analyze = new CardsAnalyze<>();
+
 		this.game = game;
 		this.eventHandler = game.registerHandler(ZoneChangeEvent.class, this::onZoneMove);
 		this.availableCards = new ArrayList<>();
 		
 		for (CardZone<?> zone : game.getPublicZones()) {
+			if (zone == game.getActionZone())
+				continue;
+			analyze.addZone(zone);
+			analyze.addCards((CardZone<Card<?>>) zone);
 			if (game.getActionZone() == zone)
 				continue;
 			availableCards.addAll(zone.cardList());
@@ -62,6 +72,10 @@ public class CardCounter implements EventListener {
 	
 	private void informMove(Card<?> card, CardZone<?> fromCardZone, CardZone<?> toCardZone) {
 		++informationCounter;
+		if (fromCardZone.isKnown(perspectivePlayer) || toCardZone.isKnown(perspectivePlayer)) {
+			System.out.println("CardCounter informed about move: " + card + " ---> " + toCardZone);
+			analyze.addRule(toCardZone, 1, c -> c == card);
+		}
 	}
 
 	public void javaGarbage() {
@@ -87,14 +101,39 @@ public class CardCounter implements EventListener {
 		return new CardCalculation(available.size(), filtered);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends Card<?>> void addRule(CardZone<T> zone, int count, Predicate<T> object) {
-		// 
+		analyze.addRule(zone, count, (Predicate<Card<?>>) object); 
 		
 	}
 
 	public <T extends Card<?>> void getProbabilityDistributionOf(CardZone<T> zone, Predicate<T> object) {
-		// TODO Auto-generated method stub
+		// TODO: Know the zones you know
+		// TODO: Actually return probabilities -- `double[]`
 		
+		CardsAnalyze<CardZone<?>, Card<?>> copy = analyze.createCopy();
+		for (CardZone<?> cz : game.getPublicZones()) {
+			if (cz.isKnown(perspectivePlayer) && cz != game.getActionZone()) {
+				if (!cz.isEmpty())
+					copy.addRule(cz, cz.size(), card -> card.getCurrentZone() == cz);
+				else copy.addRule(cz, 0, card -> true);
+			}
+		}
+		
+		CardSolutions<CardZone<?>, Card<?>> solutions = copy.solve();
+		System.out.println("Solutions:");
+		solutions.getSolutions().forEach(sol -> {
+			System.out.println("-- Solution: " + sol);
+			sol.getAssignments().entrySet().forEach(System.out::println);
+			System.out.println();
+		});
+		System.out.println("---- END SOLUTIONS");
+		
+//		if (fromCardZone.isKnown(perspectivePlayer) || toCardZone.isKnown(perspectivePlayer)) {
+//			System.out.println("CardCounter informed about move: " + card + " ---> " + toCardZone);
+//			analyze.addRule(toCardZone, 1, c -> c == card);
+//		}
+
 	}
 	
 }

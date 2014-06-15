@@ -73,7 +73,7 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 				if (!splitResult.splitPerformed())
 					continue;
 				
-				System.out.println(splitResult);
+//				System.out.println(splitResult);
 				
 				CardGroup<C> both = new CardGroup<>(splitResult.getBoth());
 				CardGroup<C> onlyA = new CardGroup<>(splitResult.getOnlyA());
@@ -158,7 +158,8 @@ public class ZoneRule<Z extends CardZone<?>, C> {
 		for (Entry<CardGroup<C>, Integer> ee : this.assignments.assigns.entrySet()) {
 			if (ee.getValue() == null) {
 				if (unplacedCards.get(ee.getKey()) == 0) {
-					this.assignments.assign(ee.getKey(), 0);
+//					this.assignments.assign(ee.getKey(), 0);
+					this.assign(ee.getKey(), 0, unplacedCards);
 					return true;
 				}
 			}

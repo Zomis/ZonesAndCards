@@ -123,12 +123,13 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 			throw new NullPointerException("Card cannot be null");
 		
 		CardGame<?, ?> cardGame = card.getGame();
+		P player = getCurrentPlayer();
 		StackAction action = card.clickAction();
 		if (action.actionIsAllowed()) {
 			replay.addMove(card);
 		}
 		addAndProcessStackAction(action);
-		executeEvent(new CardPlayedEvent(card, cardGame, action));
+		executeEvent(new CardPlayedEvent(card, player, cardGame, action));
 		return action;
 	}
 	

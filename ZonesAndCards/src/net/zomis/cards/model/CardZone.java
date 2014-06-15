@@ -61,7 +61,7 @@ public class CardZone<E extends Card<?>> implements Comparable<CardZone<E>>, Ite
 	
 	@Override
 	public final String toString() {
-		return "Zone{" + getName() + "}";
+		return "Zone{" + getFullName() + "}";
 	}
 	
 	public String getFullName() {

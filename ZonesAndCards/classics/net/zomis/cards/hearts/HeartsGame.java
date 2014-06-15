@@ -14,12 +14,10 @@ import net.zomis.cards.classics.ClassicCardFilter;
 import net.zomis.cards.classics.ClassicCardZone;
 import net.zomis.cards.classics.ClassicGame;
 import net.zomis.cards.classics.Suite;
-import net.zomis.cards.interfaces.ActionProvider;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.Player;
-import net.zomis.cards.model.StackAction;
 import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.utils.ZomisList;
 
@@ -36,12 +34,7 @@ public class HeartsGame extends ClassicGame {
 	
 	public HeartsGame(HeartsGiveDirection giveDirection) {
 		super(AceValue.HIGH);
-		this.nextTurnCard = this.addAction(new ClassicCard(Suite.EXTRA, 0), new ActionProvider() {
-			@Override
-			public StackAction get() {
-				return new NextTurnAction(HeartsGame.this);
-			}
-		});
+		this.nextTurnCard = this.addAction(new ClassicCard(Suite.EXTRA, 0), () -> new NextTurnAction(HeartsGame.this));
 		this.setActionHandler(new HeartsHandler());
 		this.giveDirection = giveDirection;
 		this.pile = new ClassicCardZone("Current");
@@ -69,7 +62,8 @@ public class HeartsGame extends ClassicGame {
 		player.setHand(hand);
 		this.addZone(hand);
 		
-		ClassicCardZone board = new ClassicCardZone("GiveAway", player);
+		ClassicCardZone board = new ClassicCardZone("GiveAway--TakenCards", player);
+		board.setGloballyKnown(false);
 		board.setKnown(player, true);
 		player.setBoard(board);
 		this.addZone(board);

@@ -55,6 +55,12 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 	}
 	
 	public void addRule(Z zone, CountStyle compare, int count, Predicate<C> predicate) {
+		if (!this.zones.contains(zone)) {
+			throw new IllegalArgumentException("Zone " + zone +
+				" has not been added to this analyze. "
+				+ "Call `addZone` if this zone should be considered. "
+				+ "Don't add this rule if it should not be considered.");
+		}
 		this.rules.add(new ZoneRule<Z, C>(zone, compare, count, findCards(predicate)));
 	}
 
@@ -74,14 +80,14 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 	}
 	
 	private void solveInternal() {
-		System.out.println("Before simplification:");
-		this.outputRules();
+//		System.out.println("Before simplification:");
+//		this.outputRules();
 		
 		// Simplify rules
 		this.simplify();
 		
-		System.out.println("After simplification:");
-		this.outputRules();
+//		System.out.println("After simplification:");
+//		this.outputRules();
 		
 		// Iterate and solve
 		this.solveByIteration();
@@ -99,12 +105,12 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		int unplaced = this.unplacedCards.get(focusGroup);
 		
 		for (int i = 0; i <= unplaced; i++) {
-			System.out.println("Solving by iteration: " + focusGroup + " = " + i + " in " + focusZone);
+//			System.out.println("Solving by iteration: " + focusGroup + " = " + i + " in " + focusZone);
 			
-			CardsAnalyze<Z, C> copy = this.createCopy();
+			CardsAnalyze<Z, C> copy = this.internalCopy(true);
 			copy.assign(focusZone.getZone(), focusGroup, i);
 			copy.solveInternal(); 
-			System.out.println("-------------");
+//			System.out.println("-------------");
 		}
 		
 	}
@@ -132,8 +138,18 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		throw new IllegalArgumentException("Rule does not have any unset groups: " + focusZone);
 	}
 
-	private CardsAnalyze<Z, C> createCopy() {
-		CardsAnalyze<Z, C> result = new CardsAnalyze<>(this.solutionCallback);
+	public CardsAnalyze<Z, C> createCopy() {
+		CardsAnalyze<Z, C> copy = internalCopy(false);
+		copy.zones.addAll(this.zones);
+		copy.cards.addAll(this.cards);
+		return copy;
+	}
+	
+	private CardsAnalyze<Z, C> internalCopy(boolean useSameSolutionCallback) {
+		final CardsAnalyze<Z, C> result;
+		if (useSameSolutionCallback)
+			result = new CardsAnalyze<>(this.solutionCallback);
+		else result = new CardsAnalyze<>();
 		
 		for (ZoneRule<Z, C> assignmentProg : this.assignmentProgress) {
 			result.assignmentProgress.add(assignmentProg.copy());
@@ -204,6 +220,10 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 
 	private void verifySums() {
 		int cards = 0;
+		if (this.zones.isEmpty())
+			throw new IllegalStateException("No zones have been added. Please call `addZone`");
+		if (this.cards.isEmpty())
+			throw new IllegalStateException("No cards have been added. Please call `addCards`");
 		for (Z zone : this.zones) {
 			cards += zone.size();
 		}
@@ -280,7 +300,6 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 		else {
 			System.out.println(this + " INVALID Solution has been found!!!".toUpperCase() + " -- " + sol);
 			results.forEach(System.out::println);
-			System.out.println();
 			System.out.println();
 			System.out.println();
 		}
