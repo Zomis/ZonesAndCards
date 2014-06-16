@@ -39,4 +39,9 @@ public class CompPlayer extends Player implements HasComponents, HasCompGame {
 		return super.toString() + components.values();
 	}
 	
+	@Override
+	public CompPlayer setName(String name) {
+		return (CompPlayer) super.setName(name);
+	}
+	
 }

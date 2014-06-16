@@ -1,4 +1,4 @@
-package net.zomis.cards;
+package net.zomis.cards.analyze;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+import net.zomis.cards.CardsTest;
+import net.zomis.cards.SimpleGame;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.utils.ZomisList.FilterInterface;
 import net.zomis.utils.ZomisUtils;

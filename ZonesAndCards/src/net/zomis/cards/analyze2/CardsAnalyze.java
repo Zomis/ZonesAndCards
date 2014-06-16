@@ -298,10 +298,10 @@ public class CardsAnalyze<Z extends CardZone<?>, C> implements CardSolutionCallb
 			this.solutions.add(sol);
 		}
 		else {
-			System.out.println(this + " INVALID Solution has been found!!!".toUpperCase() + " -- " + sol);
-			results.forEach(System.out::println);
-			System.out.println();
-			System.out.println();
+//			System.out.println(this + " INVALID Solution has been found!!!".toUpperCase() + " -- " + sol);
+//			results.forEach(System.out::println);
+//			System.out.println();
+//			System.out.println();
 		}
 	}
 	

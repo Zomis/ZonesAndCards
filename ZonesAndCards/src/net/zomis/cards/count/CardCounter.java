@@ -72,6 +72,7 @@ public class CardCounter implements EventListener {
 	
 	private void informMove(Card<?> card, CardZone<?> fromCardZone, CardZone<?> toCardZone) {
 		++informationCounter;
+		// TODO: When moving the same card again, to another zone, the old rule should be deleted. Instead of adding rules, use a `Map<Card, Zone>`
 		if (fromCardZone.isKnown(perspectivePlayer) || toCardZone.isKnown(perspectivePlayer)) {
 			System.out.println("CardCounter informed about move: " + card + " ---> " + toCardZone);
 			analyze.addRule(toCardZone, 1, c -> c == card);
@@ -107,10 +108,7 @@ public class CardCounter implements EventListener {
 		
 	}
 
-	public <T extends Card<?>> void getProbabilityDistributionOf(CardZone<T> zone, Predicate<T> object) {
-		// TODO: Know the zones you know
-		// TODO: Actually return probabilities -- `double[]`
-		
+	public CardSolutions<CardZone<?>, Card<?>> solve() {
 		CardsAnalyze<CardZone<?>, Card<?>> copy = analyze.createCopy();
 		for (CardZone<?> cz : game.getPublicZones()) {
 			if (cz.isKnown(perspectivePlayer) && cz != game.getActionZone()) {
@@ -121,19 +119,21 @@ public class CardCounter implements EventListener {
 		}
 		
 		CardSolutions<CardZone<?>, Card<?>> solutions = copy.solve();
-		System.out.println("Solutions:");
-		solutions.getSolutions().forEach(sol -> {
-			System.out.println("-- Solution: " + sol);
-			sol.getAssignments().entrySet().forEach(System.out::println);
-			System.out.println();
-		});
-		System.out.println("---- END SOLUTIONS");
+//		System.out.println("Solutions:");
+//		solutions.getSolutions().forEach(sol -> {
+//			System.out.println("-- Solution: " + sol);
+//			sol.getAssignments().entrySet().forEach(System.out::println);
+//			System.out.println();
+//		});
+//		System.out.println("---- END SOLUTIONS");
+		return solutions;
+	}
+	
+	public <T extends Card<?>> void getProbabilityDistributionOf(CardZone<T> zone, Predicate<T> object) {
+		// TODO: Actually return probabilities -- `double[]`
 		
-//		if (fromCardZone.isKnown(perspectivePlayer) || toCardZone.isKnown(perspectivePlayer)) {
-//			System.out.println("CardCounter informed about move: " + card + " ---> " + toCardZone);
-//			analyze.addRule(toCardZone, 1, c -> c == card);
-//		}
-
+		solve();
+		
 	}
 	
 }
