@@ -85,7 +85,7 @@ public class CardSolution<Z extends CardZone<?>, C> {
 	
 	public double[] getProbabilityDistributionOf(Z zone, Predicate<C> predicate) {
 		CardAssignment<Z, C> zoneAssigns = assignments.get(zone);
-		System.out.println("Get probability distribution of: " + zoneAssigns);
+		System.out.println("Get probability distribution of: " + zoneAssigns + " solution combs " + this.combinations);
 		List<CardGroup<C>> groups = new ArrayList<>(zoneAssigns.getGroups());
 		int count = 0;
 		int groupsCount = groups.size();
@@ -135,9 +135,9 @@ public class CardSolution<Z extends CardZone<?>, C> {
 		}
 		// a + a + a + b + b = 2, a + a + c + c = 1
 		
-//		for (int i = 0; i < result.length; i++) {
-//			result[i] = result[i] / this.combinations;
-//		}
+		for (int i = 0; i < result.length; i++) {
+			result[i] = result[i] * this.combinations;
+		}
 		
 		System.out.println("Result = " + Arrays.toString(result));
 		System.out.println("Sum = " + Arrays.stream(result).sum());

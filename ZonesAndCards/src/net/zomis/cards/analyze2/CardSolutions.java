@@ -17,12 +17,19 @@ public class CardSolutions<Z extends CardZone<?>, C> {
 	
 	public double[] getProbabilityDistributionOf(Z zone, Predicate<C> predicate) {
 		double[] dbl = new double[zone.size() + 1];
+		
 		for (CardSolution<Z, C> sol : solutions) {
 			double[] result = sol.getProbabilityDistributionOf(zone, predicate);
 			for (int i = 0; i < result.length; i++) {
 				dbl[i] += result[i];
 			}
 		}
+		
+		double total = getTotalCombinations();
+		for (int i = 0; i < dbl.length; i++) {
+			dbl[i] = dbl[i] / total;
+		}
+		
 		
 		return dbl;
 	}
@@ -31,6 +38,14 @@ public class CardSolutions<Z extends CardZone<?>, C> {
 		return new ArrayList<>(solutions);
 	}
 
+	public double getTotalCombinations() {
+		double total = 0;
+		for (CardSolution<Z, C> sol : this.solutions) {
+			total += sol.getCombinations();
+		}
+		return total;
+	}
+	
 	/**
 	 * 
 	 * @return A list of all the {@link CardGroup}s available in this solution set.
