@@ -64,7 +64,7 @@ public class ProbabilityTest extends CardsTest<SimpleGame> {
 	@Test
 	public void probability2() {
 		List<String> permutations = produceList(6);
-//		countResults(permutations, new int[]{ 0, 1, 2 }, "45", new StringForbid[]{ new StringForbid(0, 3, "01"), new StringForbid(3, 2, "23") });
+		countResults(permutations, new int[]{ 0, 1, 2 }, "45", new StringForbid[]{ new StringForbid(0, 3, "01"), new StringForbid(3, 2, "23") });
 		
 	}
 	

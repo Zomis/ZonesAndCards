@@ -28,6 +28,15 @@ public class HeartsTest extends CardsTest<HeartsGame> {
 	private CGController	controller;
 
 	@Test
+	public void knowsMyCards() {
+		createGame(HeartsGiveDirection.NONE);
+		game.startGame();
+		assertNotNull(game.getCurrentPlayer());
+		assertTrue(game.getCurrentPlayer().getHand().getTopCard().isKnown());
+	}
+	
+	@Test
+	@Deprecated
 	public void countCards() {
 		game = new HeartsGame(HeartsGiveDirection.NONE);
 		game.setRandomSeed(42);
@@ -123,12 +132,14 @@ public class HeartsTest extends CardsTest<HeartsGame> {
 	
 	@Test
 	public void notEnoughPlayers() {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i <= 4; i++) {
 			try {
 				game = new HeartsGame(HeartsGiveDirection.NONE);
-				for (int pl = 0; pl <= i; pl++)
+				for (int pl = 1; pl <= i; pl++)
 					game.addPlayer("BUBU_" + pl);
 				game.startGame();
+				if (i < 4)
+					fail("Game should not be started when less than four players: " + i);
 			}
 			catch (IllegalStateException e) {
 				assertTrue(game.getPlayers().size() != 4);

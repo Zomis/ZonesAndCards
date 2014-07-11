@@ -26,7 +26,7 @@ public class CGController {
 	}
 	
 	public void autoplay() {
-		while (!game.isGameOver() && this.playB()) {
+		while (!game.isGameOver() && this.playIfPossible()) {
 			
 		}
 	}
@@ -68,8 +68,13 @@ public class CGController {
 		return game.clickPerform(action);
 	}
 	
-	public boolean playB() {
-		return play().actionIsPerformed();
+	public boolean playIfPossible() {
+		if (game.getCurrentPlayer() == null)
+			return this.playAll();
+		
+		if (hasAIforCurrentPlayer())
+			return play().actionIsPerformed();
+		return false;
 	}
 	
 	/**
@@ -113,12 +118,19 @@ public class CGController {
 		new CGController(game).setAIs(ais).autoplay();
 	}
 
-	public AI getAI(Player determineWinner) {
-		return ais.get(determineWinner);
+	public AI getAI(Player player) {
+		return ais.get(player);
 	}
 
 	public StackAction playWithAI(AI ai) {
 		return play(game.getCurrentPlayer(), ai);
+	}
+
+	public boolean hasAIforCurrentPlayer() {
+		Player current = game.getCurrentPlayer();
+		if (current == null)
+			return !this.ais.isEmpty();
+		return ais.get(current) != null;
 	}
 
 }

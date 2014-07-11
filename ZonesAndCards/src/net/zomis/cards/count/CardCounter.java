@@ -88,6 +88,7 @@ public class CardCounter implements EventListener {
 		return new ArrayList<Card<?>>(this.availableCards);
 	}
 
+	@Deprecated
 	public <T extends Card<?>> CardCalculation calculate(FilterInterface<T> filter) {
 		List<Card<?>> available = this.getAvailable();
 		int filtered = 0;
@@ -119,21 +120,7 @@ public class CardCounter implements EventListener {
 		}
 		
 		CardSolutions<CardZone<?>, Card<?>> solutions = copy.solve();
-//		System.out.println("Solutions:");
-//		solutions.getSolutions().forEach(sol -> {
-//			System.out.println("-- Solution: " + sol);
-//			sol.getAssignments().entrySet().forEach(System.out::println);
-//			System.out.println();
-//		});
-//		System.out.println("---- END SOLUTIONS");
 		return solutions;
-	}
-	
-	public <T extends Card<?>> void getProbabilityDistributionOf(CardZone<T> zone, Predicate<T> object) {
-		// TODO: Actually return probabilities -- `double[]`
-		
-		solve();
-		
 	}
 	
 }

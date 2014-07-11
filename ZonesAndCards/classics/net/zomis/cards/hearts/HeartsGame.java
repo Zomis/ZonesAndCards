@@ -26,6 +26,7 @@ public class HeartsGame extends ClassicGame {
 	
 	private final Comparator<Card<ClassicCard>> compare = new ClassicCardComparator(new Suite[]{ Suite.CLUBS, Suite.DIAMONDS, Suite.SPADES, Suite.HEARTS }, true);
 	private final ClassicCardZone pile;
+	private final Map<Card<ClassicCard>, CardPlayer> lastPlayed = new HashMap<Card<ClassicCard>, CardPlayer>();
 	
 	protected HeartsGiveDirection	giveDirection;
 	private boolean heartsBroken;
@@ -127,7 +128,6 @@ public class HeartsGame extends ClassicGame {
 	}
 	
 	
-	private final Map<Card<ClassicCard>, CardPlayer> lastPlayed = new HashMap<Card<ClassicCard>, CardPlayer>();
 	
 	@Override
 	public boolean isNextPhaseAllowed() {
@@ -145,14 +145,18 @@ public class HeartsGame extends ClassicGame {
 		return super.isNextPhaseAllowed();
 	}
 	
-	@Override
-	public boolean nextPhase() {
+	public void informMove(Card<ClassicCard> card) {
 		if (!pile.isEmpty()) {
-			ClassicCard model = pile.getTopCard().getModel();
-			lastPlayed.put(pile.getTopCard(), getCurrentPlayer());
+			ClassicCard model = card.getModel();
+			lastPlayed.put(card, getCurrentPlayer());
 			if (model.getSuite() == Suite.HEARTS)
 				this.heartsBroken = true;
 		}
+		else System.out.println("WARNING: Pile not empty. " + pile.cardList() + " card " + card);
+	}
+	
+	@Override
+	public boolean nextPhase() {
 		
 		if (pile.size() == this.getPlayers().size()) {
 			givePileAndSelectNewPhase();
@@ -180,6 +184,8 @@ public class HeartsGame extends ClassicGame {
 			}
 		}
 		CardPlayer nextPlayer = this.lastPlayed.get(maxCard);
+		if (nextPlayer == null)
+			throw new IllegalStateException("Next player was null. Last played is " + lastPlayed + " card is " + maxCard);
 		
 		// Find all the cards that give points
 		List<Card<ClassicCard>> hearts = ZomisList.getAll(this.pile.cardList(), new ClassicCardFilter(Suite.HEARTS));
@@ -189,7 +195,7 @@ public class HeartsGame extends ClassicGame {
 			// give the point cards to the player who won the stick
 			card.zoneMoveOnBottom(nextPlayer.getBoard());
 		}
-		this.pile.moveToBottomOf(null); // move the rest of the cards to /dev/null
+//		this.pile.moveToBottomOf(null); // move the rest of the cards to /dev/null
 		
 		setActivePlayer(nextPlayer);
 		if (this.getCurrentPlayer().getHand().isEmpty())

@@ -9,10 +9,12 @@ import net.zomis.cards.classics.Suite;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.actions.ZoneMoveAction;
 import net.zomis.utils.ZomisList;
+import net.zomis.utils.ZomisList.FilterInterface;
 
 public class HeartsPlayAction extends ZoneMoveAction {
 
 	private ClassicCard cardModel;
+	private final FilterInterface<Card<ClassicCard>>	heartsFilter = new ClassicCardFilter(Suite.HEARTS);
 
 	public HeartsPlayAction(Card<ClassicCard> card) {
 		super(card);
@@ -49,7 +51,7 @@ public class HeartsPlayAction extends ZoneMoveAction {
 	
 	private boolean noMatchingSuiteAllowed(CardPlayer player) {
 		// Don't have a card of the requested suite, can play any card.
-		if (player.getHand().size() == ZomisList.getAll(player.getHand(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+		if (player.getHand().size() == ZomisList.getAll(player.getHand(), heartsFilter).size()) {
 			return true; // Have only HEARTS left, then it doesn't matter.
 		}
 		if (player.getHand().size() == 13) {
@@ -60,8 +62,9 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		return true;
 	}
 
+	
 	private boolean pileEmptyAllowed(CardPlayer player) {
-		if (player.getHand().size() == ZomisList.getAll(player.getHand(), new ClassicCardFilter(Suite.HEARTS)).size()) {
+		if (player.getHand().size() == ZomisList.getAll(player.getHand(), heartsFilter).size()) {
 			return setOKMessage("Only hearts left");
 		}
 		if (player.getHand().size() == HeartsGame.RANKS_PER_SUITE) {
@@ -79,9 +82,14 @@ public class HeartsPlayAction extends ZoneMoveAction {
 		return this.cardModel.getSuite() == Suite.SPADES && this.cardModel.getRank() == ClassicCard.RANK_QUEEN;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onPerform() {
+		if (getGame().getPile().size() == getGame().getPlayers().size()) {
+			getGame().getPile().moveToBottomOf(null);
+		}
 		super.onPerform();
+		getGame().informMove((Card<ClassicCard>) getCard());
 		getGame().nextPhase();
 	}
 

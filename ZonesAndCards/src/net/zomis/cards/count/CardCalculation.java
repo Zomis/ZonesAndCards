@@ -2,6 +2,7 @@ package net.zomis.cards.count;
 
 import net.zomis.utils.ZomisUtils;
 
+@Deprecated
 public class CardCalculation {
 
 	private final int available;
