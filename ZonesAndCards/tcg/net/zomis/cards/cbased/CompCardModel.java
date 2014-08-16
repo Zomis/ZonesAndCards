@@ -3,7 +3,7 @@ package net.zomis.cards.cbased;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.zomis.cards.components.Component;
+import net.zomis.cards.iface.Component;
 import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardModel;

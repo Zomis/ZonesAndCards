@@ -5,6 +5,7 @@ import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.HandComponent;
 import net.zomis.cards.events2.DetermineActionEvent;
 import net.zomis.cards.events2.FindUsableCardsEvent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.StackAction;

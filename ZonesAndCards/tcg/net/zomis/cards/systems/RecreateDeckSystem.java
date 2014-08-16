@@ -4,6 +4,7 @@ import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.DeckComponent;
 import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.events2.DrawCardEvent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.events.EventExecutorGWT;
 

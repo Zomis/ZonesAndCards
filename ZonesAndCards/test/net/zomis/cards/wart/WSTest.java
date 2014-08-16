@@ -158,8 +158,10 @@ public class WSTest extends CardsTest<HStoneGame> {
 	// TEST: Silence Kirin Tor Mage (Mage)
 	// TODO: Tests for which cards can be used on "shroud" minions (all where source is minion AFAIK)
 	// TEST: Hunter look at deck card, is it allowed to play at end of game when no cards is in deck?
+	// TODO: Snipe activates before Houndmaster battlecry activates, causing the battlecry to not be applied.
 	// TESTED: Druid - Starfall when there are no minions. Not possible to choose the other target
 	// TESTED: Crazed Alchemist - swapPT when you have Raid Leader or similar in game -- works by setting the new values, which gives you additional PT
+	// TODO: Give your characters +2 attack until end of turn has effect also for new minions that appear
 
 	
 	// TODO: NEED 400 DUST: Copy card that has been enchanted with draw card enchantment?

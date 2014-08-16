@@ -1,6 +1,7 @@
 package net.zomis.cards.components;
 
 import net.zomis.cards.iface.CardEffect;
+import net.zomis.cards.iface.Component;
 import net.zomis.cards.systems.DescribedEffect;
 
 public class EffectComponent implements Component {

@@ -5,6 +5,7 @@ import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.ChosenCardComponent;
 import net.zomis.cards.events.card.CardPlayedEvent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.events.EventExecutorGWT;
 

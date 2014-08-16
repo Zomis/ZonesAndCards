@@ -1,4 +1,4 @@
-package net.zomis.cards.systems;
+package net.zomis.cards.iface;
 
 import net.zomis.cards.cbased.FirstCompGame;
 

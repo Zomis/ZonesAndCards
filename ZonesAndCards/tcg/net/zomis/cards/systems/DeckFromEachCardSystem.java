@@ -7,6 +7,7 @@ import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.components.ZoneComponent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.utils.ZomisList;
 

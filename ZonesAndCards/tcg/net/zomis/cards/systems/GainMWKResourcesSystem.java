@@ -4,6 +4,7 @@ import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.ResourceMWKComponent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.cards.model.GamePhase;
 
 public class GainMWKResourcesSystem implements GameSystem {

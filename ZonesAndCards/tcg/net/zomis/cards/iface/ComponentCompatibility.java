@@ -1,4 +1,5 @@
-package net.zomis.cards.components;
+package net.zomis.cards.iface;
+
 
 public interface ComponentCompatibility {
 

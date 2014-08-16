@@ -1,5 +1,6 @@
 package net.zomis.cards.components;
 
+import net.zomis.cards.iface.Component;
 import net.zomis.cards.resources.IResource;
 import net.zomis.cards.resources.ResourceData;
 import net.zomis.cards.resources.ResourceMap;

@@ -5,11 +5,11 @@ import java.util.function.Function;
 import net.zomis.cards.cbased.CardWithComponents;
 import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.FirstCompGame;
-import net.zomis.cards.components.Component;
 import net.zomis.cards.components.CostComponent;
 import net.zomis.cards.components.EffectComponent;
 import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.ResourceMWKComponent;
+import net.zomis.cards.iface.Component;
 import net.zomis.cards.util.CardSet;
 
 public class MWKCardsSystem implements CardSet<FirstCompGame> {
@@ -41,7 +41,8 @@ public class MWKCardsSystem implements CardSet<FirstCompGame> {
 	}
 
 	private Component myRes(int mages, int warriors, int kings) {
-		return new EffectComponent(new DescribedEffect("Add " + mwkString(mages, warriors, kings), src -> src.getOwner().getRequiredComponent(ResourceMWKComponent.class).change(mages, warriors, kings)));
+		return new EffectComponent("Add " + mwkString(mages, warriors, kings), 
+				src -> src.getOwner().getRequiredComponent(ResourceMWKComponent.class).change(mages, warriors, kings));
 	}
 
 	private String mwkString(int mages, int warriors, int kings) {

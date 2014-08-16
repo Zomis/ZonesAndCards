@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.zomis.cards.cbased.CardWithComponents;
+import net.zomis.cards.iface.Component;
 
 public class CostComponent<T> implements Component {
 

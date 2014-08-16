@@ -3,6 +3,7 @@ package net.zomis.cards.systems;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.DeckSourceComponent;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.cards.util.DeckBuilder;
 import net.zomis.cards.util.DeckList;
 import net.zomis.custommap.view.ZomisLog;

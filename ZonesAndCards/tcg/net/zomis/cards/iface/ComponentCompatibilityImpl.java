@@ -1,8 +1,7 @@
-package net.zomis.cards.components;
+package net.zomis.cards.iface;
 
 import java.util.HashSet;
 
-import net.zomis.cards.iface.HasComponents;
 import net.zomis.custommap.view.ZomisLog;
 
 public class ComponentCompatibilityImpl implements ComponentCompatibility {
@@ -22,8 +21,9 @@ public class ComponentCompatibilityImpl implements ComponentCompatibility {
 	@Override
 	public ComponentCompatibility and(Class<? extends Component> class1) {
 		boolean working = object.hasComponent(class1);
-		if (working)
+		if (working) {
 			this.found += (working ? 1 : 0);
+		}
 		else this.missing.add(class1);
 		this.checked++;
 		return this;
@@ -36,15 +36,17 @@ public class ComponentCompatibilityImpl implements ComponentCompatibility {
 
 	@Override
 	public void required() throws RuntimeException {
-		if (fails())
+		if (fails()) {
 			throw new RuntimeException("Missing components on " + object + ": found " + found + "/" + checked + " missing: " + missing);
+		}
 	}
 
 	@Override
 	public boolean failsThenWarn() {
 		boolean result = fails();
-		if (result)
+		if (result) {
 			ZomisLog.warn("Missing components on " + object + ": found " + found + "/" + checked + " missing: " + missing);
+		}
 		return result;
 	}
 

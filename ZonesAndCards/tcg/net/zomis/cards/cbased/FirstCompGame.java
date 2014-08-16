@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.zomis.cards.components.Component;
 import net.zomis.cards.events2.GameStartedEvent;
+import net.zomis.cards.iface.Component;
+import net.zomis.cards.iface.GameSystem;
 import net.zomis.cards.iface.HasComponents;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.GamePhase;
-import net.zomis.cards.systems.GameSystem;
 import net.zomis.events.CancellableEvent;
 import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.IEvent;

@@ -2,6 +2,7 @@ package net.zomis.cards.systems;
 
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.events.card.CardPlayedEvent;
+import net.zomis.cards.iface.GameSystem;
 
 /**
  * <p>Functionality for removing a card once it has been used. (Only cards that are owned by a player is removed)</p>

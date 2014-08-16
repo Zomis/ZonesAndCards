@@ -3,6 +3,7 @@ package net.zomis.cards.systems;
 import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.helpers.DrawCardHelper;
+import net.zomis.cards.iface.GameSystem;
 
 public class DrawStartCards implements GameSystem {
 
