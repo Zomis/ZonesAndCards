@@ -1,8 +1,8 @@
 package net.zomis.cards.cbased;
 
 import static org.junit.Assert.*;
-import net.zomis.cards.systems.RPSCardsSystem;
-import net.zomis.cards.systems.RPSCardsSystem.RPS;
+import net.zomis.cards.sets.RPSCardsSystem;
+import net.zomis.cards.sets.RPSCardsSystem.RPS;
 import net.zomis.custommap.ZomisSwing;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.fight.ext.WinResult;

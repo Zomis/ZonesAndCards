@@ -1,4 +1,4 @@
-package net.zomis.cards.systems;
+package net.zomis.cards.sets;
 
 import net.zomis.cards.cbased.CompCardModel;
 import net.zomis.cards.cbased.FirstCompGame;

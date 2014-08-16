@@ -8,7 +8,8 @@ import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.RPSComponent;
 import net.zomis.cards.events.game.PhaseChangeEvent;
 import net.zomis.cards.iface.GameSystem;
-import net.zomis.cards.systems.RPSCardsSystem.RPS;
+import net.zomis.cards.sets.RPSCardsSystem;
+import net.zomis.cards.sets.RPSCardsSystem.RPS;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.fight.ext.WinResult;
 

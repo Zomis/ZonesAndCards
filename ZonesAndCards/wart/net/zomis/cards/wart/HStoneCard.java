@@ -155,6 +155,7 @@ public class HStoneCard extends Card<HStoneCardModel> {
 		this.getResources().set(HStoneRes.MAX_HEALTH, getModel().getHealth());
 	}
 
+	@Override
 	public void destroy() {
 		this.silence();
 		this.getResources().set(HStoneRes.HEALTH, 0);

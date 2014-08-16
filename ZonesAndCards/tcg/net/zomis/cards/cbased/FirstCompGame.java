@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.zomis.cards.events.card.CardPlayedEvent;
 import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.iface.Component;
 import net.zomis.cards.iface.GameSystem;
 import net.zomis.cards.iface.HasComponents;
+import net.zomis.cards.model.Card;
 import net.zomis.cards.model.CardGame;
 import net.zomis.cards.model.CardZone;
 import net.zomis.cards.model.GamePhase;
+import net.zomis.cards.model.StackAction;
 import net.zomis.events.CancellableEvent;
 import net.zomis.events.EventExecutorGWT;
 import net.zomis.events.IEvent;
@@ -20,16 +23,6 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> implement
 
 	private final List<GameSystem> systems = new ArrayList<>(); // List or Set? Should the order matter?
 	private final Map<Class<? extends Component>, Component> components = new HashMap<>();
-	
-	/**
-	 * x players
-	 * event-based: When playing card, at the start of turn, when performing a fight, when cleaning up (state-based effects), etc.
-	 * 
-	 * components only hold state
-	 * each card and cardmodel has a collection of components
-	 * 
-	 * How can generics be used with the component-based system? Using generics together with a Map<? extends Component, Component> would cause a mess.
-	 */
 	
 	public FirstCompGame() {
 		this.setActionHandler(new ComponentHandler());
@@ -85,4 +78,23 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> implement
 		return components;
 	}
 
+	public void gameOver() {
+		super.endGame();
+	}
+	
+	@Override
+	public StackAction clickPerform(Card<?> card) {
+		if (card == null)
+			throw new NullPointerException("Card cannot be null");
+		
+		CardGame<?, ?> cardGame = card.getGame();
+		CompPlayer player = getCurrentPlayer();
+		StackAction action = card.clickAction();
+		if (action.actionIsAllowed()) {
+			getReplay().addMove(card);
+		}
+		addAndProcessStackAction(action);
+		executeEvent(new CardPlayedEvent(card, player, cardGame, action));
+		return action;
+	}
 }

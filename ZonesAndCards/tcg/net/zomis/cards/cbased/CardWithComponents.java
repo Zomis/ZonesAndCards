@@ -31,5 +31,5 @@ public class CardWithComponents extends Card<CompCardModel> implements HasCompon
 	public CompPlayer getOwner() {
 		return (CompPlayer) super.getOwner();
 	}
-	
+
 }

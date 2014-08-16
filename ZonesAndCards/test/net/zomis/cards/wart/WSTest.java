@@ -705,7 +705,7 @@ HSAbilities - Set<HSAbility>, add and remove as needed. Even for stealth until n
 	}
 	
 	private void playCardFail(String name) {
-		game.getCurrentPlayer().getHand().getBottomCard().zoneMoveOnBottom(null);
+		game.getCurrentPlayer().getHand().getBottomCard().destroy();
 		HStoneCardModel cardModel = game.getCardModel(name);
 		assertNotNull("Card Model not found: " + name, cardModel);
 		HStoneCard card = game.getCurrentPlayer().getHand().createCardOnTop(cardModel);
@@ -1086,7 +1086,7 @@ HSAbilities - Set<HSAbility>, add and remove as needed. Even for stealth until n
 	private HStoneCard superCreateCard(String name) {
 		HStoneCard bottomCard = game.getCurrentPlayer().getHand().getBottomCard();
 		if (bottomCard != null)
-			bottomCard.zoneMoveOnBottom(null);
+			bottomCard.destroy();
 		return createCardWithoutDestroy(name);
 	}
 	
@@ -1216,12 +1216,12 @@ HSAbilities - Set<HSAbility>, add and remove as needed. Even for stealth until n
 	@Test
 	public void attack() {
 		superPlayCard("Murloc Raider");
-		HStoneCard card = (HStoneCard) game.getCurrentPlayer().getBattlefield().getTopCard();
+		HStoneCard card = game.getCurrentPlayer().getBattlefield().getTopCard();
 		assertNotNull("Card did not enter the battlefield", card);
 		nextTurn();
 		nextTurn();
 
-		HStoneCard card2 = (HStoneCard) game.getCurrentPlayer().getBattlefield().getTopCard();
+		HStoneCard card2 = game.getCurrentPlayer().getBattlefield().getTopCard();
 		assertTrue(card == card2);
 		assertNotNull("Card did not enter the battlefield", card);
 		HStonePlayer target = game.getCurrentPlayer().getNextPlayer();
@@ -1600,13 +1600,12 @@ HSAbilities - Set<HSAbility>, add and remove as needed. Even for stealth until n
 		assertEquals(30, opponent.getHealth());
 	}
 	
-	private void reachMana(int mana) {
+	protected void reachMana(int mana) {
 		while (!game.getCurrentPlayer().getResources().hasResources(HStoneRes.MANA_AVAILABLE, mana)
 				&& !game.isGameOver()) {
 			nextTurn();
 		}
 	}
-
 
 	@Test
 	public void repeatPlayers() {

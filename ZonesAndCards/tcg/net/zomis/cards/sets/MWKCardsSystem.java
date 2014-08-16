@@ -1,4 +1,4 @@
-package net.zomis.cards.systems;
+package net.zomis.cards.sets;
 
 import java.util.function.Function;
 
@@ -10,6 +10,7 @@ import net.zomis.cards.components.EffectComponent;
 import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.ResourceMWKComponent;
 import net.zomis.cards.iface.Component;
+import net.zomis.cards.systems.DescribedEffect;
 import net.zomis.cards.util.CardSet;
 
 public class MWKCardsSystem implements CardSet<FirstCompGame> {

@@ -150,7 +150,7 @@ public class CRTest extends CardsTest<CRCardGame> {
 	}
 	
 	private CRCard superPlayCard(String name) {
-		game.getCurrentPlayer().getHand().getBottomCard().zoneMoveOnBottom(null);
+		game.getCurrentPlayer().getHand().getBottomCard().destroy();
 		CRCardModel cardModel = game.getCardModel(name);
 		assertNotNull("Card Model not found: " + name, cardModel);
 		CRCard card = game.getCurrentPlayer().getHand().createCardOnTop(cardModel);

@@ -25,7 +25,7 @@ public class DrawCardHelper {
 		
 		DrawCardEvent event = new DrawCardEvent(game, player, card);
 		
-		game.executeEvent(event, new Runnable() {
+		game.executeCancellableEvent(event, new Runnable() {
 			@Override
 			public void run() {
 				ZomisLog.info("Moving card, top is " + deck.getDeck().getTopCard());

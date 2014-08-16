@@ -118,4 +118,8 @@ public class Card<M extends CardModel> {
 		return currentZone.getOwner();
 	}
 	
+	public void destroy() {
+		this.zoneMoveOnBottom(null);
+	}
+	
 }

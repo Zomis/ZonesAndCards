@@ -10,7 +10,7 @@ import net.zomis.utils.ZomisList;
 public class CREffects {
 
 	public CREffect remove() {
-		return (src, target) -> target.zoneMoveOnBottom(null);
+		return (src, target) -> target.destroy();
 	}
 	
 	public CREffect toRandom(CREffect effect, CRFilter filter) {

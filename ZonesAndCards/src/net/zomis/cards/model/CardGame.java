@@ -18,6 +18,7 @@ import net.zomis.cards.model.actions.InvalidStackAction;
 import net.zomis.cards.util.CardSet;
 import net.zomis.events.EventConsumer;
 import net.zomis.events.EventExecutorGWT;
+import net.zomis.events.EventExecutorOrderedByInsert;
 import net.zomis.events.EventHandlerGWT;
 import net.zomis.events.EventListener;
 import net.zomis.events.IEvent;
@@ -54,7 +55,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 	private final List<CardZone<?>> zones = new ArrayList<CardZone<?>>();
 
 	public CardGame() {
-		this.events = new EventExecutorGWT();
+		this.events = new EventExecutorOrderedByInsert();
 		this.actionZone = new CardZone<Card<M>>("Actions");
 		this.actionZone.setGloballyKnown(true);
 		this.addZone(actionZone);
@@ -126,7 +127,7 @@ public class CardGame<P extends Player, M extends CardModel> implements EventLis
 		P player = getCurrentPlayer();
 		StackAction action = card.clickAction();
 		if (action.actionIsAllowed()) {
-			replay.addMove(card);
+			getReplay().addMove(card);
 		}
 		addAndProcessStackAction(action);
 		executeEvent(new CardPlayedEvent(card, player, cardGame, action));

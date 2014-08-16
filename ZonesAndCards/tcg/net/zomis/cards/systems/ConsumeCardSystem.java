@@ -17,7 +17,7 @@ public class ConsumeCardSystem implements GameSystem {
 	
 	public void cardPlayed(CardPlayedEvent event) {
 		if (event.getCard().getOwner() != null)
-			event.getCard().zoneMoveOnBottom(null);
+			event.getCard().destroy();
 	}
 
 }

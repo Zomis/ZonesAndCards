@@ -193,7 +193,7 @@ public class HStonePlayer extends Player implements HandPlayer, DeckPlayer<HSton
 
 	public void destroyWeapon() {
 		if (this.weapon != null)
-			this.weapon.zoneMoveOnBottom(null);
+			this.weapon.destroy();
 		this.weapon = null;
 	}
 	
