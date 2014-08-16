@@ -12,7 +12,6 @@ import net.zomis.custommap.view.ZomisLog;
 
 public class DrawCardHelper {
 
-	
 	public static <T extends HasComponents & HasCompGame> void drawcard(T player) {
 		player.compatibility(HandComponent.class).and(DeckComponent.class).required();
 		

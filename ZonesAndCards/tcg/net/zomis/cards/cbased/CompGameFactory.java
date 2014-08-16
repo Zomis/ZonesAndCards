@@ -16,6 +16,7 @@ import net.zomis.cards.sets.RPSCardsSystem;
 import net.zomis.cards.systems.AttackWithBattlefieldSystem;
 import net.zomis.cards.systems.ConsumeCardSystem;
 import net.zomis.cards.systems.CostAndEffectSystem;
+import net.zomis.cards.systems.CreateDeckOnceFromSourceSystem;
 import net.zomis.cards.systems.DamageIncreasingWhenOutOfCardsSystem;
 import net.zomis.cards.systems.DeckFromEachCardSystem;
 import net.zomis.cards.systems.DrawCardAtBeginningOfTurnSystem;
@@ -112,8 +113,8 @@ public class CompGameFactory {
 	public static FirstCompGame hearthstone() {
 		FirstCompGame game = new FirstCompGame();
 		
-		game.addPlayer(new CompPlayer());
-		game.addPlayer(new CompPlayer());
+		game.addPlayer(new CompPlayer().setName("Player1"));
+		game.addPlayer(new CompPlayer().setName("Player2"));
 		
 		for (CompPlayer pl : game.getPlayers()) {
 			pl.addComponent(new HandComponent(pl));
@@ -134,7 +135,6 @@ public class CompGameFactory {
 		
 		// Draw cards
 		game.addSystem(new DrawCardAtBeginningOfTurnSystem());
-		game.addSystem(new RecreateDeckSystem());
 		game.addSystem(new DamageIncreasingWhenOutOfCardsSystem());
 		game.addSystem(new LimitedHandSizeSystem(10, card -> card.destroy()));
 		
@@ -148,6 +148,7 @@ public class CompGameFactory {
 		
 		// Initial setup
 		game.addSystem(new DeckFromEachCardSystem(2, null));
+		game.addSystem(new CreateDeckOnceFromSourceSystem());
 		game.addSystem(new DrawStartCards(3));
 		game.addSystem(new DrawStartCards(game.getPlayers().get(1), 1));
 		// TODO: game.addSystem(new GiveStartCard(game.getPlayers().get(1), "The Coin"));

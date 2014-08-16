@@ -1,5 +1,6 @@
 package net.zomis.cards.systems;
 
+import net.zomis.cards.cbased.CompPlayer;
 import net.zomis.cards.cbased.FirstCompGame;
 import net.zomis.cards.components.DeckComponent;
 import net.zomis.cards.components.DeckSourceComponent;
@@ -22,12 +23,14 @@ public class RecreateDeckSystem implements GameSystem {
 	
 	private void onDrawCard(DrawCardEvent event) {
 		ZomisLog.info("RecreateDeckSystem - DrawCard Event triggered");
-		if (event.getPlayer().compatibility(DeckComponent.class).and(DeckSourceComponent.class).failsThenWarn())
+		CompPlayer player = (CompPlayer) event.getPlayer();
+		if (player.compatibility(DeckComponent.class).and(DeckSourceComponent.class).failsThenWarn())
 			return;
 		
 		DeckComponent comp = event.getPlayer().getComponent(DeckComponent.class);
-		if (!comp.getDeck().isEmpty())
+		if (!comp.getDeck().isEmpty()) {
 			return;
+		}
 		
 		ZomisLog.info("Recreating deck");
 		DeckSourceComponent source = event.getPlayer().getComponent(DeckSourceComponent.class);
