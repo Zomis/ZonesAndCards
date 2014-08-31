@@ -8,6 +8,7 @@ public class BattlefieldComponent extends ZoneComponent {
 
 	public BattlefieldComponent(CompPlayer player) {
 		super(player.getGame(), new CardZone<CardWithComponents>("Battlefield", player));
+		this.getZone().setGloballyKnown(true);
 	}
 	
 	public CardZone<CardWithComponents> getBattlefield() {

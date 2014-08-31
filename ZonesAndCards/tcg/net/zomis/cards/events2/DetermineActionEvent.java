@@ -2,19 +2,13 @@ package net.zomis.cards.events2;
 
 import net.zomis.cards.cbased.CardWithComponents;
 import net.zomis.cards.model.StackAction;
-import net.zomis.events.IEvent;
 
-public class DetermineActionEvent implements IEvent {
+public class DetermineActionEvent extends CompCard1Event {
 
-	private final CardWithComponents card;
 	private StackAction	action;
 
 	public DetermineActionEvent(CardWithComponents card) {
-		this.card = card;
-	}
-	
-	public CardWithComponents getCard() {
-		return card;
+		super(card);
 	}
 	
 	public void setAction(StackAction action) {
@@ -23,6 +17,10 @@ public class DetermineActionEvent implements IEvent {
 	
 	public StackAction getAction() {
 		return action;
+	}
+
+	public boolean hasAction() {
+		return action != null;
 	}
 
 }

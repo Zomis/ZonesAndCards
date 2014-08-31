@@ -32,4 +32,8 @@ public class CardWithComponents extends Card<CompCardModel> implements HasCompon
 		return (CompPlayer) super.getOwner();
 	}
 
+	public void addComponent(Component component) {
+		this.components.put(component.getClass(), component);
+	}
+	
 }

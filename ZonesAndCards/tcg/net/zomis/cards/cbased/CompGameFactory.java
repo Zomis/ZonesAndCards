@@ -7,7 +7,9 @@ import net.zomis.cards.components.DeckSourceComponent;
 import net.zomis.cards.components.HandComponent;
 import net.zomis.cards.components.HealthComponent;
 import net.zomis.cards.components.ManaComponent;
+import net.zomis.cards.components.PlayerCardComponent;
 import net.zomis.cards.components.ResourceMWKComponent;
+import net.zomis.cards.components.SpecialZoneComponent;
 import net.zomis.cards.model.GamePhase;
 import net.zomis.cards.model.actions.NextTurnAction;
 import net.zomis.cards.sets.HSCompCards;
@@ -15,7 +17,6 @@ import net.zomis.cards.sets.MWKCardsSystem;
 import net.zomis.cards.sets.RPSCardsSystem;
 import net.zomis.cards.systems.AttackWithBattlefieldSystem;
 import net.zomis.cards.systems.ConsumeCardSystem;
-import net.zomis.cards.systems.CostAndEffectSystem;
 import net.zomis.cards.systems.CreateDeckOnceFromSourceSystem;
 import net.zomis.cards.systems.DamageIncreasingWhenOutOfCardsSystem;
 import net.zomis.cards.systems.DeckFromEachCardSystem;
@@ -27,14 +28,14 @@ import net.zomis.cards.systems.IncreaseManaSystem;
 import net.zomis.cards.systems.LimitedHandSizeSystem;
 import net.zomis.cards.systems.LimitedPlaysPerTurnSystem;
 import net.zomis.cards.systems.PerformRPSSystem;
-import net.zomis.cards.systems.PlayHandSystem;
+import net.zomis.cards.systems.PlayHandCostEffectSystem;
 import net.zomis.cards.systems.RecreateDeckSystem;
 import net.zomis.cards.systems.RememberChosenCardSystem;
 import net.zomis.cards.systems.RestoreManaOnTurnStartSystem;
 import net.zomis.cards.systems.SkipPlayerIfNoHealthSystem;
 
 public class CompGameFactory {
-	
+	// TODO: Possible HS extensions: Minions share attack and health, Lifelink (heal either self or player, or random filtered character)
 	/*
 	 * x players
 	 * event-based: When playing card, at the start of turn, when performing a fight, when cleaning up (state-based effects), etc.
@@ -61,8 +62,7 @@ public class CompGameFactory {
 		
 		game.addCards(new RPSCardsSystem());
 		
-		game.addSystem(new PlayHandSystem());
-		game.addSystem(new CostAndEffectSystem());
+		game.addSystem(new PlayHandCostEffectSystem());
 		game.addSystem(new LimitedPlaysPerTurnSystem(1));
 		game.addSystem(new RememberChosenCardSystem());
 		game.addSystem(new PerformRPSSystem());
@@ -94,11 +94,9 @@ public class CompGameFactory {
 		game.addSystem(new DrawCardAtBeginningOfTurnSystem());
 		game.addSystem(new GainMWKResourcesSystem());
 		game.addSystem(new RecreateDeckSystem());
-		game.addSystem(new PlayHandSystem());
+		game.addSystem(new PlayHandCostEffectSystem());
 		game.addSystem(new ConsumeCardSystem());
-		game.addSystem(new CostAndEffectSystem());
 		game.addSystem(new LimitedPlaysPerTurnSystem(2));
-		// TODO: Buffered Health system(?) - don't decrease health directly, do it during cleanup. Listen for CleanupEvent and HealthModificationEvent
 		
 		game.addSystem(new DeckFromEachCardSystem(2, null));
 		game.addSystem(new DrawStartCards(5));
@@ -117,11 +115,17 @@ public class CompGameFactory {
 		game.addPlayer(new CompPlayer().setName("Player2"));
 		
 		for (CompPlayer pl : game.getPlayers()) {
+			pl.addComponent(new SpecialZoneComponent(pl));
+			pl.addComponent(new PlayerCardComponent(pl));
+			
 			pl.addComponent(new HandComponent(pl));
 			pl.addComponent(new DeckSourceComponent(pl));
 			pl.addComponent(new DeckComponent(pl));
 			pl.addComponent(new BattlefieldComponent(pl));
-			pl.addComponent(new HealthComponent(pl.getResources(), 30));
+			
+			HealthComponent health = new HealthComponent(pl.getResources(), 30);
+			pl.getRequiredComponent(PlayerCardComponent.class).getCard().addComponent(health);
+			pl.addComponent(health);
 			pl.addComponent(new ManaComponent(pl.getResources(), 0));
 			game.addPhase(new GamePhase(pl));
 		}
@@ -139,12 +143,11 @@ public class CompGameFactory {
 		game.addSystem(new LimitedHandSizeSystem(10, card -> card.destroy()));
 		
 		// Play cards
-		game.addSystem(new PlayHandSystem());
-		game.addSystem(new ConsumeCardSystem());
-		game.addSystem(new CostAndEffectSystem());
+		game.addSystem(new AttackWithBattlefieldSystem());
+		game.addSystem(new PlayHandCostEffectSystem());
+//		game.addSystem(new ConsumeCardSystem());
 		
 		// Use cards on battlefield
-		game.addSystem(new AttackWithBattlefieldSystem(BattlefieldComponent.class));
 		
 		// Initial setup
 		game.addSystem(new DeckFromEachCardSystem(2, null));

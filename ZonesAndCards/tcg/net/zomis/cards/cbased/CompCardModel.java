@@ -29,6 +29,13 @@ public class CompCardModel extends CardModel implements HasComponents {
 		return components;
 	}
 	
+	public CompCardModel addComponents(Component... component) {
+		for (Component comp : component) {
+			addComponent(comp);
+		}
+		return this;
+	}
+	
 	public CompCardModel addComponent(Component component) {
 		if (component == null)
 			throw new NullPointerException("Component cannot be null. Previously added components: " + components);

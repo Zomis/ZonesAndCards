@@ -1,14 +1,14 @@
 package net.zomis.cards.systems;
 
 import net.zomis.cards.cbased.CardWithComponents;
-import net.zomis.cards.iface.CardEffect;
+import net.zomis.cards.iface.CardEffectSingle;
 
-public class DescribedEffect implements CardEffect {
+public class DescribedEffect implements CardEffectSingle {
 
 	private String str;
-	private CardEffect effect;
+	private CardEffectSingle effect;
 
-	public DescribedEffect(String str, CardEffect effect) {
+	public DescribedEffect(String str, CardEffectSingle effect) {
 		this.str = str;
 		this.effect = effect;
 	}

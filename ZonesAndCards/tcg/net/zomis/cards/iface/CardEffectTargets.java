@@ -3,8 +3,8 @@ package net.zomis.cards.iface;
 import net.zomis.cards.cbased.CardWithComponents;
 
 @FunctionalInterface
-public interface CardEffect {
+public interface CardEffectTargets {
 
-	void performEffect(CardWithComponents card);
+	void performEffect(CardWithComponents source, TargetData targets);
 	
 }

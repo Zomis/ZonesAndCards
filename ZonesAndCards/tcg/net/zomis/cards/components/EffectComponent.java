@@ -1,24 +1,24 @@
 package net.zomis.cards.components;
 
-import net.zomis.cards.iface.CardEffect;
+import net.zomis.cards.iface.CardEffectSingle;
 import net.zomis.cards.iface.Component;
 import net.zomis.cards.systems.DescribedEffect;
 
 public class EffectComponent implements Component {
 
-	private final CardEffect	effect;
+	private final CardEffectSingle	effect;
 
-	public EffectComponent(String description, CardEffect effect) {
+	public EffectComponent(String description, CardEffectSingle effect) {
 		this(new DescribedEffect(description, effect));
 	}
 	
-	public EffectComponent(CardEffect effect) {
+	public EffectComponent(CardEffectSingle effect) {
 		if (effect == null)
 			throw new NullPointerException();
 		this.effect = effect;
 	}
 	
-	public CardEffect getEffect() {
+	public CardEffectSingle getEffect() {
 		return effect;
 	}
 	

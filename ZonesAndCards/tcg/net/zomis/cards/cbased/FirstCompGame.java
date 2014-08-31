@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.zomis.cards.events.card.CardPlayedEvent;
+import net.zomis.cards.events2.CleanupEvent;
+import net.zomis.cards.events2.CompGameEvent;
 import net.zomis.cards.events2.GameStartedEvent;
 import net.zomis.cards.iface.Component;
 import net.zomis.cards.iface.GameSystem;
@@ -96,5 +98,17 @@ public class FirstCompGame extends CardGame<CompPlayer, CompCardModel> implement
 		addAndProcessStackAction(action);
 		executeEvent(new CardPlayedEvent(card, player, cardGame, action));
 		return action;
+	}
+
+	public void cleanup(List<CompGameEvent> events) {
+		if (isGameOver()) {
+			return;
+		}
+		
+		for (CompGameEvent event : events) {
+			this.executeEvent(event);
+		}
+		
+		this.executeEvent(new CleanupEvent(this));
 	}
 }
