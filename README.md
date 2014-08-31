@@ -1,6 +1,18 @@
 ZonesAndCards
 =============
 
+#Dependencies
+
+This project requires the following:
+
+- https://github.com/Zomis/AIScorers
+- https://github.com/Zomis/Commons
+- https://github.com/Zomis/Fighting
+
+Add these projects to your built path and you're all set to go!
+
+#Description
+
 This is an implementation and library for creating different kinds of card games. Both classic card games such as Hearts, and also some Trading Card Games are supported.
 
 The basic idea is that each card game consists of the following:
@@ -40,11 +52,3 @@ Note that although this code is meant to be very flexible and intended to be pos
 - test: Contains several tests. Not all working at the moment, as I'm doing a lot of Test-Driven Development. Failing tests is motivation for me about what to work on (Feel free to help with that!)
 - wart: A TCG game I'd like to call "Wartstone".
 - mdjq: Or possibly called "Zagic". Super-mega-big project, very little has been implemented.
-
-#Dependencies
-
-This project requires the following:
-
-- https://github.com/Zomis/AIScorers
-- https://github.com/Zomis/Commons
-- https://github.com/Zomis/Fighting

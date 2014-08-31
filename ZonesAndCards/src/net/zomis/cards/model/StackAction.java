@@ -20,15 +20,15 @@ public class StackAction {
 	 */
 	protected void onPerform() {} // throw IllegalStateException if this is called directly? It's possible, but is it good design?
 	
-	protected boolean setErrorMessage(String string) {
+	protected final boolean setErrorMessage(String string) {
 		this.message = string;
 		return false;
 	}
-	protected boolean setOKMessage(String string) {
+	protected final boolean setOKMessage(String string) {
 		this.message = string;
 		return true;
 	}
-	protected boolean setMixedMessage(boolean returnCondition, String string) {
+	protected final boolean setMixedMessage(boolean returnCondition, String string) {
 		this.message = string;
 		return returnCondition;
 	}
@@ -41,12 +41,13 @@ public class StackAction {
 		++this.performCounter;
 	}
 	
-	public int getPerformCounter() {
+	public final int getPerformCounter() {
 		return performCounter;
 	}
 	
-	public boolean actionIsPerformed() {
+	public final boolean actionIsPerformed() {
 		return performCounter > 0;
 	}
+	
 	protected void onFailedPerform() {	}
 }
