@@ -33,7 +33,7 @@ public class CardZoneView implements CardViewClickListener {
 		this.zone = zone;
 		thisPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
 		thisPanel.setLayout(new BoxLayout(thisPanel, BoxLayout.Y_AXIS));
-		thisPanel.add(new JLabel(zone.getName()));
+		thisPanel.add(new JLabel(zone.getFullName()));
 
 		cards = new JPanel();
 		cards.setLayout(new FlowLayout());
