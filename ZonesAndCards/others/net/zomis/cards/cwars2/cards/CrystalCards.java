@@ -12,6 +12,7 @@ public class CrystalCards implements CWarsCardSet {
 
 	@Override
 	public void addCards(CWars2Game game) {
+//		addCard(name: 'Mage', cost: { crystals: 8 }, myEffect: { wizards, 1 });
 		new CWars2CardFactory("Mage").setResourceCost(CRYSTALS, 8).setMyEffect(WIZARDS, 1).addTo(game);
 		new CWars2CardFactory("Lightning").setResourceCost(CRYSTALS, 20).setDamage(22).addTo(game);
 		new CWars2CardFactory("Quake").setResourceCost(CRYSTALS, 24).setDamage(27).addTo(game);
