@@ -291,6 +291,45 @@ public class PokerHandTest {
 		assertFalse("List is not completely processed", it.hasNext()); 
 	}
 
+	@Test
+	public void cannotHaveFullHouseOnlyAces() {
+        PokerHandEval eval = PokerHandEval.defaultEvaluator();
+
+        assertEquals(PokerHandType.THREE_OF_A_KIND, eval.evaluate(
+            card(Suite.CLUBS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.HEARTS, ClassicCard.RANK_5),
+            card(Suite.SPADES, ClassicCard.RANK_KING),
+            card(Suite.DIAMONDS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.SPADES, ClassicCard.RANK_ACE_HIGH)
+        ).getType());
+        assertEquals(PokerHandType.THREE_OF_A_KIND, eval.evaluate(
+            card(Suite.CLUBS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.SPADES, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.SPADES, ClassicCard.RANK_KING),
+            card(Suite.HEARTS, ClassicCard.RANK_8),
+            card(Suite.HEARTS, ClassicCard.RANK_5),
+            card(Suite.SPADES, ClassicCard.RANK_2),
+            card(Suite.EXTRA, ClassicCard.RANK_WILDCARD)
+        ).getType());
+        assertEquals(PokerHandType.THREE_OF_A_KIND, eval.evaluate(
+            card(Suite.CLUBS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.SPADES, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.EXTRA, ClassicCard.RANK_WILDCARD)
+        ).getType());
+        assertEquals(PokerHandType.PAIR, eval.evaluate(
+            card(Suite.CLUBS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.SPADES, ClassicCard.RANK_KING),
+            card(Suite.HEARTS, ClassicCard.RANK_7),
+            card(Suite.HEARTS, ClassicCard.RANK_5),
+            card(Suite.SPADES, ClassicCard.RANK_ACE_HIGH)
+        ).getType());
+
+        assertEquals(PokerHandType.PAIR, eval.evaluate(
+            card(Suite.CLUBS, ClassicCard.RANK_ACE_HIGH),
+            card(Suite.DIAMONDS, ClassicCard.RANK_ACE_HIGH)
+        ).getType());
+    }
+
 	private static void assertAdd(List<PokerHandResult> results, PokerHandType type, PokerHandResult result) {
 		assertPoker(type, result);
 		results.add(result);

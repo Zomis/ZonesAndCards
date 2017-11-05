@@ -1,5 +1,7 @@
 package net.zomis.cards.poker.validation;
 
+import net.zomis.cards.classics.ClassicCard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +57,9 @@ public class PokerPair implements PokerHandResultProducer {
 		PokerHandResult bestPair = PokerHandResult.returnBest(pairs);
 		PokerHandResult bestThree = PokerHandResult.returnBest(threeOfAKinds);
 		if (bestPair != null && bestThree != null) {
-			return new PokerHandResult(PokerHandType.FULL_HOUSE, bestThree.getPrimaryRank(), bestPair.getPrimaryRank(), null, 0); // No kickers because it's a complete hand.
+			PokerHandResult result =
+				new PokerHandResult(PokerHandType.FULL_HOUSE, bestThree.getPrimaryRank(), bestPair.getPrimaryRank(), null, 0); // No kickers because it's a complete hand.
+			return fixDoubleAce(result, analyze);
 		}
 		if (bestThree != null)
 			return bestThree;
@@ -64,7 +68,8 @@ public class PokerPair implements PokerHandResultProducer {
 			Collections.sort(pairs);
 			int a = pairs.get(pairs.size() - 1).getPrimaryRank();
 			int b = pairs.get(pairs.size() - 2).getPrimaryRank();
-			return new PokerHandResult(PokerHandType.TWO_PAIR, Math.max(a, b), Math.min(a, b), analyze.getCards(), 1);
+			PokerHandResult result = new PokerHandResult(PokerHandType.TWO_PAIR, Math.max(a, b), Math.min(a, b), analyze.getCards(), 1);
+			return fixDoubleAce(result, analyze);
 		}
 		
 		if (bestPair != null)
@@ -72,6 +77,20 @@ public class PokerPair implements PokerHandResultProducer {
 		
 		// If we have a wildcard, then we always have at least PAIR, which means that it's fine to ignore wildcards in the kickers here as well 
 		return new PokerHandResult(PokerHandType.HIGH_CARD, 0, 0, analyze.getCards());
+	}
+
+	private PokerHandResult fixDoubleAce(PokerHandResult result, PokerHandAnalyze analyze) {
+		if (result.getPrimaryRank() != ClassicCard.RANK_ACE_HIGH || result.getSecondaryRank() != ClassicCard.RANK_ACE_LOW) {
+			return result;
+		}
+		switch (result.getType()) {
+            case FULL_HOUSE:
+                return new PokerHandResult(PokerHandType.THREE_OF_A_KIND, result.getPrimaryRank(), 0, analyze.getCards());
+            case TWO_PAIR:
+                return new PokerHandResult(PokerHandType.PAIR, result.getPrimaryRank(), 0, analyze.getCards());
+            default:
+                throw new IllegalStateException("Unexpected scenario cleaning double ace from " + result);
+        }
 	}
 
 }
